@@ -1,3 +1,4 @@
+/* do not remove @tailwind components whatsoever */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
