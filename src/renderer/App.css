@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body
+:root {
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* .default_font {
+  font-family: 'Courier New', Courier, monospace;
+} */
