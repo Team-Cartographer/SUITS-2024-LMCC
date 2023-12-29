@@ -20,7 +20,6 @@ lint:
         - markdownlint
         - checkov
         - osv-scanner
-        - prettier
     enabled:
         - actionlint@1.6.26
         - eslint@8.56.0
@@ -28,5 +27,6 @@ lint:
         - oxipng@9.0.0
         - svgo@3.1.0
         - trivy@0.48.1
+        - prettier@3.1.1
         - trufflehog@3.63.7
         - yamllint@1.33.0
