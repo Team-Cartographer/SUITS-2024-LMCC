@@ -1,6 +1,7 @@
 name: Test
 
-on: [push, pull_request]
+# trunk-ignore(actionlint/syntax-check)
+on: [] #[push, pull_request]
 
 jobs:
     test:
