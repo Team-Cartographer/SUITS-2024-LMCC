@@ -3,7 +3,7 @@ import Clock from '../components/clock';
 import teamCartographerLogo from '../../assets/icons/team_cartographer_logo_rounded_edges.png';
 import './App.css';
 
-function Hello() {
+function MainPage() {
     return (
         <div className="flex flex-col items-left pl-2 justify-center default-font">
             <img
@@ -23,7 +23,7 @@ export default function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/" element={<Hello />} />
+                <Route path="/" element={<MainPage />} />
             </Routes>
         </Router>
     );
