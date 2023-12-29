@@ -3,4 +3,4 @@ Our LMCC (Local Mission Control Console) code for the NASA SUITS (Spacesuit User
 
 Questions? Send an email to: <br>
 `teamcartographer[AT]gmail.com` <br>
-(replace the [AT] with @, this is to prevent spam)
+(replace the [AT] with @, as this is to prevent spam)
