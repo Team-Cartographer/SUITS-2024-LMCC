@@ -1,7 +1,7 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
 import Clock from '../components/clock';
 import teamCartographerLogo from '../../assets/icons/team_cartographer_logo_rounded_edges.png';
+import './App.css';
 
 function Hello() {
     return (
