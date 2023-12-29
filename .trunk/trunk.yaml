@@ -20,6 +20,7 @@ lint:
         - markdownlint
         - checkov
         - osv-scanner
+        - prettier
     enabled:
         - actionlint@1.6.26
         - eslint@8.56.0
