@@ -2,7 +2,7 @@
 
 Team Cartographer's LMCC (Local Mission Control Console) code for the NASA SUITS (Spacesuit User Interface Technologies for Students) Challenge 2023/24. <br>
 
-This project is bundled with [Electron React Boilerplate](https://electron-react-boilerplate.js.org/) and styled with [TailwindCSS](https://tailwindcss.com/) as a customized overlay.
+This project is bundled with [Electron React Boilerplate](https://electron-react-boilerplate.js.org/) and styled with [TailwindCSS](https://tailwindcss.com/) and [Material UI](https://mui.com/) as a customized overlay.
 
 Contents:
 

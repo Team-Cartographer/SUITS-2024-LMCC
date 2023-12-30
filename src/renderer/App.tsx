@@ -1,12 +1,13 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import Timers from '../components/timing';
-// import teamCartographerLogo from '../../assets/icons/team_cartographer_logo_rounded_edges.png';
 import './App.css';
+import GitHubButton from '../components/github_button';
 
 function MainPage() {
     return (
         <div className="flex flex-col items-left pl-2 justify-center default-font">
             <Timers />
+            <GitHubButton />
         </div>
     );
 }
