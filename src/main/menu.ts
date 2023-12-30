@@ -54,17 +54,17 @@ export default class MenuBuilder {
 
     buildDarwinTemplate(): MenuItemConstructorOptions[] {
         const subMenuAbout: DarwinMenuItemConstructorOptions = {
-            label: 'Electron',
+            label: 'LMCC',
             submenu: [
                 {
-                    label: 'About ElectronReact',
+                    label: 'About LMCC App',
                     selector: 'orderFrontStandardAboutPanel:',
                 },
                 { type: 'separator' },
                 { label: 'Services', submenu: [] },
                 { type: 'separator' },
                 {
-                    label: 'Hide ElectronReact',
+                    label: 'Hide LMCC App',
                     accelerator: 'Command+H',
                     selector: 'hide:',
                 },
@@ -173,30 +173,16 @@ export default class MenuBuilder {
                 {
                     label: 'Learn More',
                     click() {
-                        shell.openExternal('https://electronjs.org');
-                    },
-                },
-                {
-                    label: 'Documentation',
-                    click() {
                         shell.openExternal(
-                            'https://github.com/electron/electron/tree/main/docs#readme',
+                            'https://github.com/Team-Cartographer/SUITS-2024-LMCC/',
                         );
                     },
                 },
                 {
-                    label: 'Community Discussions',
+                    label: 'Issues',
                     click() {
                         shell.openExternal(
-                            'https://www.electronjs.org/community',
-                        );
-                    },
-                },
-                {
-                    label: 'Search Issues',
-                    click() {
-                        shell.openExternal(
-                            'https://github.com/electron/electron/issues',
+                            'https://github.com/Team-Cartographer/SUITS-2024-LMCC/issues',
                         );
                     },
                 },

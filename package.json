@@ -1,35 +1,27 @@
 {
-    "description": "A foundation for scalable desktop apps",
+    "description": "SUITS 2024 LMCC App",
     "keywords": [
-        "electron",
-        "boilerplate",
-        "react",
-        "typescript",
-        "ts",
-        "sass",
-        "webpack",
-        "hot",
-        "reload"
+        "nasa",
+        "team cartographer"
     ],
-    "homepage": "https://github.com/electron-react-boilerplate/electron-react-boilerplate#readme",
+    "homepage": "https://github.com/Team-Cartographer/SUITS-2024-LMCC",
     "bugs": {
-        "url": "https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues"
+        "url": "https://github.com/Team-Cartographer/SUITS-2024-LMCC/issues"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/electron-react-boilerplate/electron-react-boilerplate.git"
+        "url": "git+https://github.com/Team-Cartographer/SUITS-2024-LMCC.git"
     },
     "license": "MIT",
     "author": {
-        "name": "Electron React Boilerplate Maintainers",
-        "email": "electronreactboilerplate@gmail.com",
-        "url": "https://electron-react-boilerplate.js.org"
+        "name": "Team Cartographer",
+        "email": "teamcartographer@gmail.com",
+        "url": "https://team-cartographer.github.io/team-cartographer-site"
     },
     "contributors": [
         {
-            "name": "Amila Welihinda",
-            "email": "amilajack@gmail.com",
-            "url": "https://github.com/amilajack"
+            "name": "Team Cartographer",
+            "email": "teamcartographer@gmail.com"
         }
     ],
     "main": "./src/main/main.ts",
@@ -180,8 +172,8 @@
         "webpack-merge": "^5.9.0"
     },
     "build": {
-        "productName": "ElectronReact",
-        "appId": "org.erb.ElectronReact",
+        "productName": "TeamCartographerLMCC",
+        "appId": "org.erb.TeamCartographerLMCC",
         "asar": true,
         "asarUnpack": "**\\*.{node,dll}",
         "files": [
