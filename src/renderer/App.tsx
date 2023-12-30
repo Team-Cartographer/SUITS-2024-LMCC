@@ -10,14 +10,12 @@ function MainPage() {
             <Timers />
             <GitHubButton />
             <EvaTelemetry
-                className="text-3xl w-1/3"
                 evaNumber="1"
-                bpm="80"
-                temp="98.0"
-                oxygenation="98.0"
+                bpm="129"
+                temp="100"
+                oxygenation="91.0"
             />
             <EvaTelemetry
-                className="text-3xl w-1/3"
                 evaNumber="2"
                 bpm="78"
                 temp="97.2"
