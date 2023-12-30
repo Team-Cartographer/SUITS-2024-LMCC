@@ -1,6 +1,6 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable max-classes-per-file */
-import { Pause, PlayArrow } from '@mui/icons-material';
+import { Loop, Pause, PlayArrow } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import React from 'react';
 import 'tailwindcss/tailwind.css';
@@ -84,6 +84,11 @@ class Stopwatch extends React.Component<{}, StopwatchState> {
         }
     };
 
+    handleReset = () => {
+        this.stopTimer();
+        this.setState({ time: 0, isRunning: false });
+    };
+
     handleStartStop = () => {
         this.setState((prevState) => ({ isRunning: !prevState.isRunning }));
     };
@@ -112,9 +117,16 @@ class Stopwatch extends React.Component<{}, StopwatchState> {
                 <IconButton
                     aria-label="start-stop"
                     onClick={this.handleStartStop}
-                    className="text-lightGray h-9 pl-2"
+                    className="text-gray-200 h-9 pl-4 hover:text-gray-10"
                 >
                     {isRunning ? <Pause /> : <PlayArrow />}
+                </IconButton>
+                <IconButton
+                    aria-label="start-stop"
+                    onClick={this.handleReset}
+                    className="text-gray-200 h-9 pl-3 hover:text-gray-10"
+                >
+                    <Loop />
                 </IconButton>
             </div>
         );
@@ -123,7 +135,7 @@ class Stopwatch extends React.Component<{}, StopwatchState> {
 
 function Timers() {
     return (
-        <div className="flex flex-row pt-2 gap-x-6">
+        <div className="flex flex-row pt-2 pl-2 gap-x-6">
             <div className="flex flex-col">
                 <p className="font-bold text-md">Current Time</p>
                 <Clock />
