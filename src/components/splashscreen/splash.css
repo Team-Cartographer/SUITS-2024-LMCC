@@ -1,0 +1,43 @@
+/* splash.css */
+body {
+    margin: 0;
+    /* Removes default margin */
+    height: 100vh;
+    /* Full viewport height */
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+div {
+    display: flex;
+    /* Enables flexbox for the div */
+    align-items: center;
+    /* Align items vertically in the center */
+    justify-content: flex-end;
+    /* Align items to the right */
+    position: absolute;
+    /* Position the div absolutely */
+    top: 0;
+    /* Position at the top of the viewport */
+    left: 0;
+    /* Position at the left of the viewport */
+    margin: 10px;
+    /* Adds some space from the edges */
+}
+
+img,
+h1 {
+    height: 50px;
+    /* Sets a fixed height for both elements */
+    width: 50px;
+    /* Sets a fixed width for both elements */
+    margin: 0 10px;
+    /* Adds horizontal spacing between elements */
+}
+
+/* Additional styling for aesthetics */
+h1 {
+    font-size: 1.5em;
+    /* Adjust font size as needed */
+    margin: 0;
+    /* Removes default margin */
+}
