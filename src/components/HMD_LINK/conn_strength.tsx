@@ -2,11 +2,11 @@
 import { SignalHigh, SignalLow, SignalMedium } from 'lucide-react';
 
 interface ConnStrengthProps {
-    evaNumber: string;
+    desc: string;
     ping: number;
 }
 
-function ConnectionStrength({ evaNumber, ping }: ConnStrengthProps) {
+function ConnectionStrength({ desc, ping }: ConnStrengthProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, prefer-const
 
     return (
@@ -16,7 +16,7 @@ function ConnectionStrength({ evaNumber, ping }: ConnStrengthProps) {
                     ping > 15 ? 'border-2 border-red-500' : ''
                 }`}
             >
-                EVA {evaNumber}:
+                {desc}:
                 {ping <= 10 ? (
                     <SignalHigh className="h-7 w-7 icon-outline pl-1" />
                 ) : ping > 10 && ping <= 20 ? (

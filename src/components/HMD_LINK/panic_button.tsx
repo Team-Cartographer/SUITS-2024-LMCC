@@ -9,7 +9,7 @@ function onPanic() {
 
 function PanicButton() {
     return (
-        <div className="pt-8 pl-3">
+        <div className="pt-8 pl-4">
             <Button
                 className="bg-red-600 h-10 w-16 text-red-200"
                 onClick={onPanic}

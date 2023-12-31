@@ -22,7 +22,7 @@ function EvaTelemetry({ evaNumber, bpm, temp, oxygenation }: TelemetryArgs) {
             <div
                 className={`flex flex-row gap-x-6 p-4 text-3xl ${
                     bpmCritical || tempCritical || oxygenationCritical
-                        ? `bg-red-500 bg-opacity-50 rounded-lg font-bold italic underline`
+                        ? `bg-red-500 bg-opacity-50 rounded-lg`
                         : 'bg-gray-750'
                 } rounded-3xl 2xl:items-center justify-start`}
             >

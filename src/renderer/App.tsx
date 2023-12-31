@@ -15,7 +15,7 @@ function MainPage() {
                 <EvaTelemetry
                     evaNumber="1"
                     bpm="129"
-                    temp="100"
+                    temp="97"
                     oxygenation="91.0"
                 />
                 <EvaTelemetry
@@ -27,8 +27,9 @@ function MainPage() {
             </div>
             <div className="h-full flex flex-col gap-x-4">
                 <PanicButton />
-                <ConnectionStrength evaNumber="1" ping={25} />
-                <ConnectionStrength evaNumber="2" ping={5} />
+                <ConnectionStrength desc="EVA 1" ping={25} />
+                <ConnectionStrength desc="EVA 2" ping={5} />
+                <ConnectionStrength desc="ROVER" ping={10} />
             </div>
             <div className="pl-2 bg-gray-200 flex-grow rounded-l-2xl">Test</div>
         </div>
