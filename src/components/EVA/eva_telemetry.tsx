@@ -6,25 +6,32 @@ const TEMP_THRESH = 99;
 const O2_THRESH = 97;
 
 interface TelemetryArgs {
+    className?: string;
     evaNumber: string;
     bpm: string;
     temp: string;
     oxygenation: string;
 }
 
-function EvaTelemetry({ evaNumber, bpm, temp, oxygenation }: TelemetryArgs) {
+function EvaTelemetry({
+    className = '',
+    evaNumber,
+    bpm,
+    temp,
+    oxygenation,
+}: TelemetryArgs) {
     let bpmCritical: boolean = parseInt(bpm, 10) > BPM_THRESH;
     let tempCritical: boolean = parseInt(temp, 10) > TEMP_THRESH;
     let oxygenationCritical: boolean = parseInt(oxygenation, 10) < O2_THRESH;
 
     return (
-        <div className="pt-4">
+        <div className={className}>
             <div
                 className={`flex flex-row gap-x-6 p-4 text-3xl ${
                     bpmCritical || tempCritical || oxygenationCritical
-                        ? `bg-red-500 bg-opacity-50 rounded-lg`
+                        ? `bg-red-500 bg-opacity-50`
                         : 'bg-gray-750'
-                } rounded-3xl 2xl:items-center justify-start`}
+                } rounded-t-3xl items-center justify-start`}
             >
                 <p>EVA {evaNumber}:</p>
                 <p

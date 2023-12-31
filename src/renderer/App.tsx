@@ -5,6 +5,7 @@ import GitHubButton from '../components/UI_AND_UX/github_button';
 import EvaTelemetry from '../components/EVA/eva_telemetry';
 import PanicButton from '../components/HMD_LINK/panic_button';
 import ConnectionStrength from '../components/HMD_LINK/conn_strength';
+import EVALiveView from '../components/HMD_LINK/eva_live_view';
 
 function MainPage() {
     return (
@@ -18,11 +19,22 @@ function MainPage() {
                     temp="97"
                     oxygenation="91.0"
                 />
+                <EVALiveView
+                    evaNumber={1}
+                    url="https://www.youtube.com/watch?v=lPyl6d2FJGw"
+                    volume={0}
+                />
                 <EvaTelemetry
+                    className="pt-3"
                     evaNumber="2"
                     bpm="78"
                     temp="97.2"
                     oxygenation="99.0"
+                />
+                <EVALiveView
+                    evaNumber={2}
+                    url="https://youtu.be/WkwULe0h5-g?t=427"
+                    volume={0}
                 />
             </div>
             <div className="h-full flex flex-col gap-x-4">
