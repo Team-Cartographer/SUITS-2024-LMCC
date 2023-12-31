@@ -10,7 +10,7 @@ import EVALiveView from '../components/HMD_LINK/eva_live_view';
 function MainPage() {
     return (
         <div className="h-full flex flex-row gap-x-4">
-            <div className="flex flex-col items-left pl-2 justify-center">
+            <div className="flex flex-col items-left pl-3 justify-center">
                 <Timers />
                 <GitHubButton />
                 <EvaTelemetry
