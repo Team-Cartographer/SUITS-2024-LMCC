@@ -27,8 +27,8 @@ function MainPage() {
             </div>
             <div className="h-full flex flex-col gap-x-4">
                 <PanicButton />
-                <ConnectionStrength evaNumber="1" />
-                <ConnectionStrength evaNumber="2" />
+                <ConnectionStrength evaNumber="1" ping={25} />
+                <ConnectionStrength evaNumber="2" ping={5} />
             </div>
             <div className="pl-2 bg-gray-200 flex-grow rounded-l-2xl">Test</div>
         </div>
