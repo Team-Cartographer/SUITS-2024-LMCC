@@ -24,7 +24,6 @@ class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-// let splash: BrowserWindow | null = null;
 
 ipcMain.on('ipc-example', async (event, arg) => {
     const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
@@ -70,21 +69,6 @@ const createWindow = async () => {
         return path.join(RESOURCES_PATH, ...paths);
     };
 
-    // splash = new BrowserWindow({
-    //     width: 500,
-    //     height: 300,
-    //     transparent: true,
-    //     frame: false,
-    //     alwaysOnTop: true,
-    //     webPreferences: {
-    //         devTools: false,
-    //     },
-    // });
-
-    // splash.loadFile('../components/splashscreen/splash.html');
-    // splash.center();
-    // splash.show();
-
     mainWindow = new BrowserWindow({
         show: false,
         width: 1920,
@@ -107,7 +91,6 @@ const createWindow = async () => {
         if (process.env.START_MINIMIZED) {
             mainWindow.minimize();
         } else {
-            // splash?.close();
             mainWindow.show();
         }
     });
