@@ -1,4 +1,4 @@
-# NASA SUITS 2024 LMCC Console :rocket: :computer:
+# NASA SUITS 2024 LMCC Console :computer:
 
 Team Cartographer's LMCC (Local Mission Control Console) code for the NASA SUITS (Spacesuit User Interface Technologies for Students) Challenge 2023/24. <br>
 
@@ -7,20 +7,23 @@ This project is bundled with [Electron React Boilerplate](https://electron-react
 Contents:
 
 -   [About the App](#about-the-app)
--   [Getting Started](#getting-started)
--   [Development](#development)
--   [Building](#building)
--   [Packaging & Production](#packaging-and-production)
+-   [Usage](#usage)
+    -   [Getting Started](#getting-started)
+    -   [Development](#development)
+    -   [Building](#building)
+    -   [Packaging & Production](#packaging-and-production)
 
 Questions? Send an email to `teamcartographer@gmail.com` and we will get back to you as soon as possible.
 
 Thank you for reading!
 
-## About the App
+## :rocket: About the App
 
--   Coming soon!
+-   Coming soon!<br><br>
 
-## Getting Started
+## :earth_americas: Usage
+
+### Getting Started :keyboard:
 
 To get started, run the following commands
 
@@ -38,9 +41,9 @@ npm install --global yarn
 npm install
 ```
 
-This will install all necessary packages and configurations for the development environment.
+This will install all necessary packages and configurations for the development environment.<br><br>
 
-## Development
+### Development :technologist:
 
 To begin the development server, simply use:
 
@@ -59,9 +62,9 @@ To test that the app is rendered as expected, use:
 npm test
 ```
 
-Current tests only include a rendering check.
+Current tests only include a rendering check.<br><br>
 
-## Building
+### Building :hammer:
 
 To build the app, run the command:
 
@@ -76,9 +79,9 @@ To view memory usages, you can also run the command:
 ANALYZE=true npm run build
 ```
 
-This will open a new webpage with file size and memory load information. At any time, the analyzer pages can be stopped with `Ctrl+C` in the terminal.
+This will open a new webpage with file size and memory load information. At any time, the analyzer pages can be stopped with `Ctrl+C` in the terminal.<br><br>
 
-## Packaging and Production
+### Packaging and Production :package:
 
 As Electron allows builds for cross-platform applications, you can package for whichever operating system you are on with the command:
 
