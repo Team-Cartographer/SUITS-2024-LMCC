@@ -24,7 +24,15 @@ function EVALiveView({ evaNumber, url, volume = 0.5 }: EVALiveViewProps) {
 
   return (
     <div>
-      <ReactPlayer url={url} playing volume={volume} style={playerStyle} />
+      <ReactPlayer
+        width="95%"
+        height="200%"
+        url={url}
+        controls
+        playing
+        volume={volume}
+        style={playerStyle}
+      />
     </div>
   );
 }

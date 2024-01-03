@@ -6,12 +6,12 @@
  * @fileoverview Coming once all "TODO:" are complete
  */
 
-import Timers from "@/components/UI_AND_UX/timing";
+import Timers from "@/components/ui_and_ux/timing";
 
 function TelemetryPage() {
   return (
     <div className="h-full flex flex-row gap-x-4 items-center justify-center">
-      <Timers />
+      Hi There!
       {/* TODO: Finish this file */}
     </div>
   );

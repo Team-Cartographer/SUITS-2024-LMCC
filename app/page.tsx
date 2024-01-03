@@ -15,6 +15,9 @@ const StartPage = () => {
       window.open("/screen_two", "_blank");
       screenTwoOpened = true;
     }
+    setTimeout(() => {
+      window.location.reload();
+    }, 10);
   }, [router]);
 
   return (
