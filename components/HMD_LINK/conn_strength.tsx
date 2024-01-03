@@ -14,7 +14,11 @@ interface ConnStrengthProps {
   className?: string;
 }
 
-function ConnectionStrength({ desc, ping, className = "" }: ConnStrengthProps) {
+const ConnectionStrength = ({
+  desc,
+  ping,
+  className = "",
+}: ConnStrengthProps) => {
   return (
     <div className={`pt-3 ${className}`}>
       <div
@@ -33,6 +37,6 @@ function ConnectionStrength({ desc, ping, className = "" }: ConnStrengthProps) {
       </div>
     </div>
   );
-}
+};
 
 export default ConnectionStrength;

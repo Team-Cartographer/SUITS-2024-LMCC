@@ -13,7 +13,7 @@ function onPanic() {
   console.log("Panic Pressed");
 }
 
-function PanicButton() {
+const PanicButton = () => {
   return (
     <div className="pt-8 pl-6">
       <Button
@@ -24,6 +24,6 @@ function PanicButton() {
       </Button>
     </div>
   );
-}
+};
 
 export default PanicButton;

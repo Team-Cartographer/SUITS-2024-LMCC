@@ -72,7 +72,7 @@ function Stopwatch() {
   );
 }
 
-function Timers() {
+const Timers = () => {
   return (
     <div className="flex flex-row pt-2 pl-2 gap-x-6">
       <div className="flex flex-col">
@@ -86,6 +86,6 @@ function Timers() {
       </div>
     </div>
   );
-}
+};
 
 export default Timers;
