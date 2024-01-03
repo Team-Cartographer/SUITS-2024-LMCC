@@ -6,12 +6,12 @@ This project is bundled with [Electron React Boilerplate](https://electron-react
 
 Contents:
 
--   [About the App](#🚀-about-the-app)
--   [Usage](#🌎-usage)
-    -   [Getting Started](#getting-started-⌨️)
-    -   [Development](#development-🧑‍💻)
-    -   [Building](#building-🔨)
-    -   [Packaging & Production](#packaging-and-production-📦)
+-   [About the App](#rocket-about-the-app)
+-   [Usage](#earth_americas-usage)
+    -   [Getting Started](#getting-started-keyboard)
+    -   [Development](#development-technologist)
+    -   [Building](#building-hammer)
+    -   [Packaging & Production](#packaging-and-production-package)
 
 Documentation for certain code files can be found in those respective files in the first few lines.
 
