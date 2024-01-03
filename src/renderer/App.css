@@ -21,6 +21,14 @@ body
     filter: drop-shadow(0 0 3px #000000); /* Adjust color and size as needed */
 }
 
+.custom-text-shadow {
+    text-shadow:
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
 
 /* HTML Color Grey Codes: https://www.w3schools.com/colors/colors_shades.asp */
 

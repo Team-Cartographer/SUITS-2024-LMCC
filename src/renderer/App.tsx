@@ -1,4 +1,10 @@
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
+import {
+    MemoryRouter as Router,
+    Routes,
+    Route,
+    useNavigate,
+} from 'react-router-dom';
+import { Button } from '@mui/material/';
 import './App.css';
 import Timers from '../components/UI_AND_UX/timing';
 import GitHubButton from '../components/UI_AND_UX/github_button';
@@ -6,8 +12,12 @@ import EvaTelemetry from '../components/EVA/eva_telemetry';
 import PanicButton from '../components/HMD_LINK/panic_button';
 import ConnectionStrength from '../components/HMD_LINK/conn_strength';
 import EVALiveView from '../components/HMD_LINK/eva_live_view';
+import TelemetryPage from '../components/PAGES/telemetry_page';
+import { StopwatchProvider } from '../providers/stopwatch_provider';
 
 function MainPage() {
+    const navigate = useNavigate();
+
     return (
         <div className="h-full flex flex-row gap-x-4">
             <div className="flex flex-col items-left pl-3 justify-center">
@@ -41,7 +51,15 @@ function MainPage() {
                 <PanicButton />
                 <ConnectionStrength desc="EVA 1" ping={25} />
                 <ConnectionStrength desc="EVA 2" ping={5} />
-                <ConnectionStrength desc="ROVER" ping={10} />
+                <ConnectionStrength desc="ROVER" ping={10} className="pb-3" />
+                <Button
+                    className="bg-gray-300 text-white rounded-xl p-2 normal-case hover:bg-gray-500  custom-text-shadow"
+                    onClick={() => {
+                        navigate('/telemetry');
+                    }}
+                >
+                    Raw Telemetry
+                </Button>
             </div>
             <div className="pl-2 bg-gray-200 flex-grow rounded-l-2xl">Test</div>
         </div>
@@ -51,9 +69,12 @@ function MainPage() {
 export default function App() {
     return (
         <Router>
-            <Routes>
-                <Route path="/" element={<MainPage />} />
-            </Routes>
+            <StopwatchProvider>
+                <Routes>
+                    <Route path="/" element={<MainPage />} />
+                    <Route path="/telemetry" element={<TelemetryPage />} />
+                </Routes>
+            </StopwatchProvider>
         </Router>
     );
 }

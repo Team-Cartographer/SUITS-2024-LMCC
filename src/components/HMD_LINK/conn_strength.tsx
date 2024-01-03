@@ -4,13 +4,15 @@ import { SignalHigh, SignalLow, SignalMedium } from 'lucide-react';
 interface ConnStrengthProps {
     desc: string;
     ping: number;
+    // eslint-disable-next-line react/require-default-props
+    className?: string;
 }
 
-function ConnectionStrength({ desc, ping }: ConnStrengthProps) {
+function ConnectionStrength({ desc, ping, className = '' }: ConnStrengthProps) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars, prefer-const
 
     return (
-        <div className="pt-3">
+        <div className={`pt-3 ${className}`}>
             <div
                 className={`text-sm flex flex-row bg-gray-300 rounded-xl p-2 items-center justify-center ${
                     ping > 15 ? 'border-2 border-red-500' : ''
