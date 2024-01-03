@@ -1,4 +1,4 @@
-# NASA SUITS 2024 LMCC Console :rocket:
+# NASA SUITS 2024 LMCC Console :rocket: :computer:
 
 Team Cartographer's LMCC (Local Mission Control Console) code for the NASA SUITS (Spacesuit User Interface Technologies for Students) Challenge 2023/24. <br>
 
