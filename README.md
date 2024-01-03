@@ -21,7 +21,8 @@ Thank you for reading!
 
 ## :rocket: About the App
 
--   Coming soon!<br><br>
+-   Documentation can be found at [Team Cartographer SUITS24 LMCC App Documentation](https://drive.google.com/drive/folders/1yhpCCvDxDdY3s0cky-qRmtXiPUFmtyzn?usp=sharing)
+-   More coming soon!<br><br>
 
 ## :earth_americas: Usage
 
