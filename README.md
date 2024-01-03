@@ -12,9 +12,7 @@ Contents:
     -   [Development](#development-technologist)
     -   [Building](#building-hammer)
     -   [Packaging & Production](#packaging-and-production-package)
-
-Documentation for certain code files can be found in those respective files in the first few lines.
-
+      
 Questions? Send an email to `teamcartographer@gmail.com` and we will get back to you as soon as possible.
 
 Thank you for reading!
