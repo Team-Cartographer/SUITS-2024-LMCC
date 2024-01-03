@@ -7,7 +7,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-no-constructed-context-values */
 /* eslint-disable react/function-component-definition */
-import React, {
+import {
     createContext,
     useState,
     useContext,
