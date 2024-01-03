@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function PanicButton
+ * @fileoverview Coming once all "TODO:" are complete
+ */
+
 import { Button } from '@mui/material';
 import { AlertTriangle } from 'lucide-react';
 

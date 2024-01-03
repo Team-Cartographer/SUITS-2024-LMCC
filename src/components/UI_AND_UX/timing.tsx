@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function Timers
+ * @fileoverview https://docs.google.com/document/d/1hmx74L0iU5ikTFpniqynhU_xts1HKvM1jPmr64Lin-o/
+ */
+
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable max-classes-per-file */
 import React from 'react';

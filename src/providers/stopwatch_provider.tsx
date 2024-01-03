@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function StopwatchProvider
+ * @fileoverview https://docs.google.com/document/d/1Zqneli7AeubiU10YHZqsq5emFCdpV_srpxIv92XRRfg/
+ */
+
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/jsx-no-constructed-context-values */
 /* eslint-disable react/function-component-definition */

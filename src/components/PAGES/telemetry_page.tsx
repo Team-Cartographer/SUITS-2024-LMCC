@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function TelemetryPage
+ * @fileoverview Coming once all "TODO:" are complete
+ */
+
 import { Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Timers from '../UI_AND_UX/timing';
@@ -15,6 +21,7 @@ function TelemetryPage() {
             >
                 Back to Home
             </Button>
+            {/* TODO: Finish this file */}
         </div>
     );
 }

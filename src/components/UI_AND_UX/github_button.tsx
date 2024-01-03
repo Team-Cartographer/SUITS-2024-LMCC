@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function GitHubButton
+ * @fileoverview This is simply a GitHub Repository Access Button in the bottom-right of the App.
+ */
+
 import { GitHub } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 

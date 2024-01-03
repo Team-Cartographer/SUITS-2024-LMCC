@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function HomePage
+ * @fileoverview https://docs.google.com/document/d/1DABLaMeVG6YfqvkmPyuQxoyOtKfFTCykDSIMbTua3FQ/
+ */
+
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@mui/material/';
 import Timers from '../UI_AND_UX/timing';

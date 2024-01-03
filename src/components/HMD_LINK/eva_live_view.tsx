@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function EVALiveView
+ * @fileoverview https://docs.google.com/document/d/1wiDTSK4uR1we2z8LcobuU8MG8j1gtWkV8PsYyITrCy4/
+ */
+
 /* eslint-disable react/require-default-props */
 import ReactPlayer from 'react-player';
 

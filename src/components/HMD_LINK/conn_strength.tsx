@@ -1,3 +1,9 @@
+/**
+ * @author @abhi-arya1
+ * @function ConnectionStrength
+ * @fileoverview https://docs.google.com/document/d/12t25fQjffmaiEypirbH_cjmmGfv19-wLZXoTAJ37Qf0/edit?usp=sharing
+ */
+
 /* eslint-disable no-nested-ternary */
 import { SignalHigh, SignalLow, SignalMedium } from 'lucide-react';
 
