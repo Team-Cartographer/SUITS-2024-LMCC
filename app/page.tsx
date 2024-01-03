@@ -5,11 +5,16 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import icon from "@/public/icon.png";
 
+let screenTwoOpened: boolean = false;
 const StartPage = () => {
   const router = useRouter();
 
   useEffect(() => {
     router.push("/screen_one");
+    if (typeof window !== "undefined" && !screenTwoOpened) {
+      window.open("/screen_two", "_blank");
+      screenTwoOpened = true;
+    }
   }, [router]);
 
   return (
