@@ -6,12 +6,14 @@ This project is bundled with [Electron React Boilerplate](https://electron-react
 
 Contents:
 
--   [About the App](#about-the-app)
--   [Usage](#usage)
-    -   [Getting Started](#getting-started)
-    -   [Development](#development)
-    -   [Building](#building)
-    -   [Packaging & Production](#packaging-and-production)
+-   [About the App](#🚀-about-the-app)
+-   [Usage](#🌎-usage)
+    -   [Getting Started](#getting-started-⌨️)
+    -   [Development](#development-🧑‍💻)
+    -   [Building](#building-🔨)
+    -   [Packaging & Production](#packaging-and-production-📦)
+
+Documentation for certain code files can be found in those respective files in the first few lines.
 
 Questions? Send an email to `teamcartographer@gmail.com` and we will get back to you as soon as possible.
 
