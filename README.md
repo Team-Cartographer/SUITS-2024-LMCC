@@ -25,15 +25,19 @@ Thank you for reading!
 
 ### Getting Started :keyboard:
 
-To get started, run the following commands
+To get started, make sure you are running`Node 21.5.0+` and `npm/npx 10.2.4+`.
 
-```
+Once you have configured your runtime environments, you can begin the steps below to set up this project on your machine:
+
+```bash
 git clone https://github.com/Team-Cartographer/SUITS-2024-LMCC.git
 ```
 
-`cd` into the newly cloned repository before running the command below:
+`cd` into the newly cloned repository before running the commands below:
 
-```
+```bash
+npm install -g typescript
+# and
 npm install
 ```
 
@@ -43,7 +47,7 @@ This will install all necessary packages and configurations for the development 
 
 To begin the development server, simply use:
 
-```
+```bash
 npm run dev
 ```
 
