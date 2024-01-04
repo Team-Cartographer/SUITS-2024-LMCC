@@ -15,7 +15,7 @@ import { Button } from "./button";
 const MissionClock = () => {
   return (
     <div className="text-4xl font-semibold mb-4 absolute pt-6">
-      <Clock format={"hh:mm:ssa"} ticking={true} timezone={"US/Pacific"} />
+      <Clock format={"hh:mm:ss A"} ticking={true} timezone={"US/Pacific"} />
     </div>
   );
 };
