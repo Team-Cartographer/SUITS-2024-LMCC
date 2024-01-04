@@ -7,7 +7,6 @@
  */
 
 import Timers from "@/components/ui/timing";
-import GitHubButton from "@/components/misc/github_button";
 import PanicButton from "@/components/hmd_link/panic_button";
 import ConnectionStrength from "@/components/hmd_link/conn_strength";
 
