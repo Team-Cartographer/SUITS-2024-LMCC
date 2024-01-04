@@ -18,8 +18,9 @@ Thank you for reading!
 
 ## :rocket: About the App
 
+- You can try the LMCC App at [cartographer-lmcc.vercel.app](https://cartographer-lmcc.vercel.app)
 - Documentation can be found at [Team Cartographer SUITS24 LMCC App Documentation](https://drive.google.com/drive/folders/1yhpCCvDxDdY3s0cky-qRmtXiPUFmtyzn?usp=sharing)
-- More coming soon!<br><br>
+- more coming soon!<br><br>
 
 ## :earth_americas: Usage
 
