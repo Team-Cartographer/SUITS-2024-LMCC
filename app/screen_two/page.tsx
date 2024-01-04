@@ -6,7 +6,7 @@
  * @fileoverview Coming once all "TODO:" are complete
  */
 
-import Timers from "@/components/ui_and_ux/timing";
+import Timers from "@/components/ui/timing";
 
 function TelemetryPage() {
   return (

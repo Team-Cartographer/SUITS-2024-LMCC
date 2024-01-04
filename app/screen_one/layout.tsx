@@ -13,7 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <StopwatchProvider>
-      <html lang="en">
+      <html lang="en" className="dark">
         <body>{children}</body>
       </html>
     </StopwatchProvider>

@@ -6,8 +6,8 @@
  * @fileoverview https://docs.google.com/document/d/1DABLaMeVG6YfqvkmPyuQxoyOtKfFTCykDSIMbTua3FQ/
  */
 
-import Timers from "@/components/ui_and_ux/timing";
-import GitHubButton from "@/components/ui_and_ux/github_button";
+import Timers from "@/components/ui/timing";
+import GitHubButton from "@/components/misc/github_button";
 import PanicButton from "@/components/hmd_link/panic_button";
 import ConnectionStrength from "@/components/hmd_link/conn_strength";
 
@@ -16,7 +16,6 @@ const HomePage = () => {
     <div className="h-full flex flex-row gap-x-4">
       <div className="flex flex-col items-left pl-3 justify-start">
         <Timers />
-        <GitHubButton />
       </div>
       <div className="h-full flex flex-col gap-x-4">
         <PanicButton />

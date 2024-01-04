@@ -4,6 +4,7 @@ import Image from "next/image";
 import icon from "@/public/icon.png";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { GitHub } from "@mui/icons-material";
 
 const StartPage = () => {
   const [screenOneOpened, setScreenOneOpened] = useState(false);
@@ -56,7 +57,7 @@ const StartPage = () => {
       <div className="pt-2">
         <Button
           variant="secondary"
-          className={`text-2xl pt-2 ${buttonOneStyle}`}
+          className={`dark text-xl pt-2 ${buttonOneStyle}`}
           onClick={onScreen1Press}
         >
           {buttonOneText}
@@ -65,10 +66,20 @@ const StartPage = () => {
       <div className="pt-2">
         <Button
           variant="secondary"
-          className={`text-2xl pt-2 ${buttonTwoStyle}`}
+          className={`dark text-xl pt-2 ${buttonTwoStyle}`}
           onClick={onScreen2Press}
         >
           {buttonTwoText}
+        </Button>
+      </div>
+      <div className="fixed bottom-0 pb-5">
+        <Button
+          className="dark flex items-center justify-center align-middle gap-x-2 text-sm"
+          onClick={() => {
+            open("https://github.com/Team-Cartographer/SUITS-2024-LMCC");
+          }}
+        >
+          <GitHub className="h-5 w-5" /> GitHub
         </Button>
       </div>
     </div>
