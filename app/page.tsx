@@ -10,14 +10,12 @@ const StartPage = () => {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/screen_one");
     if (typeof window !== "undefined" && !screenTwoOpened) {
+      window.open("/screen_one", "_blank");
       window.open("/screen_two", "_blank");
+      window.close();
       screenTwoOpened = true;
     }
-    setTimeout(() => {
-      window.location.reload();
-    }, 10);
   }, [router]);
 
   return (

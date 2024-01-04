@@ -1,13 +1,13 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config = {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -19,6 +19,33 @@ const config = {
     },
     extend: {
       colors: {
+        "gray-1000": "#000000",
+        "gray-950": "#080808",
+        "gray-900": "#101010",
+        "gray-850": "#181818",
+        "gray-800": "#202020",
+        "gray-750": "#282828",
+        "gray-700": "#303030",
+        "gray-650": "#383838",
+        "gray-600": "#404040",
+        "gray-550": "#484848",
+        "gray-500": "#505050",
+        "gray-450": "#585858",
+        "gray-400": "#606060",
+        "gray-350": "#686868",
+        "gray-300": "#696969",
+        "gray-250": "#707070",
+        "gray-200": "#787878",
+        "gray-150": "#808080",
+        "gray-100": "#888888",
+        "gray-90": "#909090",
+        "gray-80": "#989898",
+        "gray-70": "#A0A0A0",
+        "gray-60": "#A8A8A8",
+        "gray-40": "#A9A9A9",
+        "gray-30": "#B0B0B0",
+        "gray-20": "#B8B8B8",
+        "gray-10": "#BEBEBE",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
@@ -75,6 +102,6 @@ const config = {
     },
   },
   plugins: [require("tailwindcss-animate")],
-} satisfies Config
+} satisfies Config;
 
-export default config
+export default config;
