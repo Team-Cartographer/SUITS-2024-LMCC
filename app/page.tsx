@@ -1,27 +1,26 @@
 "use client";
 
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import icon from "@/public/icon.png";
+import { Button } from "@/components/ui/button";
 
-let screenTwoOpened: boolean = false;
 const StartPage = () => {
-  const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== "undefined" && !screenTwoOpened) {
-      window.open("/screen_one", "_blank");
-      window.open("/screen_two", "_blank");
-      window.close();
-      screenTwoOpened = true;
-    }
-  }, [router]);
+  const onStartPress = () => {
+    window.open("/screen_one", "_blank");
+    window.open("/screen_two", "_blank");
+    window.close();
+  };
 
   return (
     <div className="h-full flex bg-black text-white items-center justify-center">
-      <Image src={icon} alt="logo" width={70} height={70} className="pr-5" />
-      <p className="font-bold text-4xl">Loading...</p>
+      <Image src={icon} alt="logo" width={95} height={95} className="pr-5" />
+      <Button
+        variant="secondary"
+        className="text-4xl h-20 min-w-10"
+        onClick={onStartPress}
+      >
+        Start Console
+      </Button>
     </div>
   );
 };
