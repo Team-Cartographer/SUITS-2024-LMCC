@@ -6,8 +6,6 @@
  * @fileoverview Coming once all "TODO:" are complete
  */
 
-import Timers from "@/components/ui/timing";
-
 function TelemetryPage() {
   return (
     <div className="h-full flex flex-row gap-x-4 items-center justify-center">

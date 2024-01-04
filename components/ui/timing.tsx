@@ -8,9 +8,9 @@
 
 import React from "react";
 import { Loop, Pause, PlayArrow } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
 import { useStopwatch } from "../providers/stopwatch_provider";
 import Clock from "react-live-clock";
+import { Button } from "./button";
 
 const MissionClock = () => {
   return (
@@ -30,20 +30,22 @@ function Stopwatch() {
         {formattedTime}
       </div>
       <div className="pl-40">
-        <IconButton
-          aria-label="start-stop"
+        <Button
+          size="icon"
+          variant="ghost"
           onClick={handleStartStop}
-          className="text-gray-200 h-9 pl-4 hover:text-gray-10"
+          className="pl-3 text-muted-foreground hover:text-slate-600 hover:bg-transparent"
         >
           {isRunning ? <Pause /> : <PlayArrow />}
-        </IconButton>
-        <IconButton
-          aria-label="start-stop"
+        </Button>
+        <Button
+          size="icon"
+          variant="ghost"
           onClick={handleReset}
-          className="text-gray-200 h-9 pl-3 hover:text-gray-10"
+          className="pl-1 text-muted-foreground hover:text-slate-600 hover:bg-transparent"
         >
           <Loop />
-        </IconButton>
+        </Button>
       </div>
     </div>
   );
