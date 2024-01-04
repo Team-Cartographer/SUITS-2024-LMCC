@@ -4,12 +4,11 @@
  * @fileoverview Coming once all "TODO:" are complete
  */
 
-import { Button } from "@mui/material";
 import { AlertTriangle } from "lucide-react";
+import { Button } from "../ui/button";
 
 function onPanic() {
   // TODO: add panic button functionality
-  // eslint-disable-next-line no-console
   console.log("Panic Pressed");
 }
 
@@ -17,7 +16,7 @@ const PanicButton = () => {
   return (
     <div className="pt-8 pl-4">
       <Button
-        className="bg-red-600 h-10 w-16 text-red-200 hover:bg-red-700"
+        className="bg-red-600 text-red-200 hover:bg-red-700"
         onClick={onPanic}
       >
         <AlertTriangle />
