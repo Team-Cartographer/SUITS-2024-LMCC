@@ -11,7 +11,7 @@ function TelemetryPage() {
   const [text, setText] = useState('Loading Flask...');
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/home')
+    fetch('http://localhost:8080/tests/test_hello')
     .then((response) => response.json())
     .then((data) => {
         console.log(text);

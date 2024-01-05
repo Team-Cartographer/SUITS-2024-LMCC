@@ -95,7 +95,7 @@ cd client
 npm run dev
 ```
 
-This will open either [https://localhost:3000](https://localhost:3000) or the first available port on your machine.
+This will open either [http://localhost:3000](http://localhost:3000) or the first available port on your machine.
 
 At any time, the server can be stopped with `Ctrl+C` in the terminal.
 
@@ -110,6 +110,8 @@ cd server
 ```
 
 If you are on Windows, simply doubleclick on `start.bat` in the `./server` directory, and this should begin the development server for you.
+
+This will open [http://localhost:3001](http://localhost:3001) on your machine. Please make sure that the `NextJS` server that you activated in [NextJS Web App](#nextjs-web-app) is not running on this port (if port 3000 is busy), otherwise you may run into errors.
 
 ## Thank you for reading!
 
