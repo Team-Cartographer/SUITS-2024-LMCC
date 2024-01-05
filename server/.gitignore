@@ -2,3 +2,4 @@
 # local runtime configuration
 
 venv/
+.DS_Store
