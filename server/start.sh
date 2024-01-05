@@ -6,6 +6,7 @@
 
 python3 -m venv venv 
 
-pip3 install flask flask-cors
+# DEV: please add all dependencies to this installation, delimited by a space
+pip3 install flask flask-cors requests 
 
 source venv/bin/activate && python3 server.py

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Team Cartographer LMCC Server</title>
+    <style>
+        body {
+            background-color: rgb(187, 187, 187);
+            font-family: monospace;
+        }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+        }
+    </style>
+</head>
+<body>
+	<h2>Team Cartographer LMCC Server Directory</h2>
+
+    <div class="button-container">
+        Tests:
+        <ul>
+        <li><a href="/tests/test_hello" class="button" target="_blank">Test Hello (/tests/test_hello/)</a></li>
+        </ul>
+    </div>
+
+    <div class="button-container" style="padding-top: 20px;">
+        TSS:
+        <ul>
+        <li><a href="/tss/tss_info" class="button" target="_blank">TSS Information (/tss/tss_info/)</a></li>
+            <li><div style="display: flex; flex-direction: row;">
+                <a href="/tss/telemetry" class="button" target="_blank">TSS Telemetry (/tss/telemetry/)</a>
+                <i style="padding-left: 10px;">(Requires <a href="https://github.com/SUITS-Techteam/TSS_2024" target="_blank">SUITS TSS Server</a>)</i>
+            </div></li>
+        </ul>
+    </div>
+
+    <div class="button-container" style="padding-top: 20px;">
+        Error Pages
+        <ul>
+            <li><a href="/404" target="_blank" role="button">404 Error (/any invalid route)</a></li>
+        </ul>
+    </div>
+
+    <div style="
+        display: flex;
+        flex-direction: row;
+        position: fixed; 
+        bottom: 0; 
+        padding-bottom: 10px;
+    ">
+        <span style="padding-right: 10px";> 2024 Team Cartographer --</span>
+        <a href="https://github.com/Team-Cartographer/SUITS-2024-LMCC/tree/main/server" class="button" target="_blank">
+            Server GitHub
+        </a>
+    </div>
+</body>
+</html>

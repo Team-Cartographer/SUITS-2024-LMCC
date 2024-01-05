@@ -1,15 +1,39 @@
-from flask import Flask, jsonify
+# FLASK IMPORTS 
+from flask import Flask, render_template
 from flask_cors import CORS
+
+# ROUTING IMPORTS
+from routes.tss import tss
+from routes.tests import tests
+
+# OTHER IMPORTS
+from threading import Timer
+from webbrowser import open_new
+
 
 # server app instance
 app = Flask(__name__)
 CORS(app) # allows inter-process communications
 
-@app.route("/api/home", methods=["GET"])
-def return_home():
-    return jsonify({
-        "message": "Hello World from Flask"
-    })
+# register server subdirs
+app.register_blueprint(tss, url_prefix="/tss")
+app.register_blueprint(tests, url_prefix="/tests")
 
+# default routing 
+@app.route('/')
+def home():
+    return render_template('directory.html')
+
+# error routing
+@app.errorhandler(404)
+def page_not_found(_):
+    return render_template('404.html'), 404
+
+# open browser page (convenience function)
+def open_browser():
+    open_new('http://localhost:3001')
+
+# run app at http://localhost:3001/
 if __name__ == "__main__": 
-    app.run(debug=True, port=8080)
+    Timer(1, open_browser).start()
+    app.run(debug=True, port=3001)
