@@ -1,10 +1,9 @@
-# ignore unresolved import (pip3/venv issue)
 from flask import Flask, jsonify
 from flask_cors import CORS
 
-# app instance
+# server app instance
 app = Flask(__name__)
-CORS(app)
+CORS(app) # allows inter-process communications
 
 @app.route("/api/home", methods=["GET"])
 def return_home():
