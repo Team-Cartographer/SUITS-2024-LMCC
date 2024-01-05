@@ -7,8 +7,7 @@ from routes.tss import tss
 from routes.tests import tests
 
 # OTHER IMPORTS
-from threading import Timer
-from webbrowser import open_new
+pass
 
 
 # server app instance
@@ -29,11 +28,6 @@ def home():
 def page_not_found(_):
     return render_template('404.html'), 404
 
-# open browser page (convenience function)
-def open_browser():
-    open_new('http://localhost:3001')
-
 # run app at http://localhost:3001/
 if __name__ == "__main__": 
-    Timer(1, open_browser).start()
     app.run(debug=True, port=3001)
