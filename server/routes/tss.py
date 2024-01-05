@@ -1,17 +1,18 @@
 from flask import Blueprint, jsonify
+from flask_cors import CORS
 
 # this is for memory optimization. edit as necessary.
 from requests import get
 from json import loads
-import os
 
 tss = Blueprint('tss', __name__)
+CORS(tss)
 
 TSS_ROOT = 'http://192.168.64.3:14141/'
 TSS_HOST = '192.168.64.3'
 TSS_PORT = 14141
 
-@tss.route('/tss_info', methods=["GET"])
+@tss.route('/info', methods=["GET"])
 def tss_info():
     return jsonify({
         "host": TSS_HOST,

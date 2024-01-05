@@ -1,9 +1,11 @@
 from flask import Blueprint, jsonify
+from flask_cors import CORS
 
 tests = Blueprint('tests', __name__)
+CORS(tests)
 
-@tests.route('/test_hello', methods=["GET"])
-def test_server():
+@tests.route('/hello', methods=["GET"])
+def test_hello():
     return jsonify({
         "message": "Hello from Flask"
     })

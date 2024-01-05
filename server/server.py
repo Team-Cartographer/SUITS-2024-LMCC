@@ -13,6 +13,8 @@ pass
 # server app instance
 app = Flask(__name__)
 CORS(app) # allows inter-process communications
+CORS(tss)
+CORS(tests)
 
 # register server subdirs
 app.register_blueprint(tss, url_prefix="/tss")
