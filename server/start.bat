@@ -1,11 +1,24 @@
-REM: for windows users, start by double-clicking this batch file
+setlocal enabledelayedexpansion
 
-@echo off
-cd /d %~dp0
+REM Change directory to the location of the batch file
+cd /d "%~dp0"
+
+REM Create a Python virtual environment
 python -m venv venv
 
-REM: if this command doesn't work, then please activate it manually
-source venv/bin/Activate.ps1
-pip install flask flask-cors
+REM Activate the virtual environment
+CALL venv\Scripts\activate.bat
 
+REM Upgrade pip
+pip install --upgrade pip
+
+REM Install dependencies
+pip install flask
+pip install flask-cors
+pip install requests
+
+REM Execute the server script
 python server.py
+
+REM Deactivate the virtual environment
+CALL venv\Scripts\deactivate.bat
