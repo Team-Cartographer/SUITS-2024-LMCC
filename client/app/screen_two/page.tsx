@@ -12,7 +12,7 @@ function TelemetryPage() {
   const [text, setText] = useState('Loading Flask...');
 
   useEffect(() => {
-    fetchWithoutParams<{ message: string}>('tests/hello').then((data) => {
+    fetchWithoutParams<{ message: string }>('tests/hello').then((data) => {
       if (data?.message) {
         console.log("Message: ", data.message);
         setText(data.message);
