@@ -16,7 +16,7 @@ const HomePage = () => {
       <div className="flex flex-col items-left pl-3 justify-start">
         <Timers />
       </div>
-      <div className="h-full flex flex-col gap-x-4">
+      <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />
         <ConnectionStrength desc="EVA 1" ping={25} />
         <ConnectionStrength desc="EVA 2" ping={5} />

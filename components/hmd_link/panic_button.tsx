@@ -14,7 +14,7 @@ function onPanic() {
 
 const PanicButton = () => {
   return (
-    <div className="pt-8 pl-4">
+    <div>
       <Button
         className="bg-red-600 text-red-200 hover:bg-red-700"
         onClick={onPanic}

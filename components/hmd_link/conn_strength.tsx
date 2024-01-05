@@ -20,7 +20,7 @@ const ConnectionStrength = ({
   className = "",
 }: ConnStrengthProps) => {
   return (
-    <div className={`pt-3 ${className}`}>
+    <div className={`pt-3 min-w-24 ${className}`}>
       <div
         className={`text-sm flex flex-row bg-slate-600 rounded-xl p-2 items-center justify-center ${
           ping > 15 ? "border-2 border-red-500" : ""
