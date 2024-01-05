@@ -17,7 +17,7 @@ Thank you for reading!
 
 ## :rocket: About the App
 
-- You can try the LMCC App at [cartographer-lmcc.vercel.app](https://cartographer-lmcc.vercel.app)
+- You can try the LMCC App by running the development environments found in the [Usage](#earth_americas-usage) section below.
 - Documentation can be found at [Team Cartographer SUITS24 LMCC App Documentation](https://drive.google.com/drive/folders/1yhpCCvDxDdY3s0cky-qRmtXiPUFmtyzn?usp=sharing)
 - more coming soon!<br><br>
 
