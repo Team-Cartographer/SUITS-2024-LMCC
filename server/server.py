@@ -7,8 +7,7 @@ from routes.tss import tss
 from routes.tests import tests
 
 # OTHER IMPORTS
-pass
-
+# none at the moment
 
 # server app instance
 app = Flask(__name__)
