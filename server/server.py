@@ -12,7 +12,10 @@ pass
 
 # server app instance
 app = Flask(__name__)
-CORS(app) # allows inter-process communications
+
+# allows inter-process communications 
+# (do this for all Blueprint Pages)
+CORS(app) 
 CORS(tss)
 CORS(tests)
 
