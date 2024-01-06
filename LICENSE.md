@@ -1,5 +1,3 @@
-<!-- trunk-ignore-all(markdownlint/MD041) -->
-
 The MIT License (MIT)
 
 Copyright (c) 2023 Team Cartographer
