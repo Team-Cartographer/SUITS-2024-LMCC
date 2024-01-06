@@ -4,6 +4,8 @@ Team Cartographer's LMCC (Local Mission Control Console) code for the NASA SUITS
 
 This project is bundled with [NextJS](https://nextjs.org/) and styled with [TailwindCSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/) and [Material UI](https://mui.com/), with [Flask](https://flask.palletsprojects.com/en/3.0.x/) for a custom Python Backend API.
 
+
+
 Contents:
 
 - [About the App](#rocket-about-the-app)
