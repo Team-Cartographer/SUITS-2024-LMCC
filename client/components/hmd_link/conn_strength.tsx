@@ -4,15 +4,14 @@
  * @fileoverview https://docs.google.com/document/d/12t25fQjffmaiEypirbH_cjmmGfv19-wLZXoTAJ37Qf0/edit?usp=sharing
  */
 
-/* eslint-disable no-nested-ternary */
 import { SignalHigh, SignalLow, SignalMedium } from "lucide-react";
 
 interface ConnStrengthProps {
   desc: string;
   ping: number;
-  // eslint-disable-next-line react/require-default-props
   className?: string;
 }
+
 
 const ConnectionStrength = ({
   desc,
@@ -26,7 +25,8 @@ const ConnectionStrength = ({
           ping > 15 ? "border-2 border-red-500" : ""
         }`}
       >
-        {desc}:
+        {desc}: 
+        { /* FIXME: Change Ping Thresholds */ }
         {ping <= 10 ? (
           <SignalHigh className="h-7 w-7 icon-outline pl-1" />
         ) : ping > 10 && ping <= 20 ? (

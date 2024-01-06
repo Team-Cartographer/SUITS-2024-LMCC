@@ -4,8 +4,6 @@
  * @fileoverview https://docs.google.com/document/d/1Xy8z90BzejGYqI_AKgyO51-lsJwjt9BTSWW9DCOqp5Q/
  */
 
-/* eslint-disable prefer-const */
-/* eslint-disable react/require-default-props */
 
 const BPM_THRESH = 100;
 const TEMP_THRESH = 99;

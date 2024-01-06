@@ -4,8 +4,17 @@
 # "./start.sh" 
 # to begin the Python server
 
+# DEV: please add dependencies to this array and save the script
+DEPENDENCIES=("flask" "flask-cors" "requests")
+
 python3 -m venv venv 
 
-pip3 install flask flask-cors
+source venv/bin/activate 
 
-source venv/bin/activate && python3 server.py
+for package in "${DEPENDENCIES[@]}"; do
+    pip install $package
+done
+
+python server.py
+
+deactivate

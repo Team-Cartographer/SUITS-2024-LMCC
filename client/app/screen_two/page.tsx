@@ -1,4 +1,5 @@
 "use client";
+import { fetchWithoutParams } from "@/api/fetchServer";
 /**
  * @author @abhi-arya1
  * @function TelemetryPage
@@ -11,12 +12,13 @@ function TelemetryPage() {
   const [text, setText] = useState('Loading Flask...');
 
   useEffect(() => {
-    fetch('http://localhost:8080/api/home')
-    .then((response) => response.json())
-    .then((data) => {
-        console.log(text);
+    fetchWithoutParams<{ message: string }>('tests/hello').then((data) => {
+      if (data?.message) {
+        console.log("Message: ", data.message);
         setText(data.message);
+      }
     })
+    
   }, [text]);
 
   //TODO: start (and finish) second page
