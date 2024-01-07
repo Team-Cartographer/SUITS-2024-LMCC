@@ -18,12 +18,7 @@ TSS_PORT = tss_data["TSS_PORT"]
 
 @tss.route('/info', methods=["GET"])
 def tss_info():
-    return jsonify({
-        "host": TSS_HOST,
-        "port": TSS_PORT,
-        "url_root": f'http://{TSS_HOST}:{TSS_PORT}/',
-        "url_telemetry": f'http://{TSS_HOST}:{TSS_PORT}/telemetry.html',
-    })
+    return tss_data
 
 @tss.route('/telemetry', methods=["GET"])
 def telemetry():
