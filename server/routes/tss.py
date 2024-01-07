@@ -1,7 +1,5 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint
 from flask_cors import CORS
-
-# this is for memory optimization. edit as necessary.
 from requests import get
 from json import load, loads
 
