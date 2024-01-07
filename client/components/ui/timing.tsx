@@ -6,11 +6,17 @@
  * @fileoverview https://docs.google.com/document/d/1hmx74L0iU5ikTFpniqynhU_xts1HKvM1jPmr64Lin-o/
  */
 
-import React from "react";
-import { Loop, Pause, PlayArrow } from "@mui/icons-material";
-import { useStopwatch } from "../providers/stopwatch_provider";
+import React, { useEffect, useState } from "react";
 import Clock from "react-live-clock";
-import { Button } from "./button";
+import { fetchWithoutParams } from "@/api/fetchServer";
+
+const formatTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const secs = seconds % 60;
+
+  return [hours, minutes, secs].map(v => v < 10 ? "0" + v : v).join(":");
+};
 
 const MissionClock = () => {
   return (
@@ -20,36 +26,32 @@ const MissionClock = () => {
   );
 };
 
-function Stopwatch() {
-  const { isRunning, formattedTime, handleStartStop, handleReset } =
-    useStopwatch();
+const MissionStopwatch = () => {
+  const [formattedTime, setFormattedTime] = useState("00:00:00");
+
+  useEffect(() => {
+      const interval = setInterval(async () => {
+          try {
+              const data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry');
+              if (data?.telemetry?.eva_time !== undefined) {
+                  setFormattedTime(formatTime(data.telemetry.eva_time));
+              }
+          } catch (error) {
+              console.error('Error fetching eva_time:', error);
+          }
+      }, 1000);
+
+      return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div className="flex flex-row">
-      <div className="text-4xl font-semibold mb-4 absolute pt-0">
-        {formattedTime}
+      <div className="flex flex-row">
+          <div className="text-4xl font-semibold mb-4 absolute pt-0">
+              {formattedTime}
+          </div>
       </div>
-      <div className="pl-40">
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={handleStartStop}
-          className="pl-3 text-muted-foreground hover:text-slate-600 hover:bg-transparent"
-        >
-          {isRunning ? <Pause /> : <PlayArrow />}
-        </Button>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={handleReset}
-          className="pl-1 text-muted-foreground hover:text-slate-600 hover:bg-transparent"
-        >
-          <Loop />
-        </Button>
-      </div>
-    </div>
   );
-}
+};
 
 const Timers = () => {
   return (
@@ -61,7 +63,7 @@ const Timers = () => {
 
       <div className="flex flex-col pl-32">
         <p className="font-bold text-md">Mission Elapsed Time</p>
-        <Stopwatch />
+        <MissionStopwatch />
       </div>
     </div>
   );
