@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { StopwatchProvider } from "@/components/providers/stopwatch_provider";
 
 export const metadata: Metadata = {
   title: "LMCC (Screen 1)",
@@ -12,10 +11,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <StopwatchProvider>
       <html lang="en" className="dark">
         <body>{children}</body>
       </html>
-    </StopwatchProvider>
   );
 }
