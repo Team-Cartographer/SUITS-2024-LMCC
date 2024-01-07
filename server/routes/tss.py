@@ -3,14 +3,18 @@ from flask_cors import CORS
 
 # this is for memory optimization. edit as necessary.
 from requests import get
-from json import loads
+from json import load, loads
+
+with open("config/tss_data.json", "r") as f:
+    tss_data = load(f)
+    f.close()
 
 tss = Blueprint('tss', __name__)
 CORS(tss)
 
-TSS_ROOT = 'http://192.168.64.3:14141/'
-TSS_HOST = '192.168.64.3'
-TSS_PORT = 14141
+TSS_ROOT = tss_data["TSS_URL"]
+TSS_HOST = tss_data["TSS_HOST"]
+TSS_PORT = tss_data["TSS_PORT"]
 
 @tss.route('/info', methods=["GET"])
 def tss_info():
