@@ -4,7 +4,6 @@ Team Cartographer's LMCC (Local Mission Control Console) code for the NASA SUITS
 
 This project is bundled with [NextJS](https://nextjs.org/) and styled with [TailwindCSS](https://tailwindcss.com/), [ShadCN UI](https://ui.shadcn.com/) and [Material UI](https://mui.com/), with [Flask](https://flask.palletsprojects.com/en/3.0.x/) for a custom Python Backend API.
 
-
 Contents:
 
 - [About the App](#rocket-about-the-app)
@@ -20,6 +19,7 @@ Thank you for reading!
 
 - You can try the LMCC App by running the development environments found in the [Usage](#earth_americas-usage) section below.
 - Documentation can be found at [Team Cartographer SUITS24 LMCC App Documentation](https://drive.google.com/drive/folders/1yhpCCvDxDdY3s0cky-qRmtXiPUFmtyzn?usp=sharing)
+- This app runs concurrently with the [SUITS 2024 TSS Server](https://github.com/SUITS-Techteam/TSS_2024). Please set this up to run the app.
 - more coming soon!<br><br>
 
 ## :earth_americas: Usage
@@ -51,6 +51,7 @@ This will install all necessary packages and configurations for the frontend dev
 ### Flask-Python Backend
 
 To set up the `Python` & `Flask` backend, make sure you are running `python 3.11+` on your machine.
+Please make sure that you are running the TSS Server (Link found in [About the App](#rocket-about-the-app)), as the startup process requires you to have done this to allow the server to run.
 
 Then, cd into the root directory from your GitHub cloning, and run the commands below:
 
@@ -106,6 +107,8 @@ This will open either [http://localhost:3000](http://localhost:3000) or the firs
 At any time, the server can be stopped with `Ctrl+C` in the terminal.
 
 ### Python Server (Must be Concurrently Running)
+
+Please make sure that you are running the TSS Server (Link found in [About the App](#rocket-about-the-app)), as the startup process requires you to have done this to allow the server to run.
 
 Now open another terminal and begin at the root directory of the project and run the following commands if you are on MacOS or Linux:
 
