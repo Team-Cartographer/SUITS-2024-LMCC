@@ -1,6 +1,6 @@
 import tkinter as tk
 import tkinter.messagebox as messagebox
-import re
+from re import match
 from urllib.parse import urlparse
 from json import dump
 from pathlib import Path
@@ -30,7 +30,7 @@ class StartupWindow:
     def submit_url(self, _=None):
         self.url = self.url_entry.get()
         pattern = r'^http://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):14141/?$'
-        if re.match(pattern, self.url):
+        if match(pattern, self.url):
             print(f"TSS Server URL: {self.url}")
             parsed_url = urlparse(self.url)
             host = parsed_url.hostname
