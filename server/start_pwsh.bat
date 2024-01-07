@@ -19,6 +19,10 @@ pip install flask
 pip install flask-cors
 pip install requests
 
+python .\config\startup.py
+
+Start-Sleep -Seconds 2
+
 REM Execute the server script
 python server.py
 
