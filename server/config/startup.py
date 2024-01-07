@@ -8,7 +8,7 @@ from pathlib import Path
 DATA_PATH = Path(__file__).parent / 'tss_data.json'
 
 def save_to_json(data):
-    with open(DATA_PATH, "w") as file:
+    with open(DATA_PATH, "r") as file:
         dump(data, file, indent=4)
 
 class StartupWindow:
