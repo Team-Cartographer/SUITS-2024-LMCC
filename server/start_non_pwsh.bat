@@ -1,31 +1,29 @@
-@echo off
+setlocal enabledelayedexpansion
 
-REM Define dependencies
-set DEPENDENCIES=flask flask-cors requests
+REM Change directory to the location of the batch file
+cd /d "%~dp0"
 
-REM Create and activate virtual environment
+REM Create a Python virtual environment
 python -m venv venv
-call venv\Scripts\activate.bat
+
+REM Activate the virtual environment
+CALL venv\Scripts\activate.bat
+
+REM Upgrade pip
+pip install --upgrade pip
 
 REM Install dependencies
-FOR %%P IN (%DEPENDENCIES%) DO pip install %%P
+REM DEV: Please add all dependencies to this list
+pip install flask
+pip install flask-cors
+pip install requests
 
-REM Run startup configuration
-echo Running startup config
-python .\config\startup.py
+python .\config\startup.py 
 
-REM Wait for 1.25 seconds
-ping 127.0.0.1 -n 2 > nul
+timeout /t 2s /nobreak
 
-REM Check if config file exists and start the server
-set FILE_PATH=.\config\tss_data.json
-if exist "%FILE_PATH%" (
-    echo Found config/tss_data.json. Starting Server!
-    python .\server.py
-) else (
-    echo config/tss_data.json does not exist. Server will not run.
-    exit /b 1
-)
+REM Execute the server script
+python server.py
 
-REM Deactivate virtual environment
-call venv\Scripts\deactivate.bat
+REM Deactivate the virtual environment
+CALL venv\Scripts\deactivate.bat

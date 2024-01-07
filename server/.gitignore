@@ -1,7 +1,6 @@
-# ignore the venv as this needs to be set up with a 
-# local runtime configuration
-
 venv/
 .DS_Store
+
+config/tss_data.json
 
 __pycache__/

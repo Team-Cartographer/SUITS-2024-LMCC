@@ -5,8 +5,10 @@ from urllib.parse import urlparse
 from json import dump
 from pathlib import Path
 
+DATA_PATH = Path(__file__).parent / 'tss_data.json'
+
 def save_to_json(data):
-    with open("config/tss_data.json", "w") as file:
+    with open(DATA_PATH, "w") as file:
         dump(data, file, indent=4)
 
 class StartupWindow:
@@ -53,8 +55,7 @@ class StartupWindow:
 
 
 if __name__ == "__main__":
-    data_path = Path(__file__).parent / 'tss_data.json'
-    if data_path.exists():
+    if DATA_PATH.exists():
         exit(0)
     else:
         StartupWindow().run()

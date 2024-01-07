@@ -1,35 +1,30 @@
-REM Set Execution Policy
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+REM Ensure any errors stop the script
+$ErrorActionPreference = "Stop"
 
-REM Define dependencies
-$DEPENDENCIES = @("flask", "flask-cors", "requests")
+REM Change directory to the location of the script
+cd $PSScriptRoot
 
-REM Create and activate virtual environment
+REM Create a Python virtual environment
 python -m venv venv
-venv\Scripts\Activate.ps1
+
+REM Activate the virtual environment
+. .\venv\Scripts\Activate.ps1
+
+REM Upgrade pip
+pip install --upgrade pip
 
 REM Install dependencies
-foreach ($package in $DEPENDENCIES) {
-    pip install $package
-}
+REM DEV: Please add all dependencies to this list
+pip install flask
+pip install flask-cors
+pip install requests
 
-REM Run startup configuration
-Write-Host "Running startup config"
 python .\config\startup.py
 
-REM Wait for 1.25 seconds
-Start-Sleep -Seconds 1.25
+Start-Sleep -Seconds 2
 
-REM Check if config file exists and start the server
-$FILE_PATH = ".\config\tss_data.json"
-if (Test-Path $FILE_PATH) {
-    Write-Host "Found config/tss_data.json. Starting Server!"
-    # Add your script's logic here
-    python .\server.py
-} else {
-    Write-Host "config/tss_data.json does not exist. Server will not run."
-    exit 1
-}
+REM Execute the server script
+python server.py
 
-REM Deactivate virtual environment
-venv\Scripts\Deactivate.ps1
+REM Deactivate the virtual environment
+deactivate
