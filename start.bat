@@ -20,7 +20,7 @@ echo checking platform dependencies
 git --version
 node --version
 npm --version
-py --version
+REM python --version
 
 echo all dependencies are installed!
 echo.
