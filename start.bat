@@ -10,7 +10,7 @@ goto arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
 :check_program
-where %1 >nul 2>nul
+where %1 >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
     echo %1 could not be found, please install it.
     exit /b 1
