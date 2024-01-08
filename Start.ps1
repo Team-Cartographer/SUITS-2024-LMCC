@@ -21,38 +21,15 @@ Check-Program "git"
 Check-Program "python3"
 Write-Host "`nall dependencies are installed!`n"
 
-# CHECK PORTS
-Write-Host "checking port 3000 and 3001"
-
-# KILL OPEN PORTS FUNCTION
-function Kill-Port {
-    param (
-        [int]$port
-    )
-    $pid = (Get-NetTCPConnection -LocalPort $port -ErrorAction SilentlyContinue).OwningProcess
-    if ($pid) {
-        Write-Host "ending process on port $port"
-        Stop-Process -Id $pid -Force
-    }
-    else {
-        Write-Host "port $port is clear and ready to start"
-    }
-}
-
 # CLEANUP ON SCRIPT END FUNCTION
 function Cleanup {
     Write-Host "stopping processes..."
     Stop-Process -Id $server, $client -Force
-    Kill-Port 3000
-    Kill-Port 3001
     Set-Location server
     deactivate
     Set-Location ..
     Write-Host "`ncleanup complete!`n"
 }
-
-Kill-Port 3000
-Kill-Port 3001
 
 Write-Host "`nports ready, starting config now`n"
 
