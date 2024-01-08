@@ -9,6 +9,14 @@ goto arg_loop
 :end_arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
+:check_program
+%1 --version >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo %1 is not installed or not found in PATH.
+    exit /b 1
+)
+goto :eof
+
 
 REM BEGIN SCRIPT AND CHECK DEPENDENCIES 
 echo hello, world!
@@ -17,29 +25,10 @@ echo.
 echo checking platform dependencies
 call :check_program node
 
-python --version 2>NUL
-if errorlevel 1 (
-    echo python is not installed. exiting script.
-    exit 1
-)
-
-git --version 2>NUL
-if errorlevel 1 (
-    echo git is not installed. exiting script.
-    exit 1
-)
-
-node --version 2>NUL
-if errorlevel 1 (
-    echo node is not installed. exiting script.
-    exit 1
-)
-
-npm --version 2>NUL
-if errorlevel 1 (
-    echo npm is not installed. exiting script.
-    exit 1
-)
+call :check_program node
+call :check_program npm
+call :check_program git
+call :check_program python
 
 echo all dependencies are installed!
 echo.
