@@ -9,18 +9,6 @@ goto arg_loop
 :end_arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
-:check_program
-setlocal
-set "program=%1"
-for /f "delims=" %%i in ('WHERE %%program%% 2^>nul') do (
-    set "program_path=%%i"
-)
-if not defined program_path (
-    echo %program% could not be found, please install it.
-    exit /b 1
-)
-endlocal
-goto :eof
 
 REM BEGIN SCRIPT AND CHECK DEPENDENCIES 
 echo hello, world!
@@ -28,9 +16,30 @@ echo.
 
 echo checking platform dependencies
 call :check_program node
-call :check_program npm
-call :check_program git
-call :check_program python
+
+python --version 2>NUL
+if errorlevel 1 (
+    echo python is not installed. exiting script.
+    exit 1
+)
+
+git --version 2>NUL
+if errorlevel 1 (
+    echo git is not installed. exiting script.
+    exit 1
+)
+
+node --version 2>NUL
+if errorlevel 1 (
+    echo node is not installed. exiting script.
+    exit 1
+)
+
+npm --version 2>NUL
+if errorlevel 1 (
+    echo npm is not installed. exiting script.
+    exit 1
+)
 
 echo all dependencies are installed!
 echo.
