@@ -30,9 +30,40 @@ Thank you for reading!
 git clone https://github.com/Team-Cartographer/SUITS-2024-LMCC.git
 ```
 
-`cd` into the newly cloned repository before running the steps below
+**`cd` into the newly cloned repository before running the steps below!**
 
-## NextJS Frontend
+## MacOS & Linux Setup :apple: :penguin:
+
+To set up the entire application and run it on MacOS, you do not need to follow any of the steps below. First, make sure that you are running the [SUITS 2024 TSS Server](https://github.com/SUITS-Techteam/TSS_2024) on your machine, and have the URL ready to go before doing the next steps.
+
+Once that is complete, simply do the commands below in the terminal:
+
+```bash
+chmod +x start.sh
+# and
+./start.sh
+```
+
+This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers.
+
+If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Backend), do the script with the `--open` argument:
+
+```
+./start.sh --open
+```
+
+This will automatically open the 3 pages in your default browser after 1-2 seconds, allowing time for the servers to begin.
+
+## Windows Setup :window:
+
+Follow the steps below to set the app up on Windows
+
+_Universal scripts (just like Mac/Linux) are coming soon! Until then, please follow these instructions_
+
+- [NextJS Frontend](#nextjs-frontend)
+- [Flask Backend](#flask-python-backend)
+
+### NextJS Frontend
 
 To get started with frontend setup, make sure you are running`Node 21.5.0+` and `npm/npx 10.2.4+`.
 
@@ -59,10 +90,6 @@ Then, cd into the root directory from your GitHub cloning, and run the commands 
 cd server
 ```
 
-If you are on MacOS or Linux, please go to [MacOS/Linux Setup](#macoslinux-flask-setup). Else, go to [Windows Setup](#windows-flask-setup)
-
-### Windows Flask Setup
-
 To set up on Windows there are two routes to take:
 
 - If you are using Windows PowerShell, double click on `./server/start_pwsh.bat`
@@ -71,22 +98,6 @@ To set up on Windows there are two routes to take:
 Whichever script you chose _should_ configure the environment for you. Else you can open up the file on an editor and try to piece it together. Contact LMCC dev team or a Co-Lead for assistance if needed.
 
 After running through the setup for either of these scripts, do `Ctrl+C` in the terminal to end the server.
-
-### MacOS/Linux Flask Setup
-
-To set up on MacOS, run the following commands:
-
-```bash
-cd server
-# and
-chmod +x start.sh
-# and
-./start.sh
-# and
-# type Ctrl+C to end the server
-```
-
-This will set up the Flask/Python development environment on your computer.
 
 ## Development :technologist:
 
@@ -110,15 +121,7 @@ At any time, the server can be stopped with `Ctrl+C` in the terminal.
 
 Please make sure that you are running the TSS Server (Link found in [About the App](#rocket-about-the-app)), as the startup process requires you to have done this to allow the server to run.
 
-Now open another terminal and begin at the root directory of the project and run the following commands if you are on MacOS or Linux:
-
-```bash
-cd server
-# and
-./start.sh
-```
-
-If you are on Windows, simply doubleclick on `start_pwsh.bat` or `start_non_pwsh.bat` (depending on which command prompt you are using on Windows) in the `./server` directory, and this should begin the development server for you.
+Now, simply doubleclick on `start_pwsh.bat` or `start_non_pwsh.bat` (depending on which command prompt you are using on Windows) in the `./server` directory, and this should begin the development server for you.
 
 This will open [http://localhost:3001](http://localhost:3001) on your machine. Please make sure that the `NextJS` server that you activated in [NextJS Web App](#nextjs-web-app) is not running on this port (if port 3000 is busy), otherwise you may run into errors.
 
