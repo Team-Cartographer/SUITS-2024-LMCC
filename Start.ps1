@@ -21,23 +21,23 @@ Check-Program "python3"
 Write-Host "all dependencies are installed!`n"
 
 # CLEANUP ON SCRIPT END FUNCTION
-function Cleanup {
-    Write-Host "stopping processes..."
+# function Cleanup {
+#     Write-Host "stopping processes..."
 
-    Stop-Job -Job $serverJob
-    Remove-Job -Job $serverJob
-    Write-Host "server stopped."
+#     Stop-Job -Job $serverJob
+#     Remove-Job -Job $serverJob
+#     Write-Host "server stopped."
 
-    Stop-Job -Job $clientJob
-    Remove-Job -Job $clientJob
-    Write-Host "client stopped."
+#     Stop-Job -Job $clientJob
+#     Remove-Job -Job $clientJob
+#     Write-Host "client stopped."
 
-    Set-Location server
-    deactivate
-    Set-Location ..
+#     Set-Location server
+#     deactivate
+#     Set-Location ..
 
-    Write-Host "`ncleanup complete!`n"
-}
+#     Write-Host "`ncleanup complete!`n"
+# }
 
 Write-Host "`ports ready, starting config now`n"
 
@@ -93,34 +93,55 @@ Write-Host "`nlmcc client setup complete`n"
 
 Set-Location ..
 
-# Set location to server directory and start the server process as a background job
-Set-Location server
-$serverJob = Start-Job -ScriptBlock { python server.py }
-Write-Host "server started."
+function Cleanup {
+    param (
+        [System.Diagnostics.Process]$clientProcess,
+        [System.Diagnostics.Process]$serverProcess
+    )
+    
+    Write-Host "Running cleanup operations..."
 
-# Return to the root directory and then move to the client directory
-Set-Location ..
-Set-Location client
-
-# Start the client process as a background job
-$clientJob = Start-Job -ScriptBlock { npm run dev }
-Write-Host "client started."
-
-Write-Host "`nrunning ./client on: http://localhost:3000`nrunning ./server on: http://localhost:3001" 
-
-Wait-Job $clientJob
-Wait-Job $serverJob
-
-[console]::TreatControlCAsInput = $false
-trap {
-    if ($_.Exception -is [System.Management.Automation.RuntimeException] -and $_.Exception.Message -eq "stopping processes.") {
-        Cleanup
+    if ($clientProcess -and !$clientProcess.HasExited) {
+        Write-Host "Stopping client process..."
+        Stop-Process -Id $clientProcess.Id -Force
     }
-    else {
-        Write-Host "An error occurred: $_"
-        Cleanup
+
+    if ($serverProcess -and !$serverProcess.HasExited) {
+        Write-Host "Stopping server process..."
+        Stop-Process -Id $serverProcess.Id -Force
     }
+
+    Set-Location server
+    deactivate
+    Set-Location ..
+}
+
+try {
+    # Start the server process
+    Set-Location server
+    $serverProcess = Start-Process -FilePath "python" -ArgumentList "server.py" -PassThru
+    Write-Host "Server process started with ID: $($serverProcess.Id)"
+    Set-Location ..
+    Set-Location client
+
+    # Start the client process
+    $clientProcess = Start-Process -FilePath "npm" -ArgumentList "run dev" -PassThru
+    Write-Host "Client process started with ID: $($clientProcess.Id)"
+    Set-Location ..
+
+}
+catch {
+    Write-Host "An error occurred: $_"
+    Cleanup -clientProcess $clientProcess -serverProcess $serverProcess
     exit
 }
+finally {
+    Cleanup -clientProcess $clientProcess -serverProcess $serverProcess
+}
+
+
+Wait-Process -Id $serverProcess.Id
+Wait-Process -Id $clientProcess.Id
+
 
 Write-Host "`ngoodbye, world."
