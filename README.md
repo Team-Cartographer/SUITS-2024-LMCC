@@ -41,9 +41,7 @@ Since the App is built for Mac, Linux, and Windows, you can follow your platform
 
 ## MacOS & Linux :apple: :penguin:
 
-To set up the entire application and run it on MacOS, you do not need to follow any of the steps below. First, make sure that you are running the [SUITS 2024 TSS Server](https://github.com/SUITS-Techteam/TSS_2024) on your machine, and have the URL ready to go before doing the next steps.
-
-Once that is complete, simply do the commands below in the terminal:
+To set up the entire application and run it on MacOS, you do not need to follow any of the steps below. Simply do the commands below in the terminal:
 
 ```bash
 chmod +x start.sh
@@ -51,7 +49,7 @@ chmod +x start.sh
 ./start.sh
 ```
 
-This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers.
+This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers, and configure the app with your IP TSS Server (please make sure you have that available)
 
 If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Backend), do the script with the `--open` argument:
 
@@ -65,9 +63,35 @@ End the LMCC App by doing `Ctrl+C` in your Terminal. Don't forget to end the SUI
 
 ## Windows :window:
 
-Follow the steps below to set the app up on Windows
+**This app strictly runs in Windows Powershell. Please make sure you have that up-to-date before following the rest of these instructions**
 
-_COMING SOON ONCE UNIVERSAL SCRIPTS ARE TESTED_
+For Windows Setup, there is a couple extra steps as Windows scripting isn't as easy as MacOS. However, we have tried to simplify it as much as possible.
+
+Run the commands below following the comment instructions to run the server.
+
+```bash
+# this will run first-time app setup
+# you can re-run this any time you update dependencies
+./Setup.ps1
+```
+
+Once you finish setup, do these commands in _SEPERATE TERMINAL WINDOWS_:
+
+```bash
+cd client
+# and
+npm run dev
+# type Ctrl+C to end frontend user interface
+```
+
+```bash
+cd server
+# and
+python server.py
+# type Ctrl+C to end backend server
+```
+
+Let us know with any issues or questions!
 
 ## Thank you for reading!
 
