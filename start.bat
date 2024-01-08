@@ -1,4 +1,3 @@
-@echo off
 
 REM CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 set open_provided=false
