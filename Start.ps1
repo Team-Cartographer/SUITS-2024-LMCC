@@ -108,6 +108,9 @@ Write-Host "client started."
 
 Write-Host "`nrunning ./client on: http://localhost:3000`nrunning ./server on: http://localhost:3001" 
 
+Wait-Job $clientJob
+Wait-Job $serverJob
+
 [console]::TreatControlCAsInput = $false
 trap {
     if ($_.Exception -is [System.Management.Automation.RuntimeException] -and $_.Exception.Message -eq "stopping processes.") {
