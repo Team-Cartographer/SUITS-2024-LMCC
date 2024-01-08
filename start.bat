@@ -9,15 +9,6 @@ shift
 goto arg_loop
 :end_arg_loop
 
-REM CHECK SYSTEM PREREQUISITES FUNCTION
-:check_program
-"%~1" --version >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
-    echo %~1 is not installed or not found in PATH.
-    exit /b 1
-)
-goto :eof
-
 
 REM BEGIN SCRIPT AND CHECK DEPENDENCIES 
 echo hello, world!
