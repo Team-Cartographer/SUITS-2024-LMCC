@@ -1,3 +1,4 @@
+@echo off
 setlocal enabledelayedexpansion
 
 REM CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
