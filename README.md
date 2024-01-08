@@ -54,6 +54,8 @@ If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Bac
 
 This will automatically open the 3 pages in your default browser after 1-2 seconds, allowing time for the servers to begin.
 
+End the LMCC App by doing `Ctrl+C` in your Terminal. Don't forget to end the SUITS TSS Server as well!
+
 ## Windows Setup :window:
 
 Follow the steps below to set the app up on Windows
@@ -102,6 +104,14 @@ After running through the setup for either of these scripts, do `Ctrl+C` in the 
 ## Development :technologist:
 
 To begin the development server, you have to activate both the Python API Server and the NextJS Application:
+
+### MacOS & Linux :apple: :penguin:
+
+Simply follow the instructions at [Getting Started](#getting-started-keyboard) for MacOS or Linux, as this will run everything for you.
+
+### Windows :window:
+
+For Windows, Universal Scripts are coming soon. Until then, follow these instructions:
 
 ### NextJS Web App
 
