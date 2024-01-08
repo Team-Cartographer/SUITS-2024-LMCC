@@ -11,10 +11,9 @@ goto arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
 :check_program
-set "program=%~1"
-%program% --version >nul 2>&1
-if !ERRORLEVEL! NEQ 0 (
-    echo !program! is not installed or not found in PATH.
+"%~1" --version >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo %~1 is not installed or not found in PATH.
     exit /b 1
 )
 goto :eof
