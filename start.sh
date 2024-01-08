@@ -79,7 +79,7 @@ pip install -r requirements.txt
 
 cd ..
 
-echo "running server startup config"
+echo -e "\nrunning server startup config"
 
 python config/startup.py
 
