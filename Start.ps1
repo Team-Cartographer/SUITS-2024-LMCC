@@ -12,14 +12,13 @@ function Check-Program {
 
 # BEGIN SCRIPT AND CHECK DEPENDENCIES 
 Write-Host "hello, world!"
-Write-Host "`n"
 
 Write-Host "checking platform dependencies"
 Check-Program "node"
 Check-Program "npm"
 Check-Program "git"
 Check-Program "python3"
-Write-Host "`nall dependencies are installed!`n"
+Write-Host "all dependencies are installed!`n"
 
 # CLEANUP ON SCRIPT END FUNCTION
 function Cleanup {
@@ -49,7 +48,7 @@ pip install -r requirements.txt
 
 Set-Location ..
 
-Write-Host "running server startup config"
+Write-Host "`nrunning server startup config"
 
 python config/startup.py
 
@@ -98,6 +97,8 @@ Set-Location client
 $clientJob = Start-Job -ScriptBlock { npm run dev }
 Write-Host "client started."
 
+Write-Host "`nrunning ./client on: http://localhost:3000`nrunning ./server on: http://localhost:3001" 
+
 Stop-Job -Job $serverJob
 Remove-Job -Job $serverJob
 Write-Host "server stopped."
@@ -110,9 +111,6 @@ trap {
     Cleanup
     exit
 }
-
-Start-Sleep -Seconds 1
-Write-Host "`nrunning ./client on: http://localhost:3000`nrunning ./server on: http://localhost:3001`n" 
 
 Wait-Job -Job $serverJob
 Wait-Job -Job $clientJob
