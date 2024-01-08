@@ -1,11 +1,3 @@
-# CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
-$open_provided = $false
-foreach ($arg in $args) {
-    if ($arg -eq "--open") {
-        $open_provided = $true
-        break
-    }
-}
 
 # CHECK SYSTEM PREREQUISITES FUNCTION
 function Check-Program {
@@ -136,13 +128,6 @@ Write-Host "server stopped."
 Stop-Job -Job $clientJob
 Remove-Job -Job $clientJob
 Write-Host "client stopped."
-
-
-if ($open_provided) {
-    Start-Sleep -Seconds 4
-    python3 ./server/config/open_app.py &
-    $opener = $!
-}
 
 trap {
     Cleanup
