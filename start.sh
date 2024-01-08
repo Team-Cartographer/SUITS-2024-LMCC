@@ -73,9 +73,11 @@ source venv/bin/activate >/dev/null
 
 pip install --upgrade pip >/dev/null
 
-for package in "${DEPENDENCIES[@]}"; do
-    pip install $package >/dev/null
-done
+cd config 
+
+pip install -r requirements.txt
+
+cd ..
 
 echo "running server startup config"
 

@@ -12,9 +12,9 @@ def save_to_json(data):
 def get_tss_url():
     pattern = r'^http://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):14141/?$'
     while True:
-        url = input("enter your TSS server URL: ")
+        url = input("\nenter your TSS server URL: ")
         if not match(pattern, url):
-            print('please enter a URL in the correct format')
+            print('URL PARSE Error: please enter a URL in the correct format')
             continue
         else:
             break
