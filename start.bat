@@ -10,11 +10,16 @@ goto arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
 :check_program
-WHERE %1 >nul 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    echo %1 could not be found, please install it.
+setlocal
+set "program=%1"
+for /f "delims=" %%i in ('WHERE %%program%% 2^>nul') do (
+    set "program_path=%%i"
+)
+if not defined program_path (
+    echo %program% could not be found, please install it.
     exit /b 1
 )
+endlocal
 goto :eof
 
 REM BEGIN SCRIPT AND CHECK DEPENDENCIES 
