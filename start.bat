@@ -1,3 +1,4 @@
+setlocal enabledelayedexpansion
 
 REM CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 set open_provided=false
@@ -9,8 +10,6 @@ goto arg_loop
 :end_arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
-setlocal enabledelayedexpansion
-
 :check_program
 set "program=%~1"
 %program% --version >nul 2>&1
@@ -19,10 +18,6 @@ if !ERRORLEVEL! NEQ 0 (
     exit /b 1
 )
 goto :eof
-
-REM Your other script parts go here...
-
-endlocal
 
 
 REM BEGIN SCRIPT AND CHECK DEPENDENCIES 
