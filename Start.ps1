@@ -13,7 +13,7 @@ function Check-Program {
 # BEGIN SCRIPT AND CHECK DEPENDENCIES 
 Write-Host "hello, world!"
 
-Write-Host "checking platform dependencies"
+Write-Host "`nchecking platform dependencies"
 Check-Program "node"
 Check-Program "npm"
 Check-Program "git"
@@ -30,7 +30,7 @@ function Cleanup {
     Write-Host "`ncleanup complete!`n"
 }
 
-Write-Host "`nports ready, starting config now`n"
+Write-Host "`ports ready, starting config now`n"
 
 $FILE_PATH = "./config/tss_data.json"
 
@@ -99,14 +99,6 @@ Write-Host "client started."
 
 Write-Host "`nrunning ./client on: http://localhost:3000`nrunning ./server on: http://localhost:3001" 
 
-Stop-Job -Job $serverJob
-Remove-Job -Job $serverJob
-Write-Host "server stopped."
-
-Stop-Job -Job $clientJob
-Remove-Job -Job $clientJob
-Write-Host "client stopped."
-
 trap {
     Cleanup
     exit
@@ -114,5 +106,13 @@ trap {
 
 Wait-Job -Job $serverJob
 Wait-Job -Job $clientJob
+
+Stop-Job -Job $serverJob
+Remove-Job -Job $serverJob
+Write-Host "server stopped."
+
+Stop-Job -Job $clientJob
+Remove-Job -Job $clientJob
+Write-Host "client stopped."
 
 Write-Host "`ngoodbye, world."
