@@ -23,10 +23,19 @@ Write-Host "all dependencies are installed!`n"
 # CLEANUP ON SCRIPT END FUNCTION
 function Cleanup {
     Write-Host "stopping processes..."
-    Stop-Process -Id $server, $client -Force
+
+    Stop-Job -Job $serverJob
+    Remove-Job -Job $serverJob
+    Write-Host "server stopped."
+
+    Stop-Job -Job $clientJob
+    Remove-Job -Job $clientJob
+    Write-Host "client stopped."
+
     Set-Location server
     deactivate
     Set-Location ..
+
     Write-Host "`ncleanup complete!`n"
 }
 
@@ -99,20 +108,16 @@ Write-Host "client started."
 
 Write-Host "`nrunning ./client on: http://localhost:3000`nrunning ./server on: http://localhost:3001" 
 
+[console]::TreatControlCAsInput = $false
 trap {
-    Cleanup
+    if ($_.Exception -is [System.Management.Automation.RuntimeException] -and $_.Exception.Message -eq "stopping processes.") {
+        Cleanup
+    }
+    else {
+        Write-Host "An error occurred: $_"
+        Cleanup
+    }
     exit
 }
-
-Wait-Job -Job $serverJob
-Wait-Job -Job $clientJob
-
-Stop-Job -Job $serverJob
-Remove-Job -Job $serverJob
-Write-Host "server stopped."
-
-Stop-Job -Job $clientJob
-Remove-Job -Job $clientJob
-Write-Host "client stopped."
 
 Write-Host "`ngoodbye, world."
