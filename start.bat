@@ -9,13 +9,20 @@ goto arg_loop
 :end_arg_loop
 
 REM CHECK SYSTEM PREREQUISITES FUNCTION
+setlocal enabledelayedexpansion
+
 :check_program
-%1 --version >nul 2>&1
-if %ERRORLEVEL% NEQ 0 (
-    echo %1 is not installed or not found in PATH.
+set "program=%~1"
+%program% --version >nul 2>&1
+if !ERRORLEVEL! NEQ 0 (
+    echo !program! is not installed or not found in PATH.
     exit /b 1
 )
 goto :eof
+
+REM Your other script parts go here...
+
+endlocal
 
 
 REM BEGIN SCRIPT AND CHECK DEPENDENCIES 
@@ -23,7 +30,6 @@ echo hello, world!
 echo.
 
 echo checking platform dependencies
-call :check_program node
 
 call :check_program node
 call :check_program npm
