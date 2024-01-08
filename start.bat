@@ -25,10 +25,10 @@ echo.
 
 echo checking platform dependencies
 
-call :check_program node
-call :check_program npm
-call :check_program git
-call :check_program python
+git --version
+node --version
+npm --version
+python --version
 
 echo all dependencies are installed!
 echo.
