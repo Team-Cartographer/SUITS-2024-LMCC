@@ -66,6 +66,8 @@ Set-Location client
 npm install -g typescript > $null 2>&1
 npm install > $null 2>&1
 
+Set-Location ..
+
 Write-Host "`nlmcc client setup complete"
 
 Write-Host "`nlmcc application setup complete"
