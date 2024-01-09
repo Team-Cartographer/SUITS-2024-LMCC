@@ -88,6 +88,10 @@ if [ $status -eq 1 ]; then
     echo 'setup complete. open the external urls'
     echo -e "\ngoodbye, world."
     exit 1
+elif [ $status -eq 2 ]; then 
+    echo 'please start the tss server and try again'
+    echo -e "\ngoodbye, world."
+    exit 1
 else
     locally_hosted=true
 fi
