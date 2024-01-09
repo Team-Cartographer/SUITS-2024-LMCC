@@ -1,18 +1,14 @@
 #!/bin/bash
 
-# ADD PYTHON DEPENDENCIES
-DEPENDENCIES=("flask" "flask-cors" "requests")
+user_ip=$(ifconfig en0 | grep 'inet ' | awk '{print $2}')
 
 # CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 open_provided=false
-local_provided=false
+locally_hosted=true
 for arg in "$@"
 do
     if [ "$arg" == "--open" ]; then
         open_provided=true
-    fi
-    if [ "$arg" == "--local" ]; then
-        local_provided=true
     fi
 done
 
@@ -26,7 +22,8 @@ check_program() {
 }
 
 # BEGIN SCRIPT AND CHECK DEPENDENCIES 
-echo -e "hello, world!\n"
+echo "hello, world!"
+echo -e "running on ip: $user_ip\n"
 
 echo "checking platform dependencies"
 check_program node
@@ -64,7 +61,7 @@ cleanup() {
 kill_port 3000
 kill_port 3001
 
-echo -e "ports ready, starting config now\n"
+echo -e "ports ready, starting python config now\n"
 
 FILE_PATH="./config/tss_data.json"
 
@@ -78,35 +75,31 @@ pip install --upgrade pip >/dev/null
 
 cd config 
 
-pip install -r requirements.txt
+pip install -r requirements.txt >/dev/null
 
 cd ..
 
-echo -e "\nrunning server startup config"
+echo "python config complete."
 
 python config/startup.py
+status=$?
 
-sleep 1.5
-
-if [ -f "$FILE_PATH" ]; then
-    echo -e "found config/tss_data.json.\nchecking tss server status."
+if [ $status -eq 1 ]; then
+    echo 'setup complete. open the external urls'
+    echo -e "\ngoodbye, world."
+    exit 1
+elif [ $status -eq 2 ]; then 
+    echo 'please start the tss server and try again'
+    echo -e "\ngoodbye, world."
+    exit 1
 else
-    echo "config/tss_data.json does not exist. server will not run."
-    exit 1
+    locally_hosted=true
 fi
 
-python config/check_tss.py
-exit_code=$?
-
-if [ $exit_code -ne 0 ]; then
-    echo "tss server could not be pinged. deactivating server"
-    exit 1
-fi
-echo -e "tss server found. lmcc server setup complete\n"
-
-echo "setting up lmcc client"
+echo "lmcc server setup complete"
 
 cd ..
+echo -e "\nsetting up lmcc client"
 
 cd client 
 
@@ -117,14 +110,14 @@ echo -e "lmcc client setup complete\n"
 
 cd ..
 
-cd server && python server.py $( [ "$local_provided" = true ] && echo "--local" ) && cd .. &
-server=$!
 
+cd server && python server.py && cd .. &
+server=$!
 cd client && npm run dev && cd .. &
 client=$!
-
-sleep 1 && echo -e "\nrunning ./client on: http://localhost:3000\nrunning ./server on: http://localhost:3001\n" &
+sleep 1.5 && echo -e "\nrunning client on http://$user_ip:3000\nrunning server on http://$user_ip:3001\n" &
 echo_run=$!
+
 
 if [ "$open_provided" = true ]; then
     sleep 4 && python3 ./server/config/open_app.py &

@@ -5,11 +5,7 @@ from flask_cors import CORS
 # ROUTING IMPORTS
 from routes.tss import tss
 from routes.tests import tests
-import sys
-
-set_local = False
-if len(sys.argv) > 1:
-    set_local = (sys.argv[1] == "--local")
+from routes.mission import mission
 
 # server app instance
 app = Flask(__name__)
@@ -19,10 +15,13 @@ app = Flask(__name__)
 CORS(app) 
 CORS(tss)
 CORS(tests)
+CORS(mission)
+
 
 # register server subdirs
 app.register_blueprint(tss, url_prefix="/tss")
 app.register_blueprint(tests, url_prefix="/tests")
+app.register_blueprint(mission, url_prefix='/mission')
 
 # default routing 
 @app.route('/')
@@ -36,7 +35,4 @@ def page_not_found(_):
 
 # run app at http://localhost:3001/
 if __name__ == "__main__": 
-    if set_local: 
-        app.run(debug=True, port=3001)
-    else: 
-        app.run(debug=True, host='0.0.0.0', port=3001)
+    app.run(debug=True, host='0.0.0.0', port=3001)
