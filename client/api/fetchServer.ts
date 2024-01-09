@@ -1,4 +1,3 @@
-"use client";
 
 /**
  * @author @abhi-arya1
@@ -23,7 +22,7 @@
  */
 export const fetchWithoutParams = async <AnyType = any>(path: string) => {
     try {
-        const response = await fetch(`$http://localhost:3001/${path}`);
+        const response = await fetch(`http://localhost:3001/${path}`);
         const data: AnyType = await response.json();
         console.log(data);
         return data;
