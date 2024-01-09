@@ -40,7 +40,7 @@ When you run the application, your console of choice (regardless of platform) wi
 do you want to run the app (frontend, server, TSS) on your machine? (Y/n):
 ```
 
-If you answer with `Y`, the application will be launched on your computer.
+If you answer with `Y`, the application will be launched on your computer. This requires the TSS Server found in [About the App](#rocket-about-the-app) to be running concurrently.
 
 If you answer with `N`, your setup is complete. You can simply open the external URLs provided by another user which will be printed to their shell once they run either `start.sh` or `./Setup.ps1`. After that, your app will be running on their servers, mantaining a consistent environment across all testing platforms.
 
@@ -105,8 +105,6 @@ npm run dev
 
 ```bash
 cd server
-# and
-. .\venv\Scripts\Activate.ps1 # activate server venv
 # and
 python server.py
 # type Ctrl+C to end backend server
