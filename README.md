@@ -17,7 +17,7 @@ Thank you for reading!
 
 - You can try the LMCC App by running the development environments found in the [Usage](#earth_americas-usage) section below.
 - Documentation can be found at [Team Cartographer SUITS24 LMCC App Documentation](https://drive.google.com/drive/folders/1yhpCCvDxDdY3s0cky-qRmtXiPUFmtyzn?usp=sharing)
-- This app runs concurrently with the [SUITS 2024 TSS Server](https://github.com/SUITS-Techteam/TSS_2024). Please set this up to run the app.
+- This app runs concurrently with the [SUITS 2024 TSS Server](https://github.com/SUITS-Techteam/TSS_2024). Please set this up to run the app, or make sure you have another computer available with a server to use that (learn more [here](#local-and-external-server-information))
 - more coming soon!<br><br>
 
 ## :keyboard: Running the App
@@ -32,7 +32,22 @@ cd SUITS-2024-LMCC
 
 **`cd` into the newly cloned repository before running any further steps**
 
-Please make sure that you are running the TSS Server (Link found in [About the App](#rocket-about-the-app)), as the startup process requires you to have done this to allow the server to run.
+### Local and External Server Information
+
+When you run the application, your console of choice (regardless of platform) will ask you this question:
+
+```
+are you running the servers (TSS & LMCC) on your machine? (Y/n):
+```
+
+If you answer with `Y`, the LMCC server will open locally on your machine, but be available to users on your network that want to conenct to your IP.
+
+If you answer with `N`, you will be prompted for the link to another LMCC server URL which _must_ be running on the same network as you.
+This is for cross-platform cross-computer testing with many people, which is a project requirement.
+
+For most testing cases, please answer `Y`, unless you have another computer on the same network with the LMCC server ready to use.
+
+### Platform-Specific Instructions
 
 Since the App is built for Mac, Linux, and Windows, you can follow your platform specific instructions below:
 
@@ -41,21 +56,16 @@ Since the App is built for Mac, Linux, and Windows, you can follow your platform
 
 ## MacOS & Linux :apple: :penguin:
 
-To set up the entire application and run it on MacOS, you do not need to follow any of the steps below. Simply do the commands below in the terminal:
+To set up the entire application and run it on MacOS, you do not need to follow any of the steps below. Simply do the commands below in the terminal.
 
 ```bash
 chmod +x start.sh
 # and
 ./start.sh
+# type Ctrl+C to end the program
 ```
 
-This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers, and configure the app with your IP TSS Server (please make sure you have that available)
-
-To run the application both locally and on your network to share the same server among many computers, do the script with the `--local` argument:
-
-```bash
-./start.sh --local
-```
+This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers.
 
 If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Backend), do the script with the `--open` argument:
 
@@ -64,8 +74,6 @@ If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Bac
 ```
 
 This will automatically open the 3 pages in your default browser after 1-2 seconds, allowing time for the servers to begin.
-
-Argument stacking is allowed, so: `./start.sh --open --local` is a valid command!
 
 End the LMCC App by doing `Ctrl+C` in your Terminal. Don't forget to end the SUITS TSS Server as well!
 
@@ -92,21 +100,15 @@ npm run dev
 # type Ctrl+C to end frontend user interface
 ```
 
-For testing configurations, you can run the server locally as shown below:
+If you answered with `n` to the question from [Local and External Servers](#local-and-external-server-information), then this next step is not required as the app is configured with the external server.
+
+For testing configurations, you can run the server locally _in a seperae terminal from the client_ as shown below. This _requires_ the SUITS TSS Server for full functionality:
 
 ```bash
 cd server
 # and
 python server.py
 # type Ctrl+C to end backend server
-```
-
-To share the API Server on a local network so you can share the same server between computers, do:
-
-```bash
-cd server
-# and
-python server.py --local
 ```
 
 Let us know with any issues or questions!

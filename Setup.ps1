@@ -42,24 +42,7 @@ Write-Host "`nrunning server startup config"
 
 python config/startup.py
 
-Start-Sleep -Seconds 1.5
-
-if (Test-Path $FILE_PATH) {
-    Write-Host "`nfound config/tss_data.json.`nchecking tss server status."
-}
-else {
-    Write-Host "config/tss_data.json does not exist. server will not run."
-    exit 1
-}
-
-python config/check_tss.py
-$exit_code = $LASTEXITCODE
-
-if ($exit_code -ne 0) {
-    Write-Host "tss server could not be pinged. deactivating server"
-    exit 1
-}
-Write-Host "`ntss server found. lmcc server setup complete`n"
+Write-Host "`nlmcc server setup complete`n"
 
 Write-Host "setting up lmcc client"
 

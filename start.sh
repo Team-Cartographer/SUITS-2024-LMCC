@@ -4,14 +4,11 @@ user_ip=$(ifconfig en0 | grep 'inet ' | awk '{print $2}')
 
 # CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 open_provided=false
-local_provided=false
+locally_hosted=true
 for arg in "$@"
 do
     if [ "$arg" == "--open" ]; then
         open_provided=true
-    fi
-    if [ "$arg" == "--local" ]; then
-        local_provided=true
     fi
 done
 
@@ -82,28 +79,17 @@ pip install -r requirements.txt >/dev/null
 
 cd ..
 
-echo "python config complete, running server startup config"
+echo "python config complete."
 
 python config/startup.py
+status=$?
 
-sleep 1.5
-
-if [ -f "$FILE_PATH" ]; then
-    echo -e "found config/tss_data.json.\nchecking tss server status."
+if [ $status -eq 1 ]; then
+    locally_hosted=false
 else
-    echo "config/tss_data.json does not exist. server will not run."
-    exit 1
+    locally_hosted=true
 fi
 
-python config/check_tss.py
-exit_code=$?
-
-if [ $exit_code -ne 0 ]; then
-    echo "tss server could not be pinged. deactivating server"
-    exit 1
-fi
-
-echo "tss server found."
 echo "lmcc server setup complete"
 
 cd ..
@@ -118,14 +104,21 @@ echo -e "lmcc client setup complete\n"
 
 cd ..
 
-cd server && python server.py $( [ "$local_provided" = true ] && echo "--local" ) && cd .. &
-server=$!
-
-cd client && npm run dev && cd .. &
-client=$!
-
-sleep 1 && echo -e "\nrunning ./client on: http://localhost:3000\nrunning ./server on: $( [ "$local_provided" = false ] && echo http://$user_ip:3001 ) $( [ "$local_provided" = true ] && echo http://localhost:3001 )" &
-echo_run=$!
+if [ "$locally_hosted" = true ]; then 
+    cd server && python server.py && cd .. &
+    server=$!
+    cd client && npm run dev && cd .. &
+    client=$!
+    sleep 1.5 && echo -e "\nrunning client on http://localhost:3000\nrunning server on http://localhost:3001\n" &
+    echo_run=$!
+else
+    cd server && python server.py && cd .. &
+    server=$!
+    cd client && npm run dev && cd .. &
+    client=$!
+    sleep 1.5 && echo -e "\nrunning client on http://localhost:3000\nserver running externally\n" &
+    echo_run=$!
+fi
 
 if [ "$open_provided" = true ]; then
     sleep 4 && python3 ./server/config/open_app.py &
