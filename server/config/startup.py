@@ -26,7 +26,7 @@ def save_tss_to_json(url: str):
     print(f"saved tss config to {TSS_PATH}\nif you need to modify this, do so in that file\n")
 
 
-def get_url():
+def get_tss_url():
     if TSS_PATH.exists():
         print('done!')
         return 
@@ -47,7 +47,7 @@ def setup():
     while True: 
         check_local_tss = input('do you want to run the app (frontend, server, TSS) on your machine? (Y/n): ')
         if check_local_tss.strip().upper() == 'Y':
-            get_url(host='tss', port=14141)
+            get_tss_url()
             exit(0)
         elif check_local_tss.strip().upper() == 'N':
             print('done!')
