@@ -49,9 +49,9 @@ chmod +x start.sh
 ./start.sh
 ```
 
-This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers, and configure the app with your IP TSS Server (please make sure you have that available)
+This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers on your network to share the same server among many comuters, and configure the app with your IP TSS Server (please make sure you have that available)
 
-To run the application both locally and on your network to share the same server among many computers, do the script with the `--local` argument:
+To run the application locally for testing, do the script with the `--local` argument:
 
 ```bash
 ./start.sh --local
@@ -92,7 +92,7 @@ npm run dev
 # type Ctrl+C to end frontend user interface
 ```
 
-For testing configurations, you can run the server locally as shown below:
+For testing configurations, you can run the server locally as shown below. This will share the server on your network to test between computers on the same server:
 
 ```bash
 cd server
@@ -101,7 +101,7 @@ python server.py
 # type Ctrl+C to end backend server
 ```
 
-To share the API Server on a local network so you can share the same server between computers, do:
+To run locally (for testing configurations), do:
 
 ```bash
 cd server
