@@ -23,3 +23,23 @@ def telemetry():
     req = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/teams/1/TELEMETRY.json")
     return loads(req.text)
 
+@tss.route('/completed_telemetry', methods=["GET"])
+def comp_telemetry():
+    req = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/teams/1/Completed_TELEMETRY.json")
+    return loads(req.text)
+
+@tss.route('/eva_info', methods=["GET"])
+def eva_info():
+    req = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/teams/1/EVA.json")
+    return loads(req.text)
+
+@tss.route('/completed_eva', methods=["GET"])
+def comp_eva():
+    req = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/teams/1/Completed_EVA.json")
+    return loads(req.text)
+
+@tss.route('/rockdata', methods=["GET"])
+def rockdata():
+    req = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/rocks/RockData.json")
+    return loads(req.text)
+

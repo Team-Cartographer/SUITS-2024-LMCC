@@ -5,6 +5,7 @@ from flask_cors import CORS
 # ROUTING IMPORTS
 from routes.tss import tss
 from routes.tests import tests
+from routes.mission import mission
 import sys
 
 set_local = False
@@ -19,10 +20,13 @@ app = Flask(__name__)
 CORS(app) 
 CORS(tss)
 CORS(tests)
+CORS(mission)
+
 
 # register server subdirs
 app.register_blueprint(tss, url_prefix="/tss")
 app.register_blueprint(tests, url_prefix="/tests")
+app.register_blueprint(mission, url_prefix='/mission')
 
 # default routing 
 @app.route('/')
