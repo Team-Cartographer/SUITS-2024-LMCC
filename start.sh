@@ -104,8 +104,6 @@ if [ $exit_code -ne 0 ]; then
 fi
 
 echo "tss server found."
-
-python config/build_config.py
 echo "lmcc server setup complete"
 
 cd ..
