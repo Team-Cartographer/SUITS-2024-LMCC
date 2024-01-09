@@ -4,10 +4,15 @@ from json import dump
 from pathlib import Path
 
 TSS_PATH = Path(__file__).parent / 'tss_data.json'
+LMCC_PATH = Path(__file__).parent.parent.parent / 'client' / 'lmcc_config.json'
 
-def save_to_json(data: dict, path: Path):
-    with open(path, "w") as file:
+def save_lmcc_to_json():
+    import socket
+    ip = socket.gethostbyname(socket.gethostname())
+    data = { "lmcc_url": f'http://{ip}:3001' }
+    with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)
+
 
 def save_tss_to_json(url: str):
     print(f"tss server url: {url}")
@@ -48,6 +53,7 @@ def setup():
         check_local_tss = input('do you want to run the app (frontend, server, TSS) on your machine? (Y/n): ')
         if check_local_tss.strip().upper() == 'Y':
             get_tss_url()
+            save_lmcc_to_json()
             exit(0)
         elif check_local_tss.strip().upper() == 'N':
             print('done!')
