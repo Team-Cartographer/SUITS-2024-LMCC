@@ -5,9 +5,11 @@ from flask_cors import CORS
 # ROUTING IMPORTS
 from routes.tss import tss
 from routes.tests import tests
+import sys
 
-# OTHER IMPORTS
-# none at the moment
+set_local = False
+if len(sys.argv) > 1:
+    set_local = (sys.argv[1] == "--local")
 
 # server app instance
 app = Flask(__name__)
@@ -34,4 +36,7 @@ def page_not_found(_):
 
 # run app at http://localhost:3001/
 if __name__ == "__main__": 
-    app.run(debug=True, port=3001)
+    if set_local: 
+        app.run(debug=True, port=3001)
+    else: 
+        app.run(debug=True, host='0.0.0.0', port=3001)

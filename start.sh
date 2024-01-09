@@ -5,11 +5,14 @@ DEPENDENCIES=("flask" "flask-cors" "requests")
 
 # CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 open_provided=false
+local_provided=false
 for arg in "$@"
 do
     if [ "$arg" == "--open" ]; then
         open_provided=true
-        break
+    fi
+    if [ "$arg" == "--local" ]; then
+        local_provided=true
     fi
 done
 
@@ -114,7 +117,7 @@ echo -e "lmcc client setup complete\n"
 
 cd ..
 
-cd server && python server.py && cd .. &
+cd server && python server.py $( [ "$local_provided" = true ] && echo "--local" ) && cd .. &
 server=$!
 
 cd client && npm run dev && cd .. &

@@ -51,6 +51,12 @@ chmod +x start.sh
 
 This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers, and configure the app with your IP TSS Server (please make sure you have that available)
 
+To run the application both locally and on your network to share the same server among many computers, do the script with the `--local` argument:
+
+```bash
+./start.sh --local
+```
+
 If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Backend), do the script with the `--open` argument:
 
 ```
@@ -58,6 +64,8 @@ If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Bac
 ```
 
 This will automatically open the 3 pages in your default browser after 1-2 seconds, allowing time for the servers to begin.
+
+Argument stacking is allowed, so: `./start.sh --open --local` is a valid command!
 
 End the LMCC App by doing `Ctrl+C` in your Terminal. Don't forget to end the SUITS TSS Server as well!
 
@@ -84,11 +92,21 @@ npm run dev
 # type Ctrl+C to end frontend user interface
 ```
 
+For testing configurations, you can run the server locally as shown below:
+
 ```bash
 cd server
 # and
 python server.py
 # type Ctrl+C to end backend server
+```
+
+To share the API Server on a local network so you can share the same server between computers, do:
+
+```bash
+cd server
+# and
+python server.py --local
 ```
 
 Let us know with any issues or questions!
