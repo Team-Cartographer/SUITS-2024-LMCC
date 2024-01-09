@@ -55,7 +55,7 @@ if ($exitCode -eq 1) {
     Write-Host "setup complete. open the external urls"
     Write-Host "`ngoodbye, world."
     exit 1
-} else if ($exitCode -eq 2) {
+} elseif ($exitCode -eq 2) {
     Write-Host "please run the tss server and try again"
     Write-Host "`ngoodbye, world."
     exit 1
