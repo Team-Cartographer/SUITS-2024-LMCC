@@ -49,6 +49,8 @@ Write-Host "`nrunning server startup config"
 python config/startup.py
 $exitCode = $LASTEXITCODE
 
+Set-Location ..
+
 if ($exitCode -ne 0) {
     Write-Host "setup complete. open the external urls"
     Write-Host "`ngoodbye, world."
@@ -58,8 +60,6 @@ if ($exitCode -ne 0) {
 Write-Host "`nlmcc server setup complete`n"
 
 Write-Host "setting up lmcc client"
-
-Set-Location ..
 
 Set-Location client 
 

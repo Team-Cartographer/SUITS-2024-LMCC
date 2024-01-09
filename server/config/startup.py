@@ -15,7 +15,6 @@ def save_lmcc_to_json():
 
 
 def save_tss_to_json(url: str):
-    print(f"tss server url: {url}")
     parsed_url = urlparse(url)
     host = parsed_url.hostname
     port = parsed_url.port
@@ -45,8 +44,8 @@ def get_tss_url():
         else:
             save_tss_to_json(url)
             print('done!')
+            break
            
-
 
 def setup():
     while True: 
