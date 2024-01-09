@@ -85,7 +85,9 @@ python config/startup.py
 status=$?
 
 if [ $status -eq 1 ]; then
-    locally_hosted=false
+    echo 'setup complete. open the external urls'
+    echo -e "\ngoodbye, world."
+    exit 1
 else
     locally_hosted=true
 fi
@@ -104,21 +106,14 @@ echo -e "lmcc client setup complete\n"
 
 cd ..
 
-if [ "$locally_hosted" = true ]; then 
-    cd server && python server.py && cd .. &
-    server=$!
-    cd client && npm run dev && cd .. &
-    client=$!
-    sleep 1.5 && echo -e "\nrunning client on http://localhost:3000\nrunning server on http://localhost:3001\n" &
-    echo_run=$!
-else
-    cd server && python server.py && cd .. &
-    server=$!
-    cd client && npm run dev && cd .. &
-    client=$!
-    sleep 1.5 && echo -e "\nrunning client on http://localhost:3000\nserver running externally\n" &
-    echo_run=$!
-fi
+
+cd server && python server.py && cd .. &
+server=$!
+cd client && npm run dev && cd .. &
+client=$!
+sleep 1.5 && echo -e "\nrunning client on http://$user_ip:3000\nrunning server on http://$user_ip:3001\n" &
+echo_run=$!
+
 
 if [ "$open_provided" = true ]; then
     sleep 4 && python3 ./server/config/open_app.py &

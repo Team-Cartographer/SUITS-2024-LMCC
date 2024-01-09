@@ -1,4 +1,8 @@
 
+# GET IP
+$networkAdapters = Get-NetAdapter -Physical | Where-Object { $_.Status -eq "Up" } | Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.IPAddress -notlike "127.0.0.*" }
+$mainAdapter = $networkAdapters | Where-Object { $_.InterfaceIndex -eq (Get-NetRoute -DestinationPrefix "0.0.0.0/0" | Sort-Object -Property RouteMetric | Select-Object -First 1).InterfaceIndex }
+
 # CHECK SYSTEM PREREQUISITES FUNCTION
 function Check-Program {
     param (
@@ -36,11 +40,20 @@ Set-Location config
 
 pip install -r requirements.txt
 
+deactivate
+
 Set-Location ..
 
 Write-Host "`nrunning server startup config"
 
 python config/startup.py
+$exitCode = $LASTEXITCODE
+
+if ($exitCode -ne 0) {
+    Write-Host "setup complete. open the external urls"
+    Write-Host "`ngoodbye, world."
+    exit 1
+}
 
 Write-Host "`nlmcc server setup complete`n"
 
@@ -53,7 +66,10 @@ Set-Location client
 npm install -g typescript > $null 2>&1
 npm install > $null 2>&1
 
-Write-Host "`nlmcc client setup complete`n"
+Write-Host "`nlmcc client setup complete"
 
 Write-Host "`nlmcc application setup complete"
+
+Write-Host "`nclient will run on http://$($mainAdapter.IPAddress):3000`nserver will be run on http://$($mainAdapter.IPAddress):3001`nshare these urls for testing on the same network"
+
 Write-Host "`ngoodbye, world."

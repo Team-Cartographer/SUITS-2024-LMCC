@@ -37,13 +37,12 @@ cd SUITS-2024-LMCC
 When you run the application, your console of choice (regardless of platform) will ask you this question:
 
 ```
-are you running the servers (TSS & LMCC) on your machine? (Y/n):
+do you want to run the app (frontend, server, TSS) on your machine? (Y/n):
 ```
 
-If you answer with `Y`, the LMCC server will open locally on your machine, but be available to users on your network that want to conenct to your IP.
+If you answer with `Y`, the application will be launched on your computer.
 
-If you answer with `N`, you will be prompted for the link to another LMCC server URL which _must_ be running on the same network as you.
-This is for cross-platform cross-computer testing with many people, which is a project requirement.
+If you answer with `N`, your setup is complete. You can simply open the external URLs provided by another user which will be printed to their shell once they run either `start.sh` or `./Setup.ps1`
 
 For most testing cases, please answer `Y`, unless you have another computer on the same network with the LMCC server ready to use.
 
@@ -65,7 +64,7 @@ chmod +x start.sh
 # type Ctrl+C to end the program
 ```
 
-This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers.
+This will install all dependencies for NodeJS and Python, and start both the LMCC Frontend and Backend Servers on network-public URLs. You can use these for testing or for development.
 
 If you would like to open the 3 pages (SUITS TSS Server, LMCC Frontend, LMCC Backend), do the script with the `--open` argument:
 
@@ -83,15 +82,19 @@ End the LMCC App by doing `Ctrl+C` in your Terminal. Don't forget to end the SUI
 
 For Windows Setup, there is a couple extra steps as Windows scripting isn't as easy as MacOS. However, we have tried to simplify it as much as possible.
 
+If you answered with `n` to the question from [Local and External Servers](#local-and-external-server-information), then these next steps are not required as you are loading an external URL.
+
+If you are running locally, follow these commands:
 Run the commands below following the comment instructions to run the server.
 
 ```bash
-# this will run first-time app setup
+# this will run app setup
 # you can re-run this any time you update dependencies
 ./Setup.ps1
+# answer with *Y* to the local app prompt
 ```
 
-Once you finish setup, do these commands in _SEPERATE TERMINAL WINDOWS_:
+Once you finish setup, do these commands in _seperate terminal windows_:
 
 ```bash
 cd client
@@ -100,12 +103,10 @@ npm run dev
 # type Ctrl+C to end frontend user interface
 ```
 
-If you answered with `n` to the question from [Local and External Servers](#local-and-external-server-information), then this next step is not required as the app is configured with the external server.
-
-For testing configurations, you can run the server locally _in a seperae terminal from the client_ as shown below. This _requires_ the SUITS TSS Server for full functionality:
-
 ```bash
 cd server
+# and
+. .\venv\Scripts\Activate.ps1 # activate server venv
 # and
 python server.py
 # type Ctrl+C to end backend server
