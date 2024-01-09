@@ -82,10 +82,9 @@ End the LMCC App by doing `Ctrl+C` in your Terminal. Don't forget to end the SUI
 
 For Windows Setup, there is a couple extra steps as Windows scripting isn't as easy as MacOS. However, we have tried to simplify it as much as possible.
 
-If you answered with `n` to the question from [Local and External Servers](#local-and-external-server-information), then these next steps are not required as you are loading an external URL.
+**If you answered with `n` to the question from [Local and External Servers](#local-and-external-server-information), then these next steps are not required as you are loading an external URL.**
 
 If you are running locally, follow these commands:
-Run the commands below following the comment instructions to run the server.
 
 ```bash
 # this will run app setup
