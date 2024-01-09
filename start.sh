@@ -3,6 +3,8 @@
 # ADD PYTHON DEPENDENCIES
 DEPENDENCIES=("flask" "flask-cors" "requests")
 
+user_ip=$(ifconfig en0 | grep 'inet ' | awk '{print $2}')
+
 # CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 open_provided=false
 local_provided=false
@@ -26,7 +28,8 @@ check_program() {
 }
 
 # BEGIN SCRIPT AND CHECK DEPENDENCIES 
-echo -e "hello, world!\n"
+echo "hello, world!"
+echo -e "running on ip: $user_ip\n"
 
 echo "checking platform dependencies"
 check_program node
@@ -64,7 +67,7 @@ cleanup() {
 kill_port 3000
 kill_port 3001
 
-echo -e "ports ready, starting config now\n"
+echo -e "ports ready, starting python config now\n"
 
 FILE_PATH="./config/tss_data.json"
 
@@ -78,11 +81,11 @@ pip install --upgrade pip >/dev/null
 
 cd config 
 
-pip install -r requirements.txt
+pip install -r requirements.txt >/dev/null
 
 cd ..
 
-echo -e "\nrunning server startup config"
+echo "python config complete, running server startup config"
 
 python config/startup.py
 
@@ -102,7 +105,7 @@ if [ $exit_code -ne 0 ]; then
     echo "tss server could not be pinged. deactivating server"
     exit 1
 fi
-echo -e "tss server found. lmcc server setup complete\n"
+echo -e "tss server found.\nlmcc server setup complete\n"
 
 echo "setting up lmcc client"
 
@@ -123,7 +126,7 @@ server=$!
 cd client && npm run dev && cd .. &
 client=$!
 
-sleep 1 && echo -e "\nrunning ./client on: http://localhost:3000\nrunning ./server on: http://localhost:3001\n" &
+sleep 1 && echo -e "\nrunning ./client on: http://localhost:3000\nrunning ./server on: $( [ "$local_provided" = false ] && echo http://$user_ip:3001 ) $( [ "$local_provided" = true ] && echo http://localhost:3001 )" &
 echo_run=$!
 
 if [ "$open_provided" = true ]; then
