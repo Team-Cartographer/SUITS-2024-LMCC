@@ -42,7 +42,7 @@ do you want to run the app (frontend, server, TSS) on your machine? (Y/n):
 
 If you answer with `Y`, the application will be launched on your computer.
 
-If you answer with `N`, your setup is complete. You can simply open the external URLs provided by another user which will be printed to their shell once they run either `start.sh` or `./Setup.ps1`
+If you answer with `N`, your setup is complete. You can simply open the external URLs provided by another user which will be printed to their shell once they run either `start.sh` or `./Setup.ps1`. After that, your app will be running on their servers, mantaining a consistent environment across all testing platforms.
 
 For most testing cases, please answer `Y`, unless you have another computer on the same network with the LMCC server ready to use.
 
