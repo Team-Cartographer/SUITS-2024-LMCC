@@ -1,8 +1,10 @@
+"use client";
+
 /**
  * @author @abhi-arya1
  * @fileoverview API convenience functions for the Flask server
  */
-
+import lmcc_config from '@/lmcc_config.json';
 
 /**
  * @function fetchWithParams
@@ -22,7 +24,7 @@
  */
 export const fetchWithoutParams = async <AnyType = any>(path: string) => {
     try {
-        const response = await fetch(`http://localhost:3001/${path}`);
+        const response = await fetch(`${lmcc_config.lmcc_server_url}/${path}`);
         const data: AnyType = await response.json();
         console.log(data);
         return data;
@@ -42,7 +44,7 @@ export const fetchWithoutParams = async <AnyType = any>(path: string) => {
  */
 export const fetchWithParams = async <AnyType = any>(path: string, params: {[key: string]: any}) => {
     try {
-        const response = await fetch(`http://localhost:3001/${path}`, {
+        const response = await fetch(`${lmcc_config.lmcc_server_url}/${path}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

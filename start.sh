@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# ADD PYTHON DEPENDENCIES
-DEPENDENCIES=("flask" "flask-cors" "requests")
-
 user_ip=$(ifconfig en0 | grep 'inet ' | awk '{print $2}')
 
 # CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
@@ -105,11 +102,14 @@ if [ $exit_code -ne 0 ]; then
     echo "tss server could not be pinged. deactivating server"
     exit 1
 fi
-echo -e "tss server found.\nlmcc server setup complete\n"
 
-echo "setting up lmcc client"
+echo "tss server found."
+
+python config/build_config.py
+echo "lmcc server setup complete"
 
 cd ..
+echo -e "\nsetting up lmcc client"
 
 cd client 
 
