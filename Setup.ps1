@@ -35,7 +35,7 @@ python -m venv venv > $null
 
 . .\venv\Scripts\Activate.ps1 > $null
 
-pip install --upgrade pip > $null
+python.exe -m pip install --upgrade pip > $null
 
 Set-Location config 
 
