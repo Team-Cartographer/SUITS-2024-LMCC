@@ -30,7 +30,7 @@ $FILE_PATH = "./config/tss_data.json"
 
 Set-Location server
 
-python3 -m venv venv > $null
+python -m venv venv > $null
 
 . .\venv\Scripts\Activate.ps1 > $null
 
