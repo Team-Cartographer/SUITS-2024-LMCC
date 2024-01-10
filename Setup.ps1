@@ -21,7 +21,7 @@ Write-Host "`nchecking platform dependencies"
 Check-Program "node"
 Check-Program "npm"
 Check-Program "git"
-Check-Program "python3"
+Check-Program "python"
 Write-Host "all dependencies are installed!`n"
 
 Write-Host "`ports ready, starting config now`n"
