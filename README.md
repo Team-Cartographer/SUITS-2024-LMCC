@@ -9,6 +9,13 @@ Contents:
 - [About the App](#rocket-about-the-app)
 - [Running the App](#keyboard-running-the-app)
 
+Software Dependencies
+
+- `NodeJS 21.5.0+`
+- `npm 10.2.4`
+- `Python 3.12.1`
+- `git 2.43.0`
+
 Questions? Send an email to `teamcartographer@gmail.com` and we will get back to you as soon as possible.
 
 Thank you for reading!
