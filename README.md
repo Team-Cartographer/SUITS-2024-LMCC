@@ -105,8 +105,11 @@ npm run dev
 ```bash
 cd server
 # and
+. .\venv\Scripts\Activate.ps1
+# and
 python server.py
 # type Ctrl+C to end backend server
+deactivate # to end venv
 ```
 
 Let us know with any issues or questions!
