@@ -16,6 +16,7 @@ function Check-Program {
 
 # BEGIN SCRIPT AND CHECK DEPENDENCIES 
 Write-Host "hello, world!"
+Write-Host "running on ip: $($mainAdapter.IPAddress)"
 
 Write-Host "`nchecking platform dependencies"
 Check-Program "node"
@@ -40,14 +41,14 @@ Set-Location config
 
 pip install -r requirements.txt
 
-deactivate
-
 Set-Location ..
 
 Write-Host "`nrunning server startup config"
 
 python config/startup.py
 $exitCode = $LASTEXITCODE
+
+deactivate
 
 Set-Location ..
 
