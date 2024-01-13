@@ -4,6 +4,18 @@ from flask_cors import CORS
 api = Blueprint('api', __name__)
 CORS(api)
 
+class LMCCAPIError(Exception):
+    def __init__(self, msg='There was an error with the LMCC API'):
+        super().__init__(message=msg)
+
+
+def get_arg(key, args_dict):
+    if key in args_dict.keys():
+        return args_dict.get(key)
+    else:
+        raise LMCCAPIError('Improper Args were Provided')
+
+
 @api.route('/test_greeting', methods=["GET", "POST"])
 def test():
     '''
@@ -29,7 +41,7 @@ def test():
 
 
     
-@api.route('/v0', methods=["GET", "POST", "PUT"])
+@api.route('/v0', methods=["GET", "POST"])
 def api_v0():
     match request.method: 
         case "GET":
@@ -42,23 +54,22 @@ def api_v0():
             else: 
                 return handle_GET_args(args)
         case "POST":
-            # TODO: the majority of our api-v0 functions will be in here
-            pass
-        case "PUT":
-            # TODO: there will be a good amount of idempotent functions in here
-            pass
+            req_json = dict(request.get_json())
+            if len(req_json) == 0: 
+                raise LMCCAPIError('A POST Request was ran without a JSON of Arguments')
+            else:
+                return handle_POST_args(req_json)
         case _: 
             pass
 
 
 
 def handle_GET_args(args: dict): 
-    arg_keys = args.keys()
-    if ('test' in arg_keys) and (args['test'] == 't1'):
+    if get_arg('test', args) == 't1':
         return jsonify({
             'recieved': 'arg t1'
         })
-    elif ('test' in arg_keys) and (args['test'] == 't2'):
+    elif get_arg('test', args) == 't2':
         return jsonify({
             'recieved': 'arg t2'
         })
@@ -69,12 +80,13 @@ def handle_GET_args(args: dict):
     
 
 
-#TODO: handle POST args
-def handle_POST_args(**kwargs):
-    pass
+def handle_POST_args(args: dict):
+    if get_arg('test', args) == 'true':
+        return jsonify({
+            'woah': 'you found me' 
+        })
+    else:
+        return jsonify({
+            'error': 'args were invalid'
+        })
 
-
-
-#TODO: handle PUT args
-def handle_PUT_args(**kwargs):
-    pass
