@@ -6,7 +6,7 @@ from flask_cors import CORS
 from routes.tss import tss
 from routes.tests import tests
 from routes.mission import mission
-from routes.api import api
+from api import api
 
 # server app instance
 app = Flask(__name__)
