@@ -7,7 +7,6 @@ CORS(api)
 @api.route('/test', methods=["GET", "POST"])
 def test():
     req = request.get_json()
-    print(req.keys())
 
     if req["test"] == 'hey there':
         return jsonify({
