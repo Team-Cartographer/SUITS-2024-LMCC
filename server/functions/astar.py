@@ -10,12 +10,12 @@ class Node:
         self.total_cost = 0
         self.heuristic_cost = 0
         
-    # Compare nodes based on their positions
     def __eq__(self, compare):
+        'Compare nodes based on their positions'
         return self.position == compare.position
     
-    # Define the order of nodes based on their total cost (for priority queue)
     def __lt__(self, compare):
+        'Define the order of nodes based on their total cost (for priority queue)'
         return self.cost_to_reach < compare.cost_to_reach
     
     
