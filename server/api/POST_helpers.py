@@ -43,8 +43,9 @@ def update_geojson(args: dict, add: bool=True):
     
     if not add:
         for pin in pins: 
-            if is_within_radius(pin, history):
-                history = [item for item in history if item != pin]
+            history = [item for item in history if item != pin]
+            with open('temp.txt', 'w') as f:
+                f.writelines(history)
 
         updated_features = []
         for i, item in enumerate(history): 
@@ -61,7 +62,7 @@ def update_geojson(args: dict, add: bool=True):
                 },
                 "properties": {
                     "name": f"Pin_{i}",
-                    "description": pin
+                    "description": item
                 }
             }
             updated_features.append(item_data)

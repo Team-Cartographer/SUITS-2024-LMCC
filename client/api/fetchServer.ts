@@ -25,7 +25,6 @@ export const fetchWithoutParams = async <AnyType = any>(path: string) => {
     try {
         const response = await fetch(`${lmcc_config.lmcc_url}/${path}`);
         const data: AnyType = await response.json();
-        console.log(data);
         return data;
     } catch (error) {
         console.error('error fetching data:', error);
