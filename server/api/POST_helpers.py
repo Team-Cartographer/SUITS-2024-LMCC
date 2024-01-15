@@ -30,6 +30,13 @@ def update_geojson(args: dict, add: bool=True):
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
 
     pins = args.get('pins', [])
+    dims = args.get('dimensions', [])
+    if dims: 
+        height = dims[0]
+        width = dims[1]
+    else: 
+        height = 1024
+        width = 815
 
     image = Image.open(map_path)
     draw = ImageDraw.Draw(image)
@@ -50,7 +57,7 @@ def update_geojson(args: dict, add: bool=True):
         updated_features = []
         for i, item in enumerate(history): 
             x, y = map(int, item.split('x'))
-            lat, lon = image_coords_to_lat_lon(x, y)
+            lat, lon = image_coords_to_lat_lon(x, y, height, width)
             radius = 5
             draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
 
@@ -77,7 +84,7 @@ def update_geojson(args: dict, add: bool=True):
             radius = 5
             draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
 
-            lat, lon = image_coords_to_lat_lon(x, y)
+            lat, lon = image_coords_to_lat_lon(x, y, height, width)
 
             item_data = {
                 "type": "Feature",

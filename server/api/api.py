@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
+from .extender import socketio
 from . import GET_helpers as gh
 from . import POST_helpers as ph
 
@@ -83,8 +84,10 @@ def handle_GET_args(args: dict):
 
 def handle_POST_args(args: dict):
     if get_arg('map', args) == 'add':
+        socketio.emit('map-updated', {'message': 'map was updated'})
         return ph.update_geojson(args)
     elif get_arg('map', args) == 'rm':
+        socketio.emit('map-updated', {'message': 'map was updated'})
         return ph.update_geojson(args, add=False)
     else:
         return jsonify({

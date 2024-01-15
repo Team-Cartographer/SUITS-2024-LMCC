@@ -1,5 +1,9 @@
+"use client";
+
 import { fetchImageWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
+import io from 'socket.io-client';
+import lmcc_config from "@/lmcc_config.json"
 
 interface GeoJSONFeature {
     type: 'Feature';
@@ -20,6 +24,7 @@ interface GeoJSON {
 
 const Map = () => {
     const [mapImage, setMapImage] = useState('')
+    const [prevMapImage, setPrevMapImage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
     const [points, setPoints] = useState<GeoJSONFeature[]>([])
@@ -27,6 +32,24 @@ const Map = () => {
     useEffect(() => {
         fetchInitialImage();
         fetchGeoJSONPoints();
+
+        const socketIo = io(lmcc_config.lmcc_url);
+
+        socketIo.on('connect', () => {
+            console.log('Socket.IO Connected');
+        });
+
+        socketIo.on('map-update', (data) => {
+            console.log('here')
+            fetchInitialImage();
+            fetchGeoJSONPoints();
+        });
+
+        // Clean up the socket connection when the component unmounts
+        return () => {
+            socketIo.disconnect();
+        };
+
     }, [])
 
 
@@ -40,6 +63,7 @@ const Map = () => {
 
     const fetchInitialImage = async () => {
         setIsLoading(true);
+        setPrevMapImage(mapImage);
         try {
             const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
             if (imageBlob) {
@@ -75,19 +99,21 @@ const Map = () => {
         });
 
         if (nearPoint) {
-            await updateImageWithPins("rm", [nearPoint.properties.description]);
+            await updateImageWithPins("rm", [nearPoint.properties.description], [rect.width, rect.height]);
         } else {
-            await updateImageWithPins("add", [`${x}x${y}`]);
+            await updateImageWithPins("add", [`${x}x${y}`], [rect.width, rect.height]);
         }
     };
 
 
-    const updateImageWithPins = async (action: string, pins: string[]) => {
+    const updateImageWithPins = async (action: string, pins: string[], dims: number[]) => {
         setIsLoading(true);
+        setPrevMapImage(mapImage)
         try {
             const imageBlob = await fetchImageWithParams('api/v0?get=map_img', {
                 map: action,
-                pins: pins
+                pins: pins,
+                dimensions: dims
             });
             if (imageBlob) {
                 const imageObjectURL = URL.createObjectURL(imageBlob);
@@ -106,7 +132,11 @@ const Map = () => {
 
 
     if(isLoading) {
-        return <p>Loading Map from Server</p>
+        if (prevMapImage) {
+            return <div><img src={prevMapImage} alt="Loading Map" /></div>;
+        } else {
+            return <p>Loading Map from Server</p>
+        }
     }
 
     if(err) {
