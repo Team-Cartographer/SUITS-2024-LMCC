@@ -8,14 +8,14 @@ CORS(api)
 
 class LMCCAPIError(Exception):
     def __init__(self, msg='There was an error with the LMCC API'):
-        super().__init__(message=msg)
+        super().__init__(msg)
 
 
-def get_arg(key, args_dict):
+def get_arg(key, args_dict: dict):
     if key in args_dict.keys():
         return args_dict.get(key)
     else:
-        raise LMCCAPIError('Improper Args were Provided')
+        return False
 
 
 @api.route('/test_greeting', methods=["GET", "POST"])
@@ -51,7 +51,8 @@ def api_v0():
             args = request.args.to_dict()
             if len(args) == 0: 
                 return jsonify({
-                    'message': 'coming soon!'
+                    'message': 'nothing to see here!',
+                    'docs': 'docs can be found at: https://tclmcc.gitbook.io/docs/'
                 })
             else: 
                 return handle_GET_args(args)
@@ -67,14 +68,10 @@ def api_v0():
 
 
 def handle_GET_args(args: dict): 
-    if get_arg('test', args) == 't1':
-        return jsonify({
-            'recieved': 'arg t1'
-        })
-    elif get_arg('test', args) == 't2':
-        return jsonify({
-            'recieved': 'arg t2'
-        })
+    if get_arg('map', args) == 'get':
+        return gh.send_map()
+    elif get_arg('map', args) == 'info':
+        return gh.send_map_info()
     else: 
         return jsonify({
             'error': 'args were invalid'

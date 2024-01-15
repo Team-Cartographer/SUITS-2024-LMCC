@@ -24,8 +24,11 @@ def update_map(args):
     with open(mapping_json_path, 'r') as file:
         data = json.load(file)
 
-    if data['pins']:
-        pins.extend(data['pins'])
+    try:
+        if data['pins']:
+            pins.extend(data['pins'])
+    except KeyError:
+        data['pins'] = []
 
     for pin in pins:
         x, y = map(int, pin.split('x'))

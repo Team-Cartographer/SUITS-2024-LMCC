@@ -69,11 +69,12 @@ def check_tss_url(url: str):
 
 def configure_data():
     data_path = SERVER_PATH / 'data'
+    mapping_path = data_path / 'mapping.json'
     if not data_path.exists():
         mkdir(data_path)
-    if not (data_path / 'mapping.json').exists():
-        with open(data_path, 'w') as mapping:
-            dump({"size": [1024, 815]}, mapping)
+    if not mapping_path.exists():
+        with open(mapping_path, 'w') as mapping:
+            dump({"size": [1024, 815]}, mapping, indent=4)
            
 
 def setup():
