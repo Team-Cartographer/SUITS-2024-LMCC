@@ -20,6 +20,7 @@ interface GeoJSON {
 
 const Map = () => {
     const [mapImage, setMapImage] = useState('')
+    const [prevMapImage, setPrevMapImage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [err, setErr] = useState('');
     const [points, setPoints] = useState<GeoJSONFeature[]>([])
@@ -45,6 +46,7 @@ const Map = () => {
             if (imageBlob) {
                 const imageObjectURL = URL.createObjectURL(imageBlob);
                 setMapImage(imageObjectURL);
+                setPrevMapImage(imageObjectURL);
             } else {
                 throw new Error('Image blob is undefined');
             }
@@ -75,19 +77,21 @@ const Map = () => {
         });
 
         if (nearPoint) {
-            await updateImageWithPins("rm", [nearPoint.properties.description]);
+            await updateImageWithPins("rm", [nearPoint.properties.description], [rect.width, rect.height]);
         } else {
-            await updateImageWithPins("add", [`${x}x${y}`]);
+            await updateImageWithPins("add", [`${x}x${y}`], [rect.width, rect.height]);
         }
     };
 
 
-    const updateImageWithPins = async (action: string, pins: string[]) => {
+    const updateImageWithPins = async (action: string, pins: string[], dims: number[]) => {
         setIsLoading(true);
+        setPrevMapImage(mapImage)
         try {
             const imageBlob = await fetchImageWithParams('api/v0?get=map_img', {
                 map: action,
-                pins: pins
+                pins: pins,
+                dimensions: dims
             });
             if (imageBlob) {
                 const imageObjectURL = URL.createObjectURL(imageBlob);
@@ -106,7 +110,11 @@ const Map = () => {
 
 
     if(isLoading) {
-        return <p>Loading Map from Server</p>
+        if (prevMapImage) {
+            return <div><img src={prevMapImage} alt="Loading Map" /></div>;
+        } else {
+            return <p>Loading Map from Server</p>
+        }
     }
 
     if(err) {

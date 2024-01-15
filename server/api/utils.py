@@ -4,6 +4,10 @@ import math
 
 SERVER_DIR =  Path(__file__).parent.parent
 
+TOP_L_LAT = 29.565376
+TOP_L_LON = -95.082001
+BOT_R_LAT = 29.564423
+BOT_R_LON = -95.080691
 
 
 def distance_between_points(p1, p2):
@@ -21,36 +25,22 @@ def is_within_radius(check, existing_pins, radius=5):
 
 
 
-def image_coords_to_lat_lon(x, y):
-    with open((SERVER_DIR / 'images' / 'mapping.json'), 'r') as file:
-        data = json.load(file)
+def image_coords_to_lat_lon(x, y, height, width):
+    lat_deg_per_pixel = (TOP_L_LAT - BOT_R_LAT) / height
+    lon_deg_per_pixel = (BOT_R_LON - TOP_L_LON) / width
 
-    top_left_lat, top_left_lon = data["top_left_lat"], data["top_left_lon"]
-    bottom_right_lat, bottom_right_lon = data["bottom_right_lat"], data["bottom_right_lon"]
-    image_height, image_width = data["size"][0], data["size"][1]
-    
-    lat_deg_per_pixel = (top_left_lat - bottom_right_lat) / image_height
-    lon_deg_per_pixel = (bottom_right_lon - top_left_lon) / image_width
-    
-    lat = top_left_lat - (y * lat_deg_per_pixel)
-    lon = top_left_lon + (x * lon_deg_per_pixel)
+    lat = TOP_L_LAT - (y * lat_deg_per_pixel)
+    lon = TOP_L_LON + (x * lon_deg_per_pixel)
     
     return lat, lon
 
 
 
-def lat_lon_to_image_coords(lat, lon):
-    with open((SERVER_DIR / 'images' / 'mapping.json'), 'r') as file:
-        data = json.load(file)
-
-    top_left_lat, top_left_lon = data["top_left_lat"], data["top_left_lon"]
-    bottom_right_lat, bottom_right_lon = data["bottom_right_lat"], data["bottom_right_lon"]
-    image_height, image_width = data["size"][0], data["size"][1]
-
-    lat_deg_per_pixel = (top_left_lat - bottom_right_lat) / image_height
-    lon_deg_per_pixel = (bottom_right_lon - top_left_lon) / image_width
+def lat_lon_to_image_coords(lat, lon, height, width):
+    lat_deg_per_pixel = (TOP_L_LAT - BOT_R_LAT) / height
+    lon_deg_per_pixel = (BOT_R_LON - TOP_L_LON) / width
     
-    x = (lon - top_left_lon) / lon_deg_per_pixel
-    y = (top_left_lat - lat) / lat_deg_per_pixel
+    x = (lon - TOP_L_LON) / lon_deg_per_pixel
+    y = (TOP_L_LAT - lat) / lat_deg_per_pixel
     
     return int(x), int(y)
