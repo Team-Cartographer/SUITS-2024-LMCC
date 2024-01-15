@@ -1,3 +1,4 @@
+from os import mkdir
 from re import match
 from urllib.parse import urlparse
 from json import dump, load
@@ -5,8 +6,9 @@ from pathlib import Path
 from requests import get, ConnectionError, Timeout
 from time import sleep
 
-TSS_PATH = Path(__file__).parent / 'tss_data.json'
-LMCC_PATH = Path(__file__).parent.parent.parent / 'client' / 'lmcc_config.json'
+SERVER_PATH = Path(__file__).parent.parent
+TSS_PATH = SERVER_PATH / 'config' / 'tss_data.json'
+LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
 
 
 def save_lmcc_to_json():
@@ -64,6 +66,14 @@ def check_tss_url(url: str):
         print(f'\ncould not connect to tss server at {url}. please make sure it is active')
         print(f'if you need to change the url, do so in {TSS_PATH}\n')
         exit(2)
+
+def configure_data():
+    data_path = SERVER_PATH / 'data'
+    if not data_path.exists():
+        mkdir(data_path)
+    if not (data_path / 'mapping.json').exists():
+        with open(data_path, 'w') as mapping:
+            dump({"size": [1024, 815]}, mapping)
            
 
 def setup():
@@ -72,6 +82,7 @@ def setup():
         if check_local_tss.strip().upper() == 'Y':
             get_tss_url()
             save_lmcc_to_json()
+            configure_data()
             exit(0)
         elif check_local_tss.strip().upper() == 'N':
             print('done!')

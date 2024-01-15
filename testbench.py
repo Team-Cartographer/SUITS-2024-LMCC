@@ -6,9 +6,8 @@ from PIL import Image
 from io import BytesIO
 
 url = 'http://localhost:3001/api/v0'
-data = {'map': 'updated', 'pins': ["50x50", "100x100"]}
-headers = {'Content-Type': 'application/json', 'Accept':'application/json'}
+data = {'map': 'updated', 'pins': ["100x100"]}
 
-response = requests.post(url, json=data, headers=headers)
+response = requests.post(url, json=data)
 img = Image.open(BytesIO(response.content))
 img.show()

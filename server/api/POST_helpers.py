@@ -15,15 +15,29 @@ def get_arg(key, args_dict):
 
 def update_map(args):
     map_path = SERVER_DIR / 'images' / 'rockYardMap.png'
+    mapping_json_path = SERVER_DIR / 'data' / 'mapping.json'
     pins = args.get('pins', [])
 
     image = Image.open(map_path)
     draw = ImageDraw.Draw(image)
 
+    with open(mapping_json_path, 'r') as file:
+        data = json.load(file)
+
+    if data['pins']:
+        pins.extend(data['pins'])
+
     for pin in pins:
         x, y = map(int, pin.split('x'))
         radius = 5
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+    
+        if pin not in data['pins']:
+            data['pins'].append(pin)
+            
+
+    with open(mapping_json_path, 'w') as file:
+        json.dump(data, file, indent=4)
 
     img_io = io.BytesIO()
     image.save(img_io, 'PNG')
