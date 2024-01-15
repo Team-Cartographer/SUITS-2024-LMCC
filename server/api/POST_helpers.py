@@ -4,6 +4,7 @@ from flask import send_file
 from pathlib import Path
 import json
 import io
+from .utils import image_coords_to_lat_lon
 
 SERVER_DIR = Path(__file__).parent.parent 
 
@@ -13,34 +14,49 @@ def get_arg(key, args_dict):
     else:
         raise ValueError('Improper Args were Provided')
 
-def update_map(args):
+def add_to_map(args):
     map_path = SERVER_DIR / 'images' / 'rockYardMap.png'
-    mapping_json_path = SERVER_DIR / 'data' / 'mapping.json'
+    geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
+    history_path = SERVER_DIR / 'data' / 'history.json'
+
     pins = args.get('pins', [])
 
     image = Image.open(map_path)
     draw = ImageDraw.Draw(image)
 
-    with open(mapping_json_path, 'r') as file:
-        data = json.load(file)
+    with open(geojson_path, 'r') as file:
+        geojson_data = json.load(file)
+    with open(history_path, 'r') as history:
+        history = json.load(history)
 
-    try:
-        if data['pins']:
-            pins.extend(data['pins'])
-    except KeyError:
-        data['pins'] = []
-
+    pins.extend(history['pinHistory'])
     for pin in pins:
         x, y = map(int, pin.split('x'))
         radius = 5
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-    
-        if pin not in data['pins']:
-            data['pins'].append(pin)
-            
 
-    with open(mapping_json_path, 'w') as file:
-        json.dump(data, file, indent=4)
+        lat, lon = image_coords_to_lat_lon(x, y)
+
+        item_data = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [lat, lon]  
+            },
+            "properties": {
+                "name": f"Pin_{len(geojson_data['features'])}"
+            }
+        }
+
+        if not pin in history['pinHistory']:
+            history['pinHistory'].append(pin)
+            geojson_data['features'].append(item_data)
+
+
+    with open(geojson_path, 'w') as file:
+        json.dump(geojson_data, file, indent=4)
+    with open(history_path, 'w') as file:
+        json.dump(history, file, indent=4)
 
     img_io = io.BytesIO()
     image.save(img_io, 'PNG')
