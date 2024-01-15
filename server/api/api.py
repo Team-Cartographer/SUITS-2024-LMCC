@@ -68,9 +68,9 @@ def api_v0():
 
 
 def handle_GET_args(args: dict): 
-    if get_arg('map', args) == 'get':
+    if get_arg('get', args) == 'map_img':
         return gh.send_map()
-    elif get_arg('map', args) == 'info':
+    elif get_arg('get', args) == 'map_info':
         return gh.send_map_info()
     else: 
         return jsonify({
@@ -80,8 +80,10 @@ def handle_GET_args(args: dict):
 
 
 def handle_POST_args(args: dict):
-    if get_arg('map', args) == 'update_add':
-        return ph.add_to_map(args)
+    if get_arg('map', args) == 'add':
+        return ph.update_geojson(args)
+    elif get_arg('map', args) == 'rm':
+        return ph.update_geojson(args, add=False)
     else:
         return jsonify({
             'error': 'args were invalid'

@@ -14,7 +14,7 @@ def get_arg(key, args_dict):
         raise ValueError('Improper Args were Provided')
     
 def send_map_info():
-    mapping_json_path = SERVER_DIR / 'data' / 'mapping.json'
+    mapping_json_path = SERVER_DIR / 'data' / 'rockyard.geojson'
     with open(mapping_json_path, 'r') as json_file:
         data = json.load(json_file)
     return data 
@@ -23,20 +23,17 @@ def send_map_info():
 
 def send_map():
     map_path = SERVER_DIR / 'images' / 'rockYardMap.png'
-    mapping_json_path = SERVER_DIR / 'data' / 'mapping.json'
+    geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
     
     image = Image.open(map_path)
     draw = ImageDraw.Draw(image)
 
-    with open(mapping_json_path, 'r') as file:
+    with open(geojson_path, 'r') as file:
         data = json.load(file)
-
+    
     pins = []
-    try:
-        if data['pins']:
-            pins.extend(data['pins'])
-    except KeyError:
-        pass
+    for feature in data['features']:
+        pins.append(feature['properties']['description'])
 
     for pin in pins:
         x, y = map(int, pin.split('x'))

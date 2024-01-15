@@ -70,14 +70,11 @@ def check_tss_url(url: str):
 def configure_data():
     data_path = SERVER_PATH / 'data'
     rockyard_path = data_path / 'rockyard.geojson'
-    history_path = data_path / 'history.json'
     if not data_path.exists():
         mkdir(data_path)
     
     with open(rockyard_path, 'w') as rockyard:
         dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
-    with open(history_path, 'w') as history:
-        dump({"pinHistory": [], "locHistory": { "eva1": [], "eva2": [], "rover": [] }}, history, indent=4)
            
 
 def setup():
