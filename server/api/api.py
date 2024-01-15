@@ -72,6 +72,8 @@ def handle_GET_args(args: dict):
         return gh.send_map()
     elif get_arg('get', args) == 'map_info':
         return gh.send_map_info()
+    elif get_arg('get', args) == 'astar':
+        return gh.a_star()
     else: 
         return jsonify({
             'error': 'args were invalid'

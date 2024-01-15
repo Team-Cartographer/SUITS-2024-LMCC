@@ -1,5 +1,6 @@
 # all GET request helpers go in here
 from PIL import Image, ImageDraw
+from ..functions import astar
 from flask import send_file
 from pathlib import Path
 import json
@@ -45,3 +46,11 @@ def send_map():
     img_io.seek(0)
 
     return send_file(img_io, mimetype='image/png')
+
+
+def a_star(grid, start, end):
+    path = astar(grid, start, end)
+    if path:
+        path_json = json.dumps({'path': path})
+        return path_json
+    
