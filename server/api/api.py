@@ -83,10 +83,8 @@ def handle_GET_args(args: dict):
 
 
 def handle_POST_args(args: dict):
-    if get_arg('test', args) == 'true':
-        return jsonify({
-            'woah': 'you found me' 
-        })
+    if get_arg('map', args) == 'updated':
+        return ph.update_map(args)
     else:
         return jsonify({
             'error': 'args were invalid'
