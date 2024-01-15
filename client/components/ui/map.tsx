@@ -1,5 +1,9 @@
+"use client";
+
 import { fetchImageWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
+import io from 'socket.io-client';
+import lmcc_config from "@/lmcc_config.json"
 
 interface GeoJSONFeature {
     type: 'Feature';
@@ -28,6 +32,24 @@ const Map = () => {
     useEffect(() => {
         fetchInitialImage();
         fetchGeoJSONPoints();
+
+        const socketIo = io(lmcc_config.lmcc_url);
+
+        socketIo.on('connect', () => {
+            console.log('Socket.IO Connected');
+        });
+
+        socketIo.on('map-update', (data) => {
+            console.log('here')
+            fetchInitialImage();
+            fetchGeoJSONPoints();
+        });
+
+        // Clean up the socket connection when the component unmounts
+        return () => {
+            socketIo.disconnect();
+        };
+
     }, [])
 
 
@@ -41,12 +63,12 @@ const Map = () => {
 
     const fetchInitialImage = async () => {
         setIsLoading(true);
+        setPrevMapImage(mapImage);
         try {
             const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
             if (imageBlob) {
                 const imageObjectURL = URL.createObjectURL(imageBlob);
                 setMapImage(imageObjectURL);
-                setPrevMapImage(imageObjectURL);
             } else {
                 throw new Error('Image blob is undefined');
             }

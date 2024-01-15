@@ -26,6 +26,7 @@
     "react-dom": "^18",
     "react-live-clock": "^6.1.19",
     "react-player": "^2.14.1",
+    "socket.io-client": "^4.7.4",
     "tailwind-merge": "^2.2.0",
     "tailwindcss-animate": "^1.0.7"
   },
@@ -33,6 +34,7 @@
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/ws": "^8.5.10",
     "autoprefixer": "^10.0.1",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
