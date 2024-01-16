@@ -74,6 +74,12 @@ def handle_GET_args(args: dict):
         return gh.send_map_info()
     elif get_arg('get', args) == 'astar':
         return gh.a_star()
+    elif get_arg('get', args) == "biodata":
+        eva = get_arg('eva', args)
+        if eva == "one" or eva == "two":
+            return gh.send_biom_data(eva)
+        else: 
+            return jsonify({'error': 'invalid eva'})
     else: 
         return jsonify({
             'error': 'args were invalid'

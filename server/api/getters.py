@@ -2,9 +2,11 @@
 from PIL import Image, ImageDraw
 from .functions import astar
 from flask import send_file
+from flask import jsonify, request
 from pathlib import Path
 import json
 import io
+import random
 
 SERVER_DIR = Path(__file__).parent.parent 
 
@@ -19,8 +21,6 @@ def send_map_info():
     with open(mapping_json_path, 'r') as json_file:
         data = json.load(json_file)
     return data 
-
-    
 
 def send_map():
     map_path = SERVER_DIR / 'images' / 'rockYardMap.png'
@@ -47,10 +47,30 @@ def send_map():
 
     return send_file(img_io, mimetype='image/png')
 
-
 def a_star(grid, start, end):
     path = astar(grid, start, end)
     if path:
         path_json = json.dumps({'path': path})
         return path_json
     
+def send_biom_data(eva):
+    heart_rate = random.randint(70,104)
+    systolic_pressure = random.randint(90,140)
+    diastolic_pressure = random.randint(60,90)
+    breathing_rate = random.randint(12,20)
+    body_temperature = random.uniform(97.7,99.5)
+
+    data = request.args.get('datatype', '').split(",")
+
+    biometric_data = {'eva': eva}
+
+    if 'heart_rate' in data:
+        biometric_data['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
+    if 'blood_pressure' in data:
+        biometric_data['blood_pressure'] = {'value': systolic_pressure + "/" + diastolic_pressure, 'unit': 'mm Hg'}
+    if 'breathing_rate' in data:
+        biometric_data['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
+    if 'body_temperature' in data:
+        biometric_data['body_temperature'] = {'value': body_temperature, 'unit': '°F'}
+
+    return jsonify(biometric_data)
