@@ -22,8 +22,8 @@ Thank you for reading!
 
 ## :rocket: About the App
 
+- Docs can be found at: https://tclmcc.gitbook.io/docs/
 - You can try the LMCC App by running the development environments found in the [Usage](#earth_americas-usage) section below.
-- Documentation can be found at [Team Cartographer SUITS24 LMCC App Documentation](https://drive.google.com/drive/folders/1yhpCCvDxDdY3s0cky-qRmtXiPUFmtyzn?usp=sharing)
 - This app runs concurrently with the [SUITS 2024 TSS Server](https://github.com/SUITS-Techteam/TSS_2024). Please set this up to run the app, or make sure you have another computer available with a server to use that (learn more [here](#local-and-external-server-information))
 - more coming soon!<br><br>
 

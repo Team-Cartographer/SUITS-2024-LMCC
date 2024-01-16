@@ -1,3 +1,4 @@
+from os import mkdir
 from re import match
 from urllib.parse import urlparse
 from json import dump, load
@@ -5,14 +6,15 @@ from pathlib import Path
 from requests import get, ConnectionError, Timeout
 from time import sleep
 
-TSS_PATH = Path(__file__).parent / 'tss_data.json'
-LMCC_PATH = Path(__file__).parent.parent.parent / 'client' / 'lmcc_config.json'
+SERVER_PATH = Path(__file__).parent.parent
+TSS_PATH = SERVER_PATH / 'config' / 'tss_data.json'
+LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
 
 
 def save_lmcc_to_json():
     import socket
     ip = socket.gethostbyname(socket.gethostname())
-    data = { "lmcc_url": f'http://{ip}:3001' }
+    data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100 }
     with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)
 
@@ -64,6 +66,15 @@ def check_tss_url(url: str):
         print(f'\ncould not connect to tss server at {url}. please make sure it is active')
         print(f'if you need to change the url, do so in {TSS_PATH}\n')
         exit(2)
+
+def configure_data():
+    data_path = SERVER_PATH / 'data'
+    rockyard_path = data_path / 'rockyard.geojson'
+    if not data_path.exists():
+        mkdir(data_path)
+    
+    with open(rockyard_path, 'w') as rockyard:
+        dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
            
 
 def setup():
@@ -72,6 +83,7 @@ def setup():
         if check_local_tss.strip().upper() == 'Y':
             get_tss_url()
             save_lmcc_to_json()
+            configure_data()
             exit(0)
         elif check_local_tss.strip().upper() == 'N':
             print('done!')

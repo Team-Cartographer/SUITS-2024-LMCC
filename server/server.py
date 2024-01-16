@@ -6,9 +6,14 @@ from flask_cors import CORS
 from routes.tss import tss
 from routes.tests import tests
 from routes.mission import mission
+from api.api import api
+
+# OTHER IMPORTS
+import logging
 
 # server app instance
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
 
 # allows inter-process communications 
 # (do this for all Blueprint Pages)
@@ -16,12 +21,13 @@ CORS(app)
 CORS(tss)
 CORS(tests)
 CORS(mission)
-
+CORS(api)
 
 # register server subdirs
 app.register_blueprint(tss, url_prefix="/tss")
 app.register_blueprint(tests, url_prefix="/tests")
 app.register_blueprint(mission, url_prefix='/mission')
+app.register_blueprint(api, url_prefix='/api')
 
 # default routing 
 @app.route('/')
@@ -33,6 +39,14 @@ def home():
 def page_not_found(_):
     return render_template('404.html'), 404
 
+
 # run app at http://localhost:3001/
-if __name__ == "__main__": 
-    app.run(debug=True, host='0.0.0.0', port=3001)
+if __name__ == "__main__":
+    # set to "False" and restart server to see all HTTP requests 
+    log.disabled = False
+
+    app.run(
+        debug=False, 
+        host='0.0.0.0', 
+        port=3001
+    )
