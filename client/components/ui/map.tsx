@@ -99,6 +99,11 @@ const Map = () => {
             setErr(error.message);
             console.error('Error updating image:', error);
         }
+        if (action === "add"){
+            console.log(`updated Map image by adding pins at ${pins}`) 
+        } else {
+            console.log(`updated Map image by removing pins at ${pins}`) 
+        }
     };
 
     if(err) {

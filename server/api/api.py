@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
-from . import GET_helpers as gh
-from . import POST_helpers as ph
+from . import getters as gh
+from . import posters as ph
 
 api = Blueprint('api', __name__)
 CORS(api)
