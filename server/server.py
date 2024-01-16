@@ -8,8 +8,12 @@ from routes.tests import tests
 from routes.mission import mission
 from api.api import api
 
+# OTHER IMPORTS
+import logging
+
 # server app instance
 app = Flask(__name__)
+log = logging.getLogger('werkzeug')
 
 # allows inter-process communications 
 # (do this for all Blueprint Pages)
@@ -37,7 +41,10 @@ def page_not_found(_):
 
 
 # run app at http://localhost:3001/
-if __name__ == "__main__": 
+if __name__ == "__main__":
+    # set to "False" and restart server to see all HTTP requests 
+    log.disabled = False
+
     app.run(
         debug=False, 
         host='0.0.0.0', 
