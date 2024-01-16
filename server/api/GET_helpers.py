@@ -1,6 +1,6 @@
 # all GET request helpers go in here
 from PIL import Image, ImageDraw
-from ..functions import astar
+from .functions import astar
 from flask import send_file
 from pathlib import Path
 import json
