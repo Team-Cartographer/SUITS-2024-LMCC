@@ -14,7 +14,7 @@ LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
 def save_lmcc_to_json():
     import socket
     ip = socket.gethostbyname(socket.gethostname())
-    data = { "lmcc_url": f'http://{ip}:3001' }
+    data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100 }
     with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)
 

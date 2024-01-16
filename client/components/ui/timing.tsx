@@ -9,6 +9,7 @@
 import React, { useEffect, useState } from "react";
 import Clock from "react-live-clock";
 import { fetchWithoutParams } from "@/api/fetchServer";
+import lmcc_config from "@/lmcc_config.json"
 
 const formatTime = (seconds: number) => {
   const hours = Math.floor(seconds / 3600);
@@ -39,7 +40,7 @@ const MissionStopwatch = () => {
           } catch (error) {
               console.error('Error fetching eva_time:', error);
           }
-      }, 1000);
+      }, lmcc_config.tickspeed);
 
       return () => clearInterval(interval);
   }, []);

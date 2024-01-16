@@ -2,6 +2,7 @@
 
 import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
+import lmcc_config from "@/lmcc_config.json"
 
 interface GeoJSONFeature {
     type: 'Feature';
@@ -32,7 +33,7 @@ const Map = () => {
         const interval = setInterval(() => {
             fetchImage();
             fetchGeoJSONPoints();
-        }, 100); 
+        }, lmcc_config.tickspeed); 
         return () => {
             clearInterval(interval);
         };
