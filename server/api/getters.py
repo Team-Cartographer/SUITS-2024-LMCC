@@ -20,8 +20,6 @@ def send_map_info():
         data = json.load(json_file)
     return data 
 
-    
-
 def send_map():
     map_path = SERVER_DIR / 'images' / 'rockYardMap.png'
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
@@ -47,10 +45,20 @@ def send_map():
 
     return send_file(img_io, mimetype='image/png')
 
-
 def a_star(grid, start, end):
     path = astar(grid, start, end)
     if path:
         path_json = json.dumps({'path': path})
         return path_json
     
+def send_heart_rate():
+    pass
+
+def send_blood_pressure():
+    pass
+
+def send_breathing_rate():
+    pass
+
+def send_body_temperature():
+    pass

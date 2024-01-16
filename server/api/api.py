@@ -74,6 +74,14 @@ def handle_GET_args(args: dict):
         return gh.send_map_info()
     elif get_arg('get', args) == 'astar':
         return gh.a_star()
+    elif get_arg('get', args) == "heart_rate":
+        return gh.send_heart_rate()
+    elif get_arg('get', args) == "blood_pressure":
+        return gh.send_blood_pressure()
+    elif get_arg('get', args) == "breathing_rate":
+        return gh.send_breathing_rate()
+    elif get_arg('get', args) == "body_temperature":
+        return gh.send_body_temperature()
     else: 
         return jsonify({
             'error': 'args were invalid'
