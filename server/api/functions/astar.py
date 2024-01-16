@@ -1,6 +1,6 @@
 import numpy as np
 import heapq
-from imaging import draw_path_image
+from .imaging import draw_path_image
 
 class Node:
     def __init__(self, parent=None, position=None):
