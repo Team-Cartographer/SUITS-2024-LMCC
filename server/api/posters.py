@@ -1,21 +1,40 @@
 # all POST request helpers go in here
+from flask import jsonify
 from pathlib import Path
 import json
 from .utils import image_coords_to_lat_lon
 
-SERVER_DIR = Path(__file__).parent.parent 
+# Path to the `./server` Directory
+SERVER_DIR: Path = Path(__file__).parent.parent 
 
 
+def update_geojson(args: dict, add: bool=True) -> "json":
+    """
+    Updates a GeoJSON file based on the provided arguments to either add or remove pins.
 
-def get_arg(key, args_dict):
-    if key in args_dict.keys():
-        return args_dict.get(key)
-    else:
-        raise ValueError('Improper Args were Provided')
+    This function takes a dictionary of arguments and a boolean flag. It modifies a GeoJSON 
+    file located at a predefined server directory. The function supports adding or removing 
+    pins based on the boolean flag 'add'. When 'add' is True, pins are added; otherwise, pins 
+    are removed.
 
+    Parameters:
+    - args (dict): A dictionary containing the following keys:
+        - 'pins' (list of str): A list of pins to add or remove. Each pin is a string in 
+          the format 'x_coordx y_coord'.
+        - 'dimensions' (list of int): Optional. A list containing two integers [height, width] 
+          representing the dimensions of the image associated with the GeoJSON file. If not 
+          provided, default values of 1024 for height and 815 for width are used.
+    - add (bool, optional): A flag to determine if pins are to be added (True) or removed (False). 
+      Defaults to True.
 
+    The function reads the existing GeoJSON file, updates it based on the provided arguments, 
+    and writes back the changes. It also returns a JSON response indicating the update status.
 
-def update_geojson(args: dict, add: bool=True):
+    Returns:
+    - A JSON response object with the key 'update_status' set to 'OK' indicating the update 
+      was successful.
+    """
+
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
 
     pins = args.get('pins', [])
@@ -37,8 +56,6 @@ def update_geojson(args: dict, add: bool=True):
     if not add:
         for pin in pins: 
             history = [item for item in history if item != pin]
-            with open('temp.txt', 'w') as f:
-                f.writelines(history)
 
         updated_features = []
         for i, item in enumerate(history): 
@@ -85,7 +102,9 @@ def update_geojson(args: dict, add: bool=True):
     with open(geojson_path, 'w') as file:
         json.dump(geojson_data, file, indent=4)
 
-    return {'update_status': 'OK'}
+    return jsonify({
+        'update_status': 'OK'
+        })
 
 
 

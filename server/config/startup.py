@@ -11,7 +11,10 @@ TSS_PATH = SERVER_PATH / 'config' / 'tss_data.json'
 LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
 
 
-def save_lmcc_to_json():
+def save_lmcc_to_json() -> None:
+    """
+    Saves the URL of the LMCC Server into `LMCC_PATH` to be used by the Client
+    """
     import socket
     ip = socket.gethostbyname(socket.gethostname())
     data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100 }
@@ -19,7 +22,11 @@ def save_lmcc_to_json():
         dump(data, file, indent=4)
 
 
-def save_tss_to_json(url: str):
+def save_tss_to_json(url: str) -> None:
+    """
+    Saves the URL, HOST, and PORT of the `TSS` Server to be used by the Server 
+    into a file at `TSS_PATH`
+    """
     parsed_url = urlparse(url)
     host = parsed_url.hostname
     port = parsed_url.port
@@ -36,7 +43,42 @@ def save_tss_to_json(url: str):
     sleep(1)
 
 
-def get_tss_url():
+def check_tss_url(url: str):
+    """
+    Checks the connectivity to the TSS server using the provided URL.
+
+    Tries to connect to the TSS server. If successful, prints a success message. 
+    If it fails due to connection errors or timeouts, it prints an error message 
+    and advises on how to change the URL in TSS_PATH.
+
+    Parameters:
+    - url (str): The URL of the TSS server to test.
+
+    Note:
+    - Exits the program with exit code 2 on failure to connect.
+    """
+    try:
+        response = get(url, timeout=1)
+        if response.status_code == 200:
+            print('\ntss server connection successful!')
+    except (ConnectionError, Timeout):
+        print(f'\ncould not connect to tss server at {url}. please make sure it is active')
+        print(f'if you need to change the url, do so in {TSS_PATH}\n')
+        exit(2)
+
+
+def get_tss_url() -> None:
+    """
+    The function first checks if the TSS_PATH exists and reads the TSS URL from it. It then 
+    validates the URL using 'check_tss_url'. If TSS_PATH doesn't exist or is invalid, it prompts 
+    the user to enter the TSS URL in a specific format (http://<ip>:<port>) and validates it. 
+    Upon successful validation, the URL is saved and the function completes.
+
+    The URL format is validated against a pattern to ensure it follows the format:
+    'http://<ip_address>:14141/'. The IP address should be a valid IPv4 address.
+
+    Returns None.
+    """
     if TSS_PATH.exists():
         with open(TSS_PATH, "r") as json_file:
             tss_data = load(json_file)
@@ -57,17 +99,14 @@ def get_tss_url():
             break
 
 
-def check_tss_url(url: str):
-    try:
-        response = get(url, timeout=1)
-        if response.status_code == 200:
-            print('\ntss server connection successful!')
-    except (ConnectionError, Timeout):
-        print(f'\ncould not connect to tss server at {url}. please make sure it is active')
-        print(f'if you need to change the url, do so in {TSS_PATH}\n')
-        exit(2)
-
 def configure_data():
+    """
+    Configures data directories and files for the server.
+
+    Creates a 'data' directory and a 'rockyard.geojson' file in the server path 
+    if they don't exist. Initializes 'rockyard.geojson' with an empty GeoJSON 
+    feature collection.
+    """
     data_path = SERVER_PATH / 'data'
     rockyard_path = data_path / 'rockyard.geojson'
     if not data_path.exists():
@@ -78,6 +117,14 @@ def configure_data():
            
 
 def setup():
+    """
+    Sets up the application environment based on user input.
+
+    Prompts the user to decide if they want to run the app components on their 
+    machine. If 'Yes', it proceeds to configure the TSS URL, save LMCC data, 
+    and configure data files. Exits with code 0 on success. If 'No', exits with 
+    code 1. Continues to prompt until a valid response is provided.
+    """
     while True: 
         check_local_tss = input('do you want to run the app (frontend, server, TSS) on your machine? (Y/n): ')
         if check_local_tss.strip().upper() == 'Y':
@@ -92,5 +139,6 @@ def setup():
             continue
             
 
+# Run the Program
 if __name__ == "__main__":
     setup()

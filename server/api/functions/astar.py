@@ -2,6 +2,14 @@ import numpy as np
 import heapq
 from .imaging import draw_path_image
 
+"""
+Just an fyi, this version of A* will not work for what we want! I ran into this same issue for the adc. It works for 2 dimensions
+of evenly spaced nodes, however when a third dimension is added and the nodes are no longer evenly spaced, the algorithm can not know
+which nodes are its "neighbors" and must be fed that information. Luckily, I already solved this problem in the ADC, however I will
+not be able to modify that code and add it to this new implementation until I have a list and format of the data. @ me for more questions
+    -JL
+"""
+
 class Node:
     def __init__(self, parent=None, position=None):
         self.parent = parent

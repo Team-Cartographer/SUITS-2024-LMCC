@@ -1,7 +1,20 @@
+from typing import Any
 from PIL import Image, ImageDraw
 
 
-def draw_path_image(grid, path, start, end):
+def draw_path_image(grid: Any, path: list[tuple[int, int]], start: tuple[int, int], end: tuple[int, int]) -> Image:
+    """
+    Creates an image representation of a path on a grid.
+
+    Parameters:
+    - grid (Any): A 2D array-like structure representing the grid with weightings at each node.
+    - path (list[tuple[int, int]]): A list of tuples representing the coordinates of the path on the grid.
+    - start (tuple[int, int]): A tuple representing the starting coordinate on the grid.
+    - end (tuple[int, int]): A tuple representing the end coordinate on the grid.
+
+    Returns:
+    - An Image object representing the grid with the path, start point, and end point visually marked.
+    """
     scale = 20  # Increase the scaling factor for a higher definition image if needed
     img = Image.new("RGB", (grid.shape[1] * scale, grid.shape[0] * scale), "white")
     draw = ImageDraw.Draw(img)
