@@ -1,4 +1,5 @@
 # all POST request helpers go in here
+from flask import jsonify
 from pathlib import Path
 import json
 from .utils import image_coords_to_lat_lon
@@ -37,8 +38,6 @@ def update_geojson(args: dict, add: bool=True):
     if not add:
         for pin in pins: 
             history = [item for item in history if item != pin]
-            with open('temp.txt', 'w') as f:
-                f.writelines(history)
 
         updated_features = []
         for i, item in enumerate(history): 
@@ -85,7 +84,9 @@ def update_geojson(args: dict, add: bool=True):
     with open(geojson_path, 'w') as file:
         json.dump(geojson_data, file, indent=4)
 
-    return {'update_status': 'OK'}
+    return jsonify({
+        'update_status': 'OK'
+        })
 
 
 
