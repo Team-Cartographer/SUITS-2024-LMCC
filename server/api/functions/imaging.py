@@ -1,7 +1,8 @@
+from typing import Any
 from PIL import Image, ImageDraw
 
 
-def draw_path_image(grid, path, start, end):
+def draw_path_image(grid: Any, path: list[tuple[int, int]], start: tuple[int, int], end: tuple[int, int]) -> Image:
     scale = 20  # Increase the scaling factor for a higher definition image if needed
     img = Image.new("RGB", (grid.shape[1] * scale, grid.shape[0] * scale), "white")
     draw = ImageDraw.Draw(img)
