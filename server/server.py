@@ -1,3 +1,30 @@
+"""
+A Flask web server application for handling various routes and APIs.
+
+This module sets up a Flask application with Cross-Origin Resource Sharing (CORS) enabled. 
+It imports and registers multiple Blueprints for different routes, each handling specific 
+functionalities:
+
+- 'tss': Routes for accessing Traffic Signalling System (TSS) data.
+- 'tests': Routes for basic testing of the server.
+- 'mission': Routes for mission-related data.
+- 'api': General API routes.
+
+Additionally, the application is configured to serve a directory page at the root ('/') 
+and a custom 404 error page.
+
+Key Features:
+- Flask application instance creation.
+- CORS enabled for inter-process communication.
+- Blueprint registration with specific URL prefixes.
+- Default and error routing with HTML templates.
+- Running the app on localhost at port 3001.
+
+Logging for HTTP requests is configurable and can be disabled for cleaner output during development.
+
+The application is intended to be run from the command line, where it listens on '0.0.0.0' at port 3001.
+"""
+
 # FLASK IMPORTS 
 from flask import Flask, render_template
 from flask_cors import CORS
