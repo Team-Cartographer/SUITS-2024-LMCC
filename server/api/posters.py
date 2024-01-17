@@ -8,7 +8,7 @@ from .utils import image_coords_to_lat_lon
 SERVER_DIR: Path = Path(__file__).parent.parent 
 
 
-def update_geojson(args: dict, add: bool=True):
+def update_geojson(args: dict, add: bool=True) -> "json":
     """
     Updates a GeoJSON file based on the provided arguments to either add or remove pins.
 
