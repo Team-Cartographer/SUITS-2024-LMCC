@@ -1,3 +1,8 @@
+"""
+This module has a sole purpose of opening the 3 pages (TSS, LMCC Server, LMCC Frontend) 
+in the User's Default Web Browser. Nothing else. 
+"""
+
 import webbrowser
 from pathlib import Path
 from json import load
