@@ -10,12 +10,6 @@ import random
 
 SERVER_DIR = Path(__file__).parent.parent 
 
-def get_arg(key, args_dict):
-    if key in args_dict.keys():
-        return args_dict.get(key)
-    else:
-        raise ValueError('Improper Args were Provided')
-    
 def send_map_info():
     mapping_json_path = SERVER_DIR / 'data' / 'rockyard.geojson'
     with open(mapping_json_path, 'r') as json_file:
