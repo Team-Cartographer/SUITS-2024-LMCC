@@ -51,7 +51,7 @@ const StartPage = () => {
     <div className="h-full flex flex-col bg-slate-950 text-white items-center justify-center">
       <div className="flex flex-row pb-2 text-3xl font-bold items-center">
         <Image src={icon} alt="logo" width={65} height={65} className="pr-5" />
-        Team Cartographer SUITS 2024 LMCC Console - Test
+        Team Cartographer SUITS 2024 LMCC Console
       </div>
 
       <div className="pt-2">
