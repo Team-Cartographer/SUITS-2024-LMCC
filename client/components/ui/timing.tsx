@@ -29,21 +29,26 @@ const MissionClock = () => {
 
 const MissionStopwatch = () => {
   const [formattedTime, setFormattedTime] = useState("00:00:00");
+  // ... (other state variables)
 
   useEffect(() => {
       const interval = setInterval(async () => {
           try {
               const data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry');
-              if (data?.telemetry?.eva_time !== undefined) {
-                  setFormattedTime(formatTime(data.telemetry.eva_time));
+              const evaTime = data?.telemetry?.eva_time;
+
+              if (evaTime !== undefined) {
+                  console.log("EVA Time:", evaTime);  // Log the EVA time to the console
+
+                  
               }
           } catch (error) {
-              console.error('Error fetching eva_time:', error);
+              console.error('Error fetching eva_time:', error); // Error check 
           }
       }, lmcc_config.tickspeed);
 
       return () => clearInterval(interval);
-  }, []);
+  }, [/* dependencies */]);
 
   return (
       <div className="flex flex-row">
@@ -53,6 +58,7 @@ const MissionStopwatch = () => {
       </div>
   );
 };
+
 
 const Timers = () => {
   return (
@@ -69,5 +75,6 @@ const Timers = () => {
     </div>
   );
 };
+
 
 export default Timers;
