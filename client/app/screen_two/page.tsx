@@ -1,22 +1,47 @@
-"use client";
+// ./app/screen_two/page.tsx
+'use client';
 
-/**
- * @author @abhi-arya1
- * @function TelemetryPage
- * @fileoverview Coming once all "TODO:" are complete
- */
+import React from 'react';
+import YouTube, { Options } from 'react-youtube';
 
-import Map from "@/components/ui/map";
+// Traditional React component with client-specific features
+const ClientTelemetryPage: React.FC = () => {
+  const liveStreamURL = 'https://www.youtube.com/watch?v=NfcLKjFB59o'; // Replace with your YouTube video URL
 
+  // Function to get video ID from YouTube URL
+  const getVideoId = (url: string): string => {
+    const match = url.match(/[?&]v=([^?&]+)/);
+    return match ? match[1] : '';
+  };
 
-function TelemetryPage() {
-  
-  //TODO: finish second page
+  const videoId = getVideoId(liveStreamURL);
+
+  if (!videoId) {
+    console.error('Invalid YouTube URL');
+    return null;
+  }
+
+  const opts: Options = {
+    height: '100%',
+    width: '100%',
+    playerVars: {
+      autoplay: 1,
+    },
+  };
+
   return (
-    <div className="h-full flex flex-row gap-x-4 items-center justify-center">
-      <Map />
+    <div className="h-screen flex flex-row gap-x-4 items-center justify-center">
+      {/* Embed the YouTube video player */}
+      <YouTube videoId={videoId} opts={opts} />
     </div>
   );
+};
+
+// React Server Component
+function TelemetryPage() {
+  // TODO: Finish the second page
+
+  return <ClientTelemetryPage />;
 }
 
 export default TelemetryPage;
