@@ -22,17 +22,26 @@ const ClientTelemetryPage: React.FC = () => {
   }
 
   const opts: Options = {
-    height: '100%',
-    width: '100%',
+    height: '100%', // Reverted back to the previous height
+    width: '100%', // Reverted back to the previous width
     playerVars: {
       autoplay: 1,
     },
   };
 
   return (
-    <div className="h-screen flex flex-row gap-x-4 items-center justify-center">
-      {/* Embed the YouTube video player */}
-      <YouTube videoId={videoId} opts={opts} />
+    <div className="h-screen flex flex-row items-center justify-center">
+      {/* Stylish border around the YouTube video player */}
+      <div style={{ border: '2px solid #3498db', borderRadius: '10px', overflow: 'hidden', textAlign: 'center' }}>
+        {/* Embed the YouTube video player */}
+        <YouTube videoId={videoId} opts={opts} />
+      </div>
+
+      {/* Additional text with styling */}
+      <div className="text-white text-lg ml-4 text-center">
+        <p>Rover live stream.</p>
+        <p>- Work in progress by Isaiah Ramos</p>
+      </div>
     </div>
   );
 };
