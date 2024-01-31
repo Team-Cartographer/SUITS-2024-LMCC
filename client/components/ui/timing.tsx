@@ -34,14 +34,12 @@ const MissionStopwatch = () => {
   useEffect(() => {
       const interval = setInterval(async () => {
           try {
-              const data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry');
-              const evaTime = data?.telemetry?.eva_time;
-
-              if (evaTime !== undefined) {
-                  console.log("EVA Time:", evaTime);  // Log the EVA time to the console
-
-                  
-              }
+              const data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry'); //fetch mission elapsed time
+              if (data?.telemetry?.eva_time !== undefined) {
+                console.log(data.telemetry.eva_time)
+                setFormattedTime(formatTime(data.telemetry.eva_time));
+            }
+              
           } catch (error) {
               console.error('Error fetching eva_time:', error); // Error check 
           }
@@ -51,6 +49,8 @@ const MissionStopwatch = () => {
   }, [/* dependencies */]);
 
   return (
+   
+     
       <div className="flex flex-row">
           <div className="text-4xl font-semibold mb-4 absolute pt-0">
               {formattedTime}
