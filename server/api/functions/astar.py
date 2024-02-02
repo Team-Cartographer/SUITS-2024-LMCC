@@ -1,7 +1,14 @@
 import numpy as np
 import heapq
-from PIL import Image, ImageDraw
+from .imaging import draw_path_image
 
+"""
+Just an fyi, this version of A* will not work for what we want! I ran into this same issue for the adc. It works for 2 dimensions
+of evenly spaced nodes, however when a third dimension is added and the nodes are no longer evenly spaced, the algorithm can not know
+which nodes are its "neighbors" and must be fed that information. Luckily, I already solved this problem in the ADC, however I will
+not be able to modify that code and add it to this new implementation until I have a list and format of the data. @ me for more questions
+    -JL
+"""
 
 class Node:
     def __init__(self, parent=None, position=None):
@@ -84,30 +91,6 @@ def create_random_test_grid(grid_size):
     
     return (grid, start, end)
 
-
-def draw_path_image(grid, path, start, end):
-    scale = 20  # Increase the scaling factor for a higher definition image if needed
-    img = Image.new("RGB", (grid.shape[1] * scale, grid.shape[0] * scale), "white")
-    draw = ImageDraw.Draw(img)
-
-
-    # Draw the grid (with node weightings)
-    for y in range(grid.shape[0]):
-        for x in range(grid.shape[1]):
-            color = int(255 - grid[y][x] * 255 / 9)  # Darker for higher values
-            draw.rectangle([x*scale, y*scale, (x+1)*scale-1, (y+1)*scale-1], fill=(color, color, color))
-
-
-    # Draw the found path
-    for position in path:
-        x, y = position
-        draw.rectangle([x*scale, y*scale, (x+1)*scale-1, (y+1)*scale-1], fill="#89A1EF")
-
-    # Draw the start and end points in green and red, respectively
-    draw.rectangle([start[1]*scale, start[0]*scale, (start[1]+1)*scale-1, (start[0]+1)*scale-1], fill="green")
-    draw.rectangle([end[1]*scale, end[0]*scale, (end[1]+1)*scale-1, (end[0]+1)*scale-1], fill="red")
-
-    return img
 
 
 if __name__ == "__main__":

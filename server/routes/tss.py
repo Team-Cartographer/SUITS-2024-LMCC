@@ -1,3 +1,23 @@
+"""
+Establishes a Flask Blueprint 'tss' for accessing data from a Traffic Signalling System (TSS).
+
+This module creates a Flask Blueprint named 'tss', enabling Cross-Origin Resource Sharing (CORS). 
+It reads TSS configuration from 'config/tss_data.json' and defines several routes to fetch different 
+types of data from the TSS server:
+
+Routes:
+- '/info': Returns TSS configuration data.
+- '/telemetry': Fetches and returns telemetry data for team 1 from 'TELEMETRY.json'.
+- '/completed_telemetry': Fetches and returns completed telemetry data for team 1 from 'Completed_TELEMETRY.json'.
+- '/eva_info': Fetches and returns EVA (Extravehicular Activity) information for team 1 from 'EVA.json'.
+- '/completed_eva': Fetches and returns completed EVA data for team 1 from 'Completed_EVA.json'.
+- '/rockdata': Fetches and returns rock data from 'RockData.json'.
+
+Each route makes a GET request to the specified TSS server endpoint and returns the data in JSON format.
+
+The module uses the 'requests' library for HTTP requests and Flask's Blueprint to define the routes.
+"""
+
 from flask import Blueprint
 from flask_cors import CORS
 from requests import get
