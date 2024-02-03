@@ -60,7 +60,6 @@ def send_biom_data(eva):
     biometric_data = {
         'eva': eva,
         'data': {   
-
         }
     }
 
