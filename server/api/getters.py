@@ -73,4 +73,7 @@ def send_biom_data(eva):
     if 'body_temperature' in data:
         biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': '°F'}
 
-    return jsonify(biometric_data)
+    formatted = json.loads(biometric_data)
+    return json.dumps(formatted, indent = 2, sort_keys = False)
+
+    # return jsonify(biometric_data)
