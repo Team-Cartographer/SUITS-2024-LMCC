@@ -6,7 +6,7 @@ import YouTube, { Options } from 'react-youtube';
 
 // Traditional React component with client-specific features
 const ClientTelemetryPage: React.FC = () => {
-  const liveStreamURL = 'https://www.youtube.com/watch?v=NfcLKjFB59o'; // Replace with your YouTube video URL
+  const liveStreamURL = 'https://www.youtube.com/watch?v=NfcLKjFB59o'; // Replace with rover live stream URL when available
 
   // Function to get video ID from YouTube URL
   const getVideoId = (url: string): string => {
@@ -22,8 +22,8 @@ const ClientTelemetryPage: React.FC = () => {
   }
 
   const opts: Options = {
-    height: '100%', // Reverted back to the previous height
-    width: '100%', // Reverted back to the previous width
+    height: '100%', // Media player height
+    width: '100%', // Media player width
     playerVars: {
       autoplay: 1,
     },
@@ -33,7 +33,7 @@ const ClientTelemetryPage: React.FC = () => {
     <div className="h-screen flex flex-row items-center justify-center">
       {/* Stylish border around the YouTube video player */}
       <div style={{ border: '2px solid #3498db', borderRadius: '10px', overflow: 'hidden', textAlign: 'center' }}>
-        {/* Embed the YouTube video player */}
+        {/* Embed the YouTube video player, saying error but not causing anything bad*/}
         <YouTube videoId={videoId} opts={opts} />
       </div>
 
