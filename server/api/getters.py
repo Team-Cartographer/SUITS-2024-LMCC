@@ -58,12 +58,9 @@ def send_biom_data(eva):
     data = request.args.get('datatype', '').split(",")
 
     biometric_data = {
-        'eva': eva, 
-        'data': {
-            'heart_rate': {},
-            'blood_pressure': {},
-            'breathing_rate': {},
-            'body_temperature': {},
+        'eva': eva,
+        'data': {   
+            
         }
     }
 
