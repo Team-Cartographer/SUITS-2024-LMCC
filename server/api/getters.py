@@ -48,6 +48,7 @@ def a_star(grid, start, end):
         return path_json
     
 def send_biom_data(eva):
+    
     heart_rate = random.randint(70,104)
     systolic_pressure = random.randint(90,140)
     diastolic_pressure = random.randint(60,90)
@@ -56,12 +57,20 @@ def send_biom_data(eva):
 
     data = request.args.get('datatype', '').split(",")
 
-    biometric_data = {'eva': eva, 'data': {}}
+    biometric_data = {
+        'eva': eva, 
+        'data': {
+            'heart_rate': {},
+            'blood_pressure': {},
+            'breathing_rate': {},
+            'body_temperature': {},
+        }
+    }
 
     if 'heart_rate' in data:
         biometric_data['data']['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
     if 'blood_pressure' in data:
-        biometric_data['data']['blood_pressure'] = {'value': systolic_pressure + '/' + diastolic_pressure, 'unit': 'mm Hg'}
+        biometric_data['data']['blood_pressure'] = {'value': str(systolic_pressure) + '/' + str(diastolic_pressure), 'unit': 'mm Hg'}
     if 'breathing_rate' in data:
         biometric_data['data']['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
     if 'body_temperature' in data:
