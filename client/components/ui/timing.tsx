@@ -84,7 +84,7 @@ const UIAStopwatch = () => {
    
      
       <div className="flex flex-col">
-          <div className="text-1xl font-semibold mb-1 absolute pb-0">
+          <div className="text-2xl font-semibold mb-1 absolute pb-0">
               {formattedTime}
           </div>
       </div>
@@ -119,7 +119,7 @@ const SpecStopwatch = () => {
    
      
       <div className="flex flex-row">
-          <div className="text-1xl font-semibold mb-4 absolute pt-0">
+          <div className="text-2xl font-semibold mb-4 absolute pt-0">
               {formattedTime}
           </div>
       </div>
@@ -152,7 +152,7 @@ const RoverStopwatch = () => {
    
      
       <div className="flex flex-row">
-          <div className="text-1xl font-semibold mb-4 absolute pt-0">
+          <div className="text-2xl font-semibold mb-4 absolute pt-0">
               {formattedTime}
           </div>
       </div>
@@ -186,7 +186,7 @@ const DCUStopwatch = () => {
    
      
       <div className="flex flex-row">
-          <div className="text-1xl font-semibold mb-4 absolute pt-0">
+          <div className="text-2xl font-semibold mb-4 absolute pt-0">
               {formattedTime}
           </div>
       </div>
@@ -212,7 +212,7 @@ const Timers = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-y-8 space-y-5 mt-20 pr-2"> 
+      <div className="flex flex-row gap-x-5 space-x-5 mt-10 pr-6"> 
         <div>
           <p className="font-bold text-md">UIA Time</p>
           <UIAStopwatch />
