@@ -48,7 +48,6 @@ def a_star(grid, start, end):
         return path_json
     
 def send_biom_data(eva):
-    
     heart_rate = random.randint(70,104)
     systolic_pressure = random.randint(90,140)
     diastolic_pressure = random.randint(60,90)
@@ -70,8 +69,6 @@ def send_biom_data(eva):
     if 'breathing_rate' in data:
         biometric_data['data']['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
     if 'body_temperature' in data:
-        biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': '°F'}
+        biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': 'F'}
 
-    return json.dumps(biometric_data, indent = 2, sort_keys = False)
-
-    # return jsonify(biometric_data)
+    return jsonify(biometric_data)
