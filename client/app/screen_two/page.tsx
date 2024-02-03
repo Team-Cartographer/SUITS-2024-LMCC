@@ -1,4 +1,5 @@
 // ./app/screen_two/page.tsx
+// Code notes by Isaiah: https://docs.google.com/document/d/17xVcVvvVmFHU4XP4ukxu7YCvT04KC2miXijcyR0V_II/edit?usp=sharing
 'use client';
 
 import React from 'react';
