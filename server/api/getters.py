@@ -54,17 +54,15 @@ def send_biom_data(eva):
     breathing_rate = random.randint(12,20)
     body_temperature = random.uniform(97.7,99.5)
 
-    data = request.args.get('datatype', '').split(",")
-
-    biometric_data = {'eva': eva}
-
-    if 'heart_rate' in data:
-        biometric_data['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
-    if 'blood_pressure' in data:
-        biometric_data['blood_pressure'] = {'value': systolic_pressure + "/" + diastolic_pressure, 'unit': 'mm Hg'}
-    if 'breathing_rate' in data:
-        biometric_data['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
-    if 'body_temperature' in data:
-        biometric_data['body_temperature'] = {'value': body_temperature, 'unit': '°F'}
+    biometric_data = {
+        'eva': eva,
+        'data': {   
+        }
+    }
+    
+    biometric_data['data']['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
+    biometric_data['data']['blood_pressure'] = {'value': str(systolic_pressure) + '/' + str(diastolic_pressure), 'unit': 'mm Hg'}
+    biometric_data['data']['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
+    biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': 'F'}
 
     return jsonify(biometric_data)
