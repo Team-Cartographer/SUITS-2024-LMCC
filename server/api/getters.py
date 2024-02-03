@@ -56,12 +56,12 @@ def send_biom_data(eva):
 
     data = request.args.get('datatype', '').split(",")
 
-    biometric_data = {'eva': eva}
+    biometric_data = {'eva': eva, 'data': {}}
 
     if 'heart_rate' in data:
         biometric_data['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
     if 'blood_pressure' in data:
-        biometric_data['blood_pressure'] = {'value': systolic_pressure + "/" + diastolic_pressure, 'unit': 'mm Hg'}
+        biometric_data['blood_pressure'] = {'value': systolic_pressure, 'unit': 'mm Hg'}
     if 'breathing_rate' in data:
         biometric_data['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
     if 'body_temperature' in data:
