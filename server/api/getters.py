@@ -59,12 +59,12 @@ def send_biom_data(eva):
     biometric_data = {'eva': eva, 'data': {}}
 
     if 'heart_rate' in data:
-        biometric_data['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
+        biometric_data['data']['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
     if 'blood_pressure' in data:
-        biometric_data['blood_pressure'] = {'value': systolic_pressure, 'unit': 'mm Hg'}
+        biometric_data['data']['blood_pressure'] = {'value': systolic_pressure + '/' + diastolic_pressure, 'unit': 'mm Hg'}
     if 'breathing_rate' in data:
-        biometric_data['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
+        biometric_data['data']['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
     if 'body_temperature' in data:
-        biometric_data['body_temperature'] = {'value': body_temperature, 'unit': '°F'}
+        biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': '°F'}
 
     return jsonify(biometric_data)
