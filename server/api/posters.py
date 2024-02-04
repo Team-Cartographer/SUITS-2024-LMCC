@@ -40,7 +40,7 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     pins = args.get('pins', [])
     dims = args.get('dimensions', [])
     if dims: 
-        height = dims[0]
+        height = dims[0] # i think this is where the issue is maybe in the system
         width = dims[1]
     else: 
         height = 1024
