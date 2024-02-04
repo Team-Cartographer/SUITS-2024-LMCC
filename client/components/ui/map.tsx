@@ -101,6 +101,7 @@ const Map = () => {
 
         fetchGeoJSONPoints();
 
+        // This looks whether the click was within a pixel radius of size "tolerance" to another point (defined on line 95). 
         const nearPoint = points.find(point => {
             const [pointX, pointY] = point.properties.description.split('x').map(Number);
             const isNearPoint = (Math.abs(x - pointX) <= tolerance) && (Math.abs(y - pointY) <= tolerance);
