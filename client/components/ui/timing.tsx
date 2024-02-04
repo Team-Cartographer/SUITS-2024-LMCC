@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * @author @abhi-arya1, adyxn
- *  * @function Timers
+ * @author @abhi-arya1, @adyxn
+ * @function Timers
  */
 
 import React, { useEffect, useState } from "react";

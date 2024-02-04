@@ -1,8 +1,16 @@
 "use client";
 
+/**
+ * @author @abhi-arya1
+ * @function Map
+ * The minimap component for the LMCC console. 
+ */
+
 import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
+
+// Note that all scaling must be based off of 1024x815 dimensions!
 
 const SCALING_FACTOR = 0.5 // Map Scaling Factor
 const MAP_HEIGHT = 815 * SCALING_FACTOR // Scaled by 1/2
