@@ -40,6 +40,7 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     pins = args.get('pins', [])
     dims = args.get('dimensions', [])
     if dims: 
+        print(dims)
         height = dims[0]
         width = dims[1]
     else: 

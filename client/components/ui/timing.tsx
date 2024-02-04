@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * @author @abhi-arya1, adyxn
- *  * @function Timers
+ * @author @abhi-arya1, @adyxn
+ * @function Timers
  */
 
 import React, { useEffect, useState } from "react";
@@ -198,7 +198,7 @@ const DCUStopwatch = () => {
 
 const Timers = () => {
   return (                                             //main container for overall layout
-    <div className="flex flex-col pt-2 pl-2 gap-y-3">
+    <div className="flex flex-col pt-2 pl-2 gap-y-3 pr-3">
       
       <div className="flex flex-row pl-2 gap-x-6">
         <div className="flex flex-col">
@@ -214,7 +214,7 @@ const Timers = () => {
 
       <div className="flex flex-row gap-x-5 space-x-5 mt-10 pr-6"> 
         <div>
-          <p className="font-bold text-md">UIA Time</p>
+          <p className="font-bold text-md pr-3">UIA Time</p>
           <UIAStopwatch />
         </div>
         <div>
