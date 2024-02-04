@@ -14,6 +14,9 @@ const MAP_WIDTH = 1024 * SCALING_FACTOR // Scaled by 1/2
     and multiply the rect height, width, and x, y in const handleImageClick(); 
 */
 
+
+// Gets feature information for GeoJSON files 
+// if you need more than this to be typed, just add it here
 interface GeoJSONFeature {
     type: 'Feature';
     geometry: {
@@ -26,16 +29,19 @@ interface GeoJSONFeature {
     };
 }
 
+// Gets GeoJSON interface type hinting
 interface GeoJSON {
     type: 'FeatureCollection';
     features: GeoJSONFeature[];
 }
 
+// Map Component
 const Map = () => {
-    const [mapImage, setMapImage] = useState('');
-    const [err, setErr] = useState('');
-    const [points, setPoints] = useState<GeoJSONFeature[]>([])
+    const [mapImage, setMapImage] = useState(''); // URL to Map Image
+    const [err, setErr] = useState(''); // Potential Error in getting Map
+    const [points, setPoints] = useState<GeoJSONFeature[]>([]) // Set of points to have from the map
 
+    // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
         fetchImage();
         fetchGeoJSONPoints();
@@ -49,6 +55,8 @@ const Map = () => {
         };
     }, []);
 
+
+    // Fetches the current GeoJSON points and sets them to the state 
     const fetchGeoJSONPoints = async () => {
         const data = await fetchWithoutParams<GeoJSON>('api/v0?get=map_info');
         if (data && data.features) {
@@ -56,7 +64,7 @@ const Map = () => {
         }
     };
 
-
+    // Fetches the current map image and sets them to the URL state, checking for errors
     const fetchImage = async () => {
         try {
             const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
@@ -73,11 +81,13 @@ const Map = () => {
         }
     }
 
+    // Checks if the image was clicked, and whether that click was/wasn't near an existing point
     const handleImageClick = async (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         const target = event.target as HTMLImageElement;
         const tolerance = 50
 
         const rect = target.getBoundingClientRect();
+        // Make sure to scale these 
         const x = Math.round(event.clientX - rect.left) / SCALING_FACTOR;
         const y = Math.round(event.clientY - rect.top) / SCALING_FACTOR;
 
@@ -99,6 +109,7 @@ const Map = () => {
     };
 
 
+    // Updates the Image every time it is clicked
     const updateImageWithPins = async (action: string, pins: string[], dims: number[]) => {
         try {
             await fetchWithParams('api/v0?get=map_img', {
@@ -118,6 +129,8 @@ const Map = () => {
         }
     };
 
+
+    // Renders Error if there was an Error
     if(err) {
         return (
             <div className="flex flex-col items-center justify-center">
@@ -127,6 +140,8 @@ const Map = () => {
         )
     }
 
+    // Renders the Map Image if it exists. 
+    // Please DO NOT use <Image /> from `next/image`, as only the HTML5 <img /> tag works here!
     return ( 
         <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
