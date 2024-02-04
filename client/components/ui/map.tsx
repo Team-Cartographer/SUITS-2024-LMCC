@@ -4,6 +4,16 @@ import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/
 import { useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
 
+const SCALING_FACTOR = 0.5 // Map Scaling Factor
+const MAP_HEIGHT = 815 * SCALING_FACTOR // Scaled by 1/2
+const MAP_WIDTH = 1024 * SCALING_FACTOR // Scaled by 1/2
+
+/* 
+    When you are running this file and want to resize the map, 
+    make sure to divide the height and width by the scale factor, 
+    and multiply the rect height, width, and x, y in const handleImageClick(); 
+*/
+
 interface GeoJSONFeature {
     type: 'Feature';
     geometry: {
@@ -68,8 +78,8 @@ const Map = () => {
         const tolerance = 50
 
         const rect = target.getBoundingClientRect();
-        const x = Math.round(event.clientX - rect.left);
-        const y = Math.round(event.clientY - rect.top);
+        const x = Math.round(event.clientX - rect.left) / SCALING_FACTOR;
+        const y = Math.round(event.clientY - rect.top) / SCALING_FACTOR;
 
         fetchGeoJSONPoints();
 
@@ -79,10 +89,12 @@ const Map = () => {
             return isNearPoint;
         });
 
+        let dims = [rect.width / SCALING_FACTOR, rect.height / SCALING_FACTOR]
+
         if (nearPoint) {
-            await updateImageWithPins("rm", [nearPoint.properties.description], [rect.width, rect.height]);
+            await updateImageWithPins("rm", [nearPoint.properties.description], dims);
         } else {
-            await updateImageWithPins("add", [`${x}x${y}`], [rect.width, rect.height]);
+            await updateImageWithPins("add", [`${x}x${y}`], dims);
         }
     };
 
@@ -107,12 +119,18 @@ const Map = () => {
     };
 
     if(err) {
-        return <p>Error: "{err}" was thrown while loading Map</p>
+        return (
+            <div className="flex flex-col items-center justify-center">
+                <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
+                <p>Make sure Gateway and the TSS Server are running.</p>            
+                </div>
+        )
     }
 
     return ( 
         <div>
-            {mapImage && <img src={mapImage} alt="Map" onClick={handleImageClick} />}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {mapImage && <img src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH} height={MAP_HEIGHT} />}
         </div>
     );
 }
