@@ -107,7 +107,7 @@ const Map = () => {
     };
 
     if(err) {
-        return <p>Error: "{err}" was thrown while loading Map</p>
+        return <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
     }
 
     return ( 

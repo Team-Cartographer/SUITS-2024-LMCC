@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @author @ivanvuong
  * @function CameraFeed
@@ -5,10 +7,12 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import lmcc_config from "@/lmcc_config.json"
 
-export const fetchVideoWithoutParams = async (path: string): Promise<Response | undefined> => {
-    try {
-        const response = await fetch(`https://$100.64.13.144${path}`, {
+
+const fetchVideoWithoutParams = async (path: string): Promise<Response | undefined> => {
+    try { // FIXME: PR will be approved w/ this, but this path will need to be changed once we get HoloLenses
+        const response = await fetch(`${lmcc_config.lmcc_url}/${path}`, {
             method: 'GET',  
         });
         if (response.ok) {
@@ -22,7 +26,8 @@ export const fetchVideoWithoutParams = async (path: string): Promise<Response | 
     return undefined;
 }
 
-export const fetchVideo = async () => {
+
+const fetchVideo = async () => {
     try {
         const response = await fetchVideoWithoutParams('/api/holographic/stream/live_high.mp4?holo=true&pv=true&mic=false&loopback=true&RenderFromCamera=true');
         if (!response) {
@@ -42,7 +47,8 @@ export const fetchVideo = async () => {
     };
 };
 
-function CameraFeed() {
+
+export function CameraFeed() {
     const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
     useEffect(() => {
         const fetchURL = async () => {
@@ -55,32 +61,30 @@ function CameraFeed() {
         };
         fetchURL();
     }, []);
-      return (
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        return (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
             <video controls width="1400">
-              <source src={videoUrl} type="video/mp4" />
-              Your browser does not support the video tag.
+                <source src={videoUrl} type="video/mp4" />
+                Your browser does not support the video tag.
             </video>
-          </div>
-        );
-      }
-
-//   export default CameraFeed;
-
-  function TempYoutubeVideo() {
-    return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div>
-                <iframe
-                    width="1236" 
-                    height="695" 
-                    src="https://www.youtube.com/embed/jfKfPfyJRdk" 
-                    title="lofi hip hop radio 📚 - beats to relax/study to" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                    allowFullScreen={true}
-                ></iframe>
             </div>
-        </div>
-    );
+        );
 }
-export default TempYoutubeVideo;
+
+export function TempYoutubeVideo() {
+return (
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <div>
+            <iframe
+                width="1236" 
+                height="695" 
+                src="https://www.youtube.com/embed/jfKfPfyJRdk" 
+                title="lofi hip hop radio 📚 - beats to relax/study to" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowFullScreen={true}
+            ></iframe>
+        </div>
+    </div>
+);
+}
+
