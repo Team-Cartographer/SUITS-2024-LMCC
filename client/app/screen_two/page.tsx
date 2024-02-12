@@ -1,22 +1,18 @@
-"use client";
+  "use client";
 
-/**
- * @author @abhi-arya1
- * @function TelemetryPage
- * @fileoverview Coming once all "TODO:" are complete
- */
-
-import Map from "@/components/ui/map";
+  /**
+   * @author @abhi-arya1 @ivanvuong
+   * @function TelemetryPage
+   * @fileoverview Coming once all "TODO:" are complete
+   */
 
 
-function TelemetryPage() {
-  
-  //TODO: finish second page
-  return (
-    <div className="h-full flex flex-row gap-x-4 items-center justify-center">
-      <Map />
-    </div>
-  );
-}
+  function TelemetryPage() {
+    return (
+      <div className="h-full flex flex-row gap-x-4 items-center justify-center">
+          Test
+      </div>
+    )
+  }
 
-export default TelemetryPage;
+  export default TelemetryPage;

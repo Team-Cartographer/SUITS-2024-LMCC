@@ -152,9 +152,9 @@ const Map = () => {
     // Renders the Map Image if it exists. 
     // Please DO NOT use <Image /> from `next/image`, as only the HTML5 <img /> tag works here!
     return ( 
-        <div>
+        <div className="">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {mapImage && <img src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+            {mapImage && <img className="rounded-3xl" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
         </div>
     );
 }
