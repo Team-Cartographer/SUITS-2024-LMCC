@@ -62,7 +62,7 @@ export function CameraFeed() {
         fetchURL();
     }, []);
         return (
-            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+            <div className="justify-center items-center pt-12">
             <video controls width="1400">
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -73,7 +73,7 @@ export function CameraFeed() {
 
 export function TempYoutubeVideo() {
 return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    <div className="justify-center items-center pt-10">
         <div>
             <iframe
                 width="1236" 
