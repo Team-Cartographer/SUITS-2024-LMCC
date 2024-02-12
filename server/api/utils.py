@@ -1,12 +1,10 @@
 from pathlib import Path
 import math
+import numpy as np
 
 SERVER_DIR: Path =  Path(__file__).parent.parent
-
-TOP_L_LAT: float = 29.565376
-TOP_L_LON: float = -95.082001
-BOT_R_LAT: float = 29.564423
-BOT_R_LON: float = -95.080691
+TIFF_DATA_PATH = SERVER_DIR / 'data' / 'geodata.npy'
+TIFF_DATASET = np.load(TIFF_DATA_PATH)
 
 
 def distance_between_points(p1: str, p2: str) -> float:
@@ -23,23 +21,6 @@ def is_within_radius(check: str, existing_pins: list[str], radius=5) -> bool:
     return False
 
 
-
-def image_coords_to_lat_lon(x: str, y: str, height: int, width: int) -> tuple[float, float]:
-    lat_deg_per_pixel = (TOP_L_LAT - BOT_R_LAT) / height
-    lon_deg_per_pixel = (BOT_R_LON - TOP_L_LON) / width
-
-    lat = TOP_L_LAT - (y * lat_deg_per_pixel)
-    lon = TOP_L_LON + (x * lon_deg_per_pixel)
-    
+def get_lat_lon_from_tif(x: int, y: int) -> tuple[float, float]:
+    lon, lat = TIFF_DATASET[x, y]
     return lat, lon
-
-
-
-def lat_lon_to_image_coords(lat: float, lon: float, height: int, width: int) -> tuple[int, int]:
-    lat_deg_per_pixel = (TOP_L_LAT - BOT_R_LAT) / height
-    lon_deg_per_pixel = (BOT_R_LON - TOP_L_LON) / width
-    
-    x = (lon - TOP_L_LON) / lon_deg_per_pixel
-    y = (TOP_L_LAT - lat) / lat_deg_per_pixel
-    
-    return int(x), int(y)

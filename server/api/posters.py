@@ -2,7 +2,7 @@
 from flask import jsonify
 from pathlib import Path
 import json
-from .utils import image_coords_to_lat_lon
+from .utils import get_lat_lon_from_tif
 
 # Path to the `./server` Directory
 SERVER_DIR: Path = Path(__file__).parent.parent 
@@ -39,12 +39,8 @@ def update_geojson(args: dict, add: bool=True) -> "json":
 
     pins = args.get('pins', [])
     dims = args.get('dimensions', [])
-    if dims: 
-        height = dims[0]
-        width = dims[1]
-    else: 
-        height = 1024
-        width = 815
+    height = dims[0]
+    width = dims[1]
 
     with open(geojson_path, 'r') as file:
         geojson_data = json.load(file)
@@ -60,7 +56,7 @@ def update_geojson(args: dict, add: bool=True) -> "json":
         updated_features = []
         for i, item in enumerate(history): 
             x, y = map(int, item.split('x'))
-            lat, lon = image_coords_to_lat_lon(x, y, height, width)
+            lat, lon = get_lat_lon_from_tif(x, y)
             item_data = {
                 "type": "Feature",
                 "geometry": {
@@ -81,7 +77,7 @@ def update_geojson(args: dict, add: bool=True) -> "json":
         pins.extend(history) 
         for pin in pins:
             x, y = map(int, pin.split('x'))
-            lat, lon = image_coords_to_lat_lon(x, y, height, width)
+            lat, lon = get_lat_lon_from_tif(x, y)
 
             item_data = {
                 "type": "Feature",
