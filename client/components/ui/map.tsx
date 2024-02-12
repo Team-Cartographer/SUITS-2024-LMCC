@@ -141,16 +141,12 @@ const Map = () => {
 
     // Renders Error if there was an Error
     if(err) {
-<<<<<<< HEAD
-        return <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
-=======
         return (
             <div className="flex flex-col items-center justify-center">
                 <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
                 <p>Make sure Gateway and the TSS Server are running.</p>            
                 </div>
         )
->>>>>>> main
     }
 
     // Renders the Map Image if it exists. 
