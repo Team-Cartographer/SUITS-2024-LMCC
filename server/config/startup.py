@@ -5,10 +5,15 @@ from json import dump, load
 from pathlib import Path
 from requests import get, ConnectionError, Timeout
 from time import sleep
+import numpy as np
+import rasterio 
+
 
 SERVER_PATH = Path(__file__).parent.parent
 TSS_PATH = SERVER_PATH / 'config' / 'tss_data.json'
 LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
+TIFF_PATH = SERVER_PATH / 'images' / 'rockyard_map_geo.tif'
+TIFF_DATA_PATH = SERVER_PATH / 'data' / 'geodata.npy'
 
 
 def save_lmcc_to_json() -> None:
@@ -17,7 +22,7 @@ def save_lmcc_to_json() -> None:
     """
     import socket
     ip = socket.gethostbyname(socket.gethostname())
-    data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100 }
+    data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100, "scale_factor": 5 }
     with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)
 
@@ -114,6 +119,19 @@ def configure_data():
     
     with open(rockyard_path, 'w') as rockyard:
         dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
+
+    if not TIFF_DATA_PATH.exists():
+        with rasterio.open(TIFF_PATH) as src:
+            width, height = src.width, src.height
+            transform = src.transform
+            coordinates = np.zeros((height, width), dtype=[('x', np.float64), ('y', np.float64)])
+
+            rows, cols = np.arange(src.height), np.arange(src.width)
+            col_indices, row_indices = np.meshgrid(cols, rows)
+            xs, ys = transform * (col_indices, row_indices)
+            coordinates = np.stack((xs, ys), axis=-1)
+
+            np.save(TIFF_DATA_PATH, coordinates)
            
 
 def setup():

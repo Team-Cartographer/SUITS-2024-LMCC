@@ -12,9 +12,9 @@ import lmcc_config from "@/lmcc_config.json"
 
 // Note that all scaling must be based off of 1024x815 dimensions!
 
-const SCALING_FACTOR = 0.5 // Map Scaling Factor
-const MAP_HEIGHT = 815 * SCALING_FACTOR // Scaled by 1/2
-const MAP_WIDTH = 1024 * SCALING_FACTOR // Scaled by 1/2
+const SCALING_FACTOR = 1/(lmcc_config.scale_factor);
+const MAP_HEIGHT = 3543;
+const MAP_WIDTH = 3720;
 
 /* 
     When you are running this file and want to resize the map, 
@@ -154,7 +154,7 @@ const Map = () => {
     return ( 
         <div>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {mapImage && <img src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH} height={MAP_HEIGHT} />}
+            {mapImage && <img src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
         </div>
     );
 }

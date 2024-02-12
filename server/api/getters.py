@@ -22,7 +22,7 @@ def send_map_info():
 
 
 def send_map():
-    map_path = SERVER_DIR / 'images' / 'rockYardMap.png'
+    map_path = SERVER_DIR / 'images' / 'rockyard_map_png.png'
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
     
     image = Image.open(map_path)
@@ -37,7 +37,8 @@ def send_map():
 
     for pin in pins:
         x, y = map(int, pin.split('x'))
-        radius = 7
+        x, y = x/5, y/5.
+        radius = 3
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
 
     img_io = io.BytesIO()
