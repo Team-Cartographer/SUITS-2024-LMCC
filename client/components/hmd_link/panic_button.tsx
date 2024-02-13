@@ -5,22 +5,80 @@
  */
 
 import { AlertTriangle } from "lucide-react";
-import { Button } from "../ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { fetchWithoutParams } from "@/api/fetchServer";
+import { FormEvent, useState } from "react";
 
-function onPanic() {
-  // TODO: add panic button functionality
-  console.log("Panic Pressed");
+interface PanicData {
+    infoWarning: string;
+    infoTodo: string;
+    isWarning: boolean;
 }
 
 const PanicButton = () => {
+  const [inputValue, setInputValue] = useState('');
+  const handleInputChange = (event: any) => {
+    setInputValue(event.target.value);
+  };
+
+  const onPanic = async () => {
+    try {
+      console.log(inputValue);
+      await fetchWithoutParams<PanicData>(`api/v0?get=notif&infoWarning=${inputValue}&isWarning=true`);
+
+    } catch (err) {
+        const error = err as Error;
+        console.error('Error updating image:', error);
+    }
+    console.log("Panic Pressed");
+    setInputValue('');
+  }
+
+
   return (
     <div>
-      <Button
-        className="bg-red-600 text-red-200 hover:bg-red-700"
-        onClick={onPanic}
-      >
-        <AlertTriangle />
-      </Button>
+      <AlertDialog>
+        <AlertDialogTrigger className="flex bg-red-600 text-red-200 hover:bg-red-700 w-14 h-12 items-center justify-center rounded-xl">
+            <AlertTriangle className="h-7 w-7"/>
+        </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Please enter the content to send</AlertDialogTitle>
+            <AlertDialogDescription>
+              <div>
+                { /* TODO: MAKE FORM INPUTAREA BIGGER */ }
+                <form onSubmit={onPanic}>
+                  <input
+                    type="text"
+                    value={inputValue}
+                    onChange={handleInputChange}
+                    className="bg-background text-muted-foreground underline"
+                    placeholder="Type Here"
+                  />
+                  <div className="fixed bottom-0 right-0 p-3 pb-6 pr-5">
+                    <AlertDialogAction onClick={onPanic} className="bg-red-600 text-white hover:bg-red-700">Send</AlertDialogAction>
+                  </div>
+                </form>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <div className="pr-20">
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+            </div>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

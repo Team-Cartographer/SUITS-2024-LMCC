@@ -37,7 +37,6 @@ const MissionStopwatch = () => {
           try {   //uses try catch hook to catch error if occured
               const data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry'); //fetch eva elapsed time, from tss server if on
               if (data?.telemetry?.eva_time !== undefined) {
-                console.log(data.telemetry.eva_time)  //logs in console the time logged
                 setFormattedTime(formatTime(data.telemetry.eva_time)); //sets formatted time from telemetry to correct format
             }
               
@@ -68,7 +67,6 @@ const UIAStopwatch = () => {
         try {  //uses try catch hook to catch error if occured
             const data = await fetchWithoutParams<{ eva: { uia: {time: number }}}>('tss/eva_info' ); //fetch uia elapsed time through eva_info dictionary, uia time 
             if (data?.eva?.uia?.time !== undefined) {
-              console.log(data.eva.uia.time)
               setFormattedTime(formatTime(data.eva.uia.time)); //sets formatted time from telemetry to correct format
           }
             
@@ -103,7 +101,6 @@ const SpecStopwatch = () => {
         try {
             const data = await fetchWithoutParams<{ eva: { spec: {time: number }}}>('tss/eva_info' ); //fetch spec elapsed time through eva_info dictionary, spec time 
             if (data?.eva?.spec?.time !== undefined) {
-              console.log(data.eva.spec.time)
               setFormattedTime(formatTime(data.eva.spec.time));
           }
             
@@ -136,7 +133,6 @@ const RoverStopwatch = () => {
         try {
             const data = await fetchWithoutParams<{ eva: { rover: {time: number }}}>('tss/eva_info' ); //fetch rover elapsed time through eva_info dictionary, rover time 
             if (data?.eva?.rover?.time !== undefined) {
-              console.log(data.eva.rover.time)
               setFormattedTime(formatTime(data.eva.rover.time));
           }
             
@@ -170,7 +166,6 @@ const DCUStopwatch = () => {
         try {
             const data = await fetchWithoutParams<{ eva: { dcu: {time: number }}}>('tss/eva_info' ); //fetch dcu elapsed time through eva_info dictionary, dcu time 
             if (data?.eva?.dcu?.time !== undefined) {
-              console.log(data.eva.dcu.time)
               setFormattedTime(formatTime(data.eva.dcu.time));
           }
             
