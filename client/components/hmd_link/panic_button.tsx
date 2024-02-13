@@ -53,7 +53,7 @@ const PanicButton = () => {
         </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Please enter the content to send</AlertDialogTitle>
+          <AlertDialogTitle className="pb-2">Send a Warning</AlertDialogTitle>
             <AlertDialogDescription>
               <div>
                 { /* TODO: MAKE FORM INPUTAREA BIGGER */ }
@@ -62,8 +62,8 @@ const PanicButton = () => {
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
-                    className="bg-background text-muted-foreground underline"
-                    placeholder="Type Here"
+                    className="h-full w-full p-2 rounded-lg bg-background text-muted-foreground outline outline-1 outline-muted-foreground"
+                    placeholder="Warning Info Here..."
                   />
                   <div className="fixed bottom-0 right-0 p-3 pb-6 pr-5">
                     <AlertDialogAction onClick={onPanic} className="bg-red-600 text-white hover:bg-red-700">Send</AlertDialogAction>

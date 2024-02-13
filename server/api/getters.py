@@ -91,8 +91,8 @@ def send_notification(args: dict):
 
     if info_todo or info_warning or is_warning:
         data = {
-            "infoWarning": info_todo, 
-            "infoTodo": info_warning, 
+            "infoWarning": info_warning, 
+            "infoTodo": info_todo, 
             "isWarning": is_warning,
         }
         with open(NOTIF_PATH, 'w') as jf:
