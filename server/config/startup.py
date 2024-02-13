@@ -9,11 +9,20 @@ import numpy as np
 import rasterio 
 
 
+
+
 SERVER_PATH = Path(__file__).parent.parent
+DATA_PATH = SERVER_PATH / 'data'
+
 TSS_PATH = SERVER_PATH / 'config' / 'tss_data.json'
 LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
 TIFF_PATH = SERVER_PATH / 'images' / 'rockyard_map_geo.tif'
-TIFF_DATA_PATH = SERVER_PATH / 'data' / 'geodata.npy'
+TIFF_DATA_PATH = DATA_PATH / 'geodata.npy'
+ROCKYARD_PATH = DATA_PATH / 'rockyard.geojson'
+NOTIF_PATH = DATA_PATH / 'notification.json'
+
+
+
 
 
 def save_lmcc_to_json() -> None:
@@ -25,6 +34,9 @@ def save_lmcc_to_json() -> None:
     data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100, "scale_factor": 5 }
     with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)
+
+
+
 
 
 def save_tss_to_json(url: str) -> None:
@@ -46,6 +58,9 @@ def save_tss_to_json(url: str) -> None:
         dump(url_data, file, indent=4)
     print(f"saved tss config to {TSS_PATH}\nif you need to modify this, do so in that file\n")
     sleep(1)
+
+
+
 
 
 def check_tss_url(url: str):
@@ -70,6 +85,9 @@ def check_tss_url(url: str):
         print(f'\ncould not connect to tss server at {url}. please make sure it is active')
         print(f'if you need to change the url, do so in {TSS_PATH}\n')
         exit(2)
+
+
+
 
 
 def get_tss_url() -> None:
@@ -104,7 +122,10 @@ def get_tss_url() -> None:
             break
 
 
-def configure_data():
+
+
+
+def create_data_endpoints():
     """
     Configures data directories and files for the server.
 
@@ -112,13 +133,13 @@ def configure_data():
     if they don't exist. Initializes 'rockyard.geojson' with an empty GeoJSON 
     feature collection.
     """
-    data_path = SERVER_PATH / 'data'
-    rockyard_path = data_path / 'rockyard.geojson'
-    if not data_path.exists():
-        mkdir(data_path)
+    if not DATA_PATH.exists():
+        mkdir(DATA_PATH)
     
-    with open(rockyard_path, 'w') as rockyard:
+
+    with open(ROCKYARD_PATH, 'w') as rockyard:
         dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
+
 
     if not TIFF_DATA_PATH.exists():
         with rasterio.open(TIFF_PATH) as src:
@@ -132,7 +153,16 @@ def configure_data():
             coordinates = np.stack((xs, ys), axis=-1)
 
             np.save(TIFF_DATA_PATH, coordinates)
-           
+
+
+    with open(NOTIF_PATH, 'w') as notif: 
+        dump({
+            "infoWarning": '', 
+            "infoTodo": '', 
+            "isWarning": False,
+        }, notif, indent=4)
+
+
 
 def setup():
     """
@@ -148,7 +178,7 @@ def setup():
         if check_local_tss.strip().upper() == 'Y':
             get_tss_url()
             save_lmcc_to_json()
-            configure_data()
+            create_data_endpoints()
             exit(0)
         elif check_local_tss.strip().upper() == 'N':
             print('done!')
@@ -156,6 +186,9 @@ def setup():
         else:
             continue
             
+
+
+
 
 # Run the Program
 if __name__ == "__main__":

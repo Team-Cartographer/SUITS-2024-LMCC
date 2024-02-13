@@ -38,9 +38,10 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
 
     pins = args.get('pins', [])
-    dims = args.get('dimensions', [])
-    height = dims[0]
-    width = dims[1]
+    # DEPRECATED
+    # dims = args.get('dimensions', [])
+    # height = dims[0]
+    # width = dims[1]
 
     with open(geojson_path, 'r') as file:
         geojson_data = json.load(file)

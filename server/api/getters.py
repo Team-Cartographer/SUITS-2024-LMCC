@@ -9,6 +9,8 @@ import io
 import random
 
 SERVER_DIR = Path(__file__).parent.parent 
+DATA_DIR = SERVER_DIR / 'data'
+NOTIF_PATH = DATA_DIR / 'notification.json'
 
 
 
@@ -78,3 +80,24 @@ def send_biom_data(eva):
     biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': 'F'}
 
     return jsonify(biometric_data)
+
+
+
+
+def send_notification(args: dict):
+    info_todo = args.get('infoTodo', None)
+    info_warning = args.get('infoWarning', None)
+    is_warning = args.get('isWarning', None)
+
+    if info_todo or info_warning or is_warning:
+        data = {
+            "infoWarning": info_todo, 
+            "infoTodo": info_warning, 
+            "isWarning": is_warning,
+        }
+        with open(NOTIF_PATH, 'w') as jf:
+            json.dump(data, jf, indent=4)
+        return jsonify(data)
+    else: 
+        with open(NOTIF_PATH, 'r') as f:
+            return json.load(f)

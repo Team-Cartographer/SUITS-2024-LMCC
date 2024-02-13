@@ -7,12 +7,18 @@ from . import posters as ph
 api = Blueprint('api', __name__)
 CORS(api)
 
+
+
+
 class LMCCAPIError(Exception):
     """
     Raises an error for the LMCC API if something goes wrong that isn't intrinsic to Python3.12+
     """
     def __init__(self, msg='There was an error with the LMCC API'):
         super().__init__(msg)
+
+
+
 
 
 def get_arg(key: str, args_dict: dict) -> bool | Any:
@@ -23,6 +29,9 @@ def get_arg(key: str, args_dict: dict) -> bool | Any:
         return args_dict.get(key)
     else:
         return False
+
+
+
 
 
 @api.route('/test_greeting', methods=["GET", "POST"])
@@ -55,6 +64,7 @@ def test():
 
 
     
+
 @api.route('/v0', methods=["GET", "POST"])
 def api_v0():
     """
@@ -90,6 +100,8 @@ def api_v0():
 
 
 
+
+
 def handle_GET_args(args: dict) -> Any: 
     """
     Processes GET request arguments for specific functionalities.
@@ -113,6 +125,8 @@ def handle_GET_args(args: dict) -> Any:
         return gh.send_map_info()
     elif get_arg('get', args) == 'astar':
         return gh.a_star()
+    elif get_arg('get', args) == 'notif':
+        return gh.send_notification(args)
     elif get_arg('get', args) == "biodata":
         eva = get_arg('eva', args)
         if eva == "one" or eva == "two":
@@ -124,6 +138,9 @@ def handle_GET_args(args: dict) -> Any:
             'error': 'args were invalid'
         })
     
+
+
+
 
 
 def handle_POST_args(args: dict) -> Any:
