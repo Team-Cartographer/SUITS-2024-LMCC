@@ -1,7 +1,6 @@
 /**
  * @author @abhi-arya1
  * @function PanicButton
- * @fileoverview Coming once all "TODO:" are complete
  */
 
 import { AlertTriangle } from "lucide-react";
@@ -56,7 +55,6 @@ const PanicButton = () => {
           <AlertDialogTitle className="pb-2">Send a Warning</AlertDialogTitle>
             <AlertDialogDescription>
               <div>
-                { /* TODO: MAKE FORM INPUTAREA BIGGER */ }
                 <form onSubmit={onPanic}>
                   <input
                     type="text"
