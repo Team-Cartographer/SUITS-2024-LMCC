@@ -66,10 +66,9 @@ const UnifiedLiveView: React.FC<UnifiedLiveViewProps> = ({ url, volume = 0.5 }) 
     // For non-YouTube URLs, use ReactPlayer
     return (
       <div style={playerStyle}>
-        <ReactPlayer url={url} playing volume={volume} style={playerStyle} />
-      </div>
-    );
-  }
+      <ReactPlayer url={url} playing volume={volume} />
+    </div>
+  );
 };
 
 export default UnifiedLiveView;

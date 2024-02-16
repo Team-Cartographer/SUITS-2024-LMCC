@@ -9,7 +9,6 @@
 'use client';
 
 import React from 'react';
-import YouTube, { Options } from 'react-youtube';
 
 // Traditional React component with client-specific features
 const ClientTelemetryPage: React.FC = () => {
@@ -51,13 +50,6 @@ const ClientTelemetryPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-// React Server Component
-function TelemetryPage() {
-  // TODO: Finish the second page
-
-  return <ClientTelemetryPage />;
 }
 
 export default TelemetryPage;
