@@ -8,23 +8,16 @@
  */
 // ./app/screen_two/page.tsx
 import React from 'react';
+import MediaPlayer from './components/rover/rover_live_view';
+import './components/rover/rover_live_view'; // Add this line to import the missing module's type declarations
 
-const TelemetryPage: React.FC = () => {
+const App = () => {
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <div style={{ border: '2px solid #3498db', borderRadius: '10px', overflow: 'hidden', textAlign: 'center' }}>
-        <iframe
-          width="100%"
-          height="100%"
-          src="https://www.youtube.com/embed/NfcLKjFB59o"
-          title="YouTube video player"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-        ></iframe>
-      </div>
+    <div>
+      {/* Use MediaPlayer component by passing the URL of the media */}
+      <MediaPlayer url="https://www.youtube.com/watch?v=NfcLKjFB59o" volume={0.7} />
     </div>
   );
-}
+};
 
-export default TelemetryPage;
+export default App;
