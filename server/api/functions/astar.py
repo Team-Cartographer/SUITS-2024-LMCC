@@ -1,105 +1,124 @@
-import numpy as np
+from PIL import Image, ImageDraw
 import heapq
-from .imaging import draw_path_image
-
-"""
-Just an fyi, this version of A* will not work for what we want! I ran into this same issue for the adc. It works for 2 dimensions
-of evenly spaced nodes, however when a third dimension is added and the nodes are no longer evenly spaced, the algorithm can not know
-which nodes are its "neighbors" and must be fed that information. Luckily, I already solved this problem in the ADC, however I will
-not be able to modify that code and add it to this new implementation until I have a list and format of the data. @ me for more questions
-    -JL
-"""
+from numpy import sqrt, load
+from typing import List, Tuple, Union
 
 class Node:
-    def __init__(self, parent=None, position=None):
+    def __init__(self, x: int, y: int, GRID: List[List[List[float]]], parent: "Node" = None) -> None:
+        """
+        Initialize a node with coordinates, parent, height, slope, g, h, and f values.
+        """
+        self.x = x
+        self.y = y
         self.parent = parent
-        self.position = position
-        self.cost_to_reach = 0
-        self.total_cost = 0
-        self.heuristic_cost = 0
-        
-    def __eq__(self, compare):
-        'Compare nodes based on their positions'
-        return self.position == compare.position
-    
-    def __lt__(self, compare):
-        'Define the order of nodes based on their total cost (for priority queue)'
-        return self.cost_to_reach < compare.cost_to_reach
-    
-    
-def a_star(grid, start, end):
-    start_node = Node(None, start)
-    end_node = Node(None, end)
-    
-    open_list = []
-    closed_list = []
-    
-    # Add the start node to the open list
-    heapq.heappush(open_list, (start_node.total_cost, start_node))
+        self.height = GRID[x][y][8]  # Get the height of the node from the grid
+        self.slope = GRID[x][y][3]  # Get the slope of the node from the grid
+        self.g: float = 0  # Cost from start node to current node
+        self.h: float = 0  # Heuristic cost from current node to goal node
+        self.f: float = 0  # Total cost f = g + h
+        if parent is not None:
+            self.g = parent.new_g(self)  # Calculate g value
+            self.h = self.heuristic(goal_node)  # Calculate h value
+            self.f = self.g + self.h  # Calculate f value
 
-    while len(open_list) > 0:
-        # Pop the node with the lowest cost from open list
-        current_node = heapq.heappop(open_list)[1]
-        closed_list.append(current_node)
-        
-        # Check if we have reached the end, return the path
-        if current_node == end_node:
+    def __lt__(self, other: "Node") -> bool:
+        """
+        Comparison method to compare nodes based on f value.
+        """
+        return self.f < other.f
+
+    def heuristic(self, other: "Node") -> float:
+        """
+        Calculate the heuristic value (distance) between current node and another node.
+        """
+        return self.dist_btw(other)
+
+    def dist_btw(self, other: "Node") -> float:
+        """
+        Calculate the Euclidean distance between current node and another node.
+        """
+        return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.height - other.height) ** 2)
+
+    def new_g(self, other: "Node") -> float:
+        """
+        Calculate the new g value for the current node based on the parent node and other parameters.
+        """
+        k_dist: float = 1  # Distance constant
+        k_slope: float = 0.25  # Slope constant
+        slope_penalty: float = 0  # Slope penalty
+        if other.slope >= 15:
+            slope_penalty = 100
+        elif other.slope >= 8:
+            slope_penalty = 5
+        dist: float = self.dist_btw(other)  # Distance between nodes
+        slope: float = abs(self.slope - other.slope)  # Absolute difference in slope
+        eqn: float = k_dist * dist + k_slope * slope + slope_penalty  # Equation to calculate g value
+        return eqn
+
+class BreakIt(Exception):
+    pass
+
+def astar(start_node: Node, goal_node: Node, GRID: List[List[List[float]]]) -> Union[List[Tuple[int, int, int]], None]:
+    """
+    A* search algorithm to find the optimal path from start node to goal node in a grid.
+    """
+    nodes: List[Node] = []  # Priority queue for nodes
+    heapq.heappush(nodes, start_node)  # Add start node to the priority queue
+    visited = set()  # Set to store visited nodes
+    while nodes:
+        current = heapq.heappop(nodes)  # Pop node with the lowest f value from the priority queue
+        if (current.x, current.y) in visited:
+            continue
+        visited.add((current.x, current.y))
+        if current.x == goal_node.x and current.y == goal_node.y and current.height == goal_node.height:
+            # If goal node is reached, construct and return the path
             path = []
-            current = current_node
-            while current is not None:
-                path.append(current.position)
+            while current.parent:
+                path.append((current.x, current.y, current.height))
                 current = current.parent
-            return path[::-1]  # Return reversed path
-        
-        
-        children = []
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]: # Check adjacent squares
-            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
-
-            # Make sure node is within range (grid boundaries)
-            if node_position[0] > (len(grid) - 1) or node_position[0] < 0 or node_position[1] > (len(grid[len(grid)-1]) -1) or node_position[1] < 0:
-                continue
-
-
-            new_node = Node(current_node, node_position)
-            children.append(new_node)
-            
-            
-        for child in children:
-            if child in closed_list:
-                continue
-
-            # Calculate costs
-            child.cost_to_reach = current_node.cost_to_reach + grid[child.position[0]][child.position[1]]
-            child.heuristic_cost = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
-            child.total_cost = child.cost_to_reach + child.heuristic_cost
-
-
-            if len([i for i in open_list if child == i[1] and child.cost_to_reach > i[1].cost_to_reach]) > 0:
-                continue
-
-            heapq.heappush(open_list, (child.total_cost, child))
-
+            path.append((start_node.x, start_node.y, start_node.height))
+            path.reverse()
+            return path
+        # Expand current node's neighbors
+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+            x2 = current.x + dx
+            y2 = current.y + dy
+            if 0 <= x2 < len(GRID) and 0 <= y2 < len(GRID[0]):
+                new_node = Node(x2, y2, GRID, current)
+                heapq.heappush(nodes, new_node)
     return None
 
+def run_astar(sv: any, GRID: List[List[List[float]]]) -> None:
+    """
+    Main function to run the A* algorithm.
+    """
+    print("Finding a suitable lunar path")
+    SIZE = sv.size
+    (x, y) = get_pathfinding_endpoints()
+    start_node = Node(x, y, GRID)
+    goal_node = Node(x, y, GRID)
+    final_path = astar(start_node, goal_node, GRID)
+    print("Initial path generated")
+    if final_path:
+        generate_image(final_path, SIZE)  # Pass SIZE to generate_image
 
-def create_random_test_grid(grid_size):
-    'Generates random square test grid in specified size'
-    grid = np.random.randint(1, 10, size=(grid_size, grid_size))
-    start = (grid_size - 1, 0)
-    end = (0, grid_size - 1)
-    
-    return (grid, start, end)
+def get_pathfinding_endpoints() -> Tuple[int, int]:
+    """
+    Helper function to get the start and end points for pathfinding.
+    """
+    x = int(input("Enter x coordinate: "))
+    y = int(input("Enter y coordinate: "))
+    return (x, y)
 
-
+def generate_image(final_path: List[Tuple[int, int, int]], SIZE: Tuple[int, int]) -> None:
+    """
+    Generate an image of the optimal path using Pillow library.
+    """
+    img = Image.new("RGB", (SIZE[0], SIZE[1]), color="white")  # Create a new image
+    draw = ImageDraw.Draw(img)  # Create a drawing context
+    for node in final_path:
+        draw.point((node[0], node[1]), fill="blue")  # Draw blue points for the path nodes
+    img.show()  # Display the image
 
 if __name__ == "__main__":
-    path_data = create_random_test_grid(50)
-    grid, start, end = path_data
-    path = a_star(grid, start, end)
-    if path:
-        image = draw_path_image(grid, path, start, end)
-        image.show()
-    else:
-        print('No optimal path found')
-    # print(path)
+    pass
