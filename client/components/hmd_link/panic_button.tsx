@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @author @abhi-arya1
  * @function PanicButton
@@ -36,6 +38,7 @@ const PanicButton = () => {
         `api/v0?get=notif`,
       );
       if (data && data.isWarning === "true") {
+        console.log(data)
         toggleVignette();
       }
     } catch (err) {
