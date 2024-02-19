@@ -16,7 +16,7 @@ const defaultValue: VignetteContextType = {
 const VignetteContext = createContext(defaultValue);
 
 // VignetteProvider component
-export const VignetteProvider: React.FC = ({ children }) => {
+export const VignetteProvider = ({ children }: any) => {
   const [isVignetteVisible, setIsVignetteVisible] = useState(false);
 
   const toggleVignette = () => {

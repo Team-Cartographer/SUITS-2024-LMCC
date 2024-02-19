@@ -17,35 +17,39 @@ import {
 } from "@/components/ui/alert-dialog";
 import { fetchWithoutParams } from "@/api/fetchServer";
 import { useState, useEffect } from "react";
-import "../../hooks/context/VignetteContext";
-import lmcc_config from "../../../client/lmcc_config.json";
+import lmcc_config from "@/lmcc_config.json";
+import { useVignette } from "@/hooks/context/VignetteContext";
 
 interface PanicData {
   infoWarning: string;
   infoTodo: string;
-  isWarning: boolean;
+  isWarning: string;
 }
 
 const PanicButton = () => {
   const [inputValue, setInputValue] = useState("");
-
-  useEffect(() => {
-    const intervalId = setInterval(fetchPanicData, lmcc_config.tickspeed); // Fetch every 5 seconds
-    return () => clearInterval(intervalId); // Clear interval on component unmount
-  }, []);
+  const { toggleVignette } = useVignette();
 
   const fetchPanicData = async () => {
     try {
       const data = await fetchWithoutParams<PanicData>(
-        `api/v0?get=notif&infoWarning=${inputValue}&isWarning=true`,
+        `api/v0?get=notif`,
       );
-      if (data.isWarning) {
+      if (data && data.isWarning === "true") {
         toggleVignette();
       }
     } catch (err) {
       console.error("Error fetching panic data:", err);
     }
   };
+
+  useEffect(() => {
+    fetchPanicData();
+    const intervalId = setInterval(() => {
+      fetchPanicData();
+    }, lmcc_config.tickspeed); 
+    return () => clearInterval(intervalId);
+  });
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
