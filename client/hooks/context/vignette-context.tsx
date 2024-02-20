@@ -5,13 +5,15 @@ import React, { createContext, useContext, useState } from "react";
 // Define the type for the default value
 interface VignetteContextType {
   isVignetteVisible: boolean;
-  toggleVignette: () => void;
+  displayVignette: () => void;
+  hideVignette: () => void;
 }
 
 // Create the context with a default value
 const defaultValue: VignetteContextType = {
   isVignetteVisible: false,
-  toggleVignette: () => {},
+  displayVignette: () => {},
+  hideVignette: () => {},
 };
 
 // Create the context
@@ -21,12 +23,16 @@ const VignetteContext = createContext(defaultValue);
 export const VignetteProvider = ({ children }: any) => {
   const [isVignetteVisible, setIsVignetteVisible] = useState(false);
 
-  const toggleVignette = () => {
-    setIsVignetteVisible(!isVignetteVisible);
+  const displayVignette = () => {
+    setIsVignetteVisible(true);
+  };
+
+  const hideVignette = () => {
+    setIsVignetteVisible(false);
   };
 
   return (
-    <VignetteContext.Provider value={{ isVignetteVisible, toggleVignette }}>
+    <VignetteContext.Provider value={{ isVignetteVisible, displayVignette, hideVignette }}>
       {children}
     </VignetteContext.Provider>
   );

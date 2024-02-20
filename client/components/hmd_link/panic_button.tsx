@@ -18,9 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { fetchWithoutParams } from "@/api/fetchServer";
-import { useState, useEffect } from "react";
-import lmcc_config from "@/lmcc_config.json";
-import { useVignette } from "@/hooks/context/VignetteContext";
+import { useState } from "react";
 
 interface PanicData {
   infoWarning: string;
@@ -30,29 +28,6 @@ interface PanicData {
 
 const PanicButton = () => {
   const [inputValue, setInputValue] = useState("");
-  const { toggleVignette } = useVignette();
-
-  const fetchPanicData = async () => {
-    try {
-      const data = await fetchWithoutParams<PanicData>(
-        `api/v0?get=notif`,
-      );
-      if (data && data.isWarning === "true") {
-        console.log(data)
-        toggleVignette();
-      }
-    } catch (err) {
-      console.error("Error fetching panic data:", err);
-    }
-  };
-
-  useEffect(() => {
-    fetchPanicData();
-    const intervalId = setInterval(() => {
-      fetchPanicData();
-    }, lmcc_config.tickspeed); 
-    return () => clearInterval(intervalId);
-  });
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value);

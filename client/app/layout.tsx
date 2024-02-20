@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { VignetteProvider } from "@/hooks/context/VignetteContext";
+import { VignetteProvider } from "@/hooks/context/vignette-context";
+import Notifier from "@/components/ui/notifier";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <VignetteProvider>
+        <Notifier />
         <body className={inter.className}>{children}</body>
       </VignetteProvider>
     </html>
