@@ -71,6 +71,18 @@ body,
     --ring: 212.7 26.8% 83.9%;
   }
 }
+
+.vignette-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0; /* Extend to the edge */
+  left: 0; /* Extend to the edge */
+  right: 0; /* Extend to the edge */
+  bottom: 0; /* Extend to the edge */
+  border-radius: 0; /* Adjust if you want slightly rounded corners */
+  box-shadow: inset 0 0 7px 7px rgba(255, 0, 0, 0.6); /* Casts the shadow inward */
+  pointer-events: none; /* Ensure clicks pass through */
+}
  
 @layer base {
   * {

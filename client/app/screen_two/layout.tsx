@@ -1,3 +1,4 @@
+import Notifier from "@/components/ui/notifier";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,6 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <Notifier />
       <body>{children}</body>
     </html>
   );
