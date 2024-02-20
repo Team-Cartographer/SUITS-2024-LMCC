@@ -51,9 +51,6 @@ const Map = () => {
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
-        fetchImage();
-        fetchGeoJSONPoints();
-
         const interval = setInterval(() => {
             fetchImage();
             fetchGeoJSONPoints();

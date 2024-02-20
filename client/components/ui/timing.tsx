@@ -10,6 +10,8 @@ import Clock from "react-live-clock";
 import { fetchWithoutParams } from "@/api/fetchServer"; //fetches without parameters 
 import lmcc_config from "@/lmcc_config.json" // server tickspeed and ip 
 
+const TICKSPEED = 500;
+
 const formatTime = (seconds: number) => {  //build formatted timer 
   const hours = Math.floor(seconds / 3600); // build hours timer 
   const minutes = Math.floor((seconds % 3600) / 60); //build minutes timer
@@ -43,7 +45,7 @@ const MissionStopwatch = () => {
           } catch (error) {
               console.error('Error fetching eva_time:', error); // Error check 
           }
-      }, lmcc_config.tickspeed); //tickspeed from lmcc
+      }, TICKSPEED); //tickspeed from lmcc
 
       return () => clearInterval(interval);
   }, [/* dependencies */]);
@@ -73,7 +75,7 @@ const UIAStopwatch = () => {
         } catch (error) {
             console.error('Error fetching uia_time:', error); // Error check 
         }
-    }, lmcc_config.tickspeed);
+    }, TICKSPEED);
 
     return () => clearInterval(interval);
 }, [/* dependencies */]);
@@ -107,7 +109,7 @@ const SpecStopwatch = () => {
         } catch (error) {
             console.error('Error fetching spec_time:', error); // Error check 
         }
-    }, lmcc_config.tickspeed);
+    }, TICKSPEED);
 
     return () => clearInterval(interval);
 }, [/* dependencies */]);
@@ -139,7 +141,7 @@ const RoverStopwatch = () => {
         } catch (error) {
             console.error('Error fetching rover_time:', error); // Error check 
         }
-    }, lmcc_config.tickspeed);
+    }, TICKSPEED);
 
     return () => clearInterval(interval);
 }, [/* dependencies */]);
@@ -172,7 +174,7 @@ const DCUStopwatch = () => {
         } catch (error) {
             console.error('Error fetching dcu_time:', error); // Error check 
         }
-    }, lmcc_config.tickspeed);
+    }, TICKSPEED);
 
     return () => clearInterval(interval);
 }, [/* dependencies */]);

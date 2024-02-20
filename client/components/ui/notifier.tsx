@@ -40,10 +40,7 @@ const Notifier = () => {
     };
 
     useEffect(() => {
-        fetchPanicData() 
-        const intervalId = setInterval(() => {
-          fetchPanicData();
-        }, lmcc_config.tickspeed); 
+        const intervalId = setInterval(fetchPanicData, 750); 
         return () => clearInterval(intervalId);
       });
 
@@ -58,7 +55,7 @@ const Notifier = () => {
           }
           {panicData && (panicData.infoWarning !== "" || panicData.infoTodo !== "") && (
             <div className="fixed bottom-5 left-5 bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
-              {panicData.infoWarning !== "" && (
+              {panicData.infoWarning !== "" && panicData.infoWarning !== null && (
                 <p className={`text-sm text-white font-semibold ${(panicData.infoTodo === "" || panicData.infoTodo === null) && "pb-4"}`}>
                     <span className="underline">Warning Info:</span> {panicData.infoWarning}
                 </p>
