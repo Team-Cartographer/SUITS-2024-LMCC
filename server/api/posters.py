@@ -6,6 +6,7 @@ from .utils import get_lat_lon_from_tif
 
 # Path to the `./server` Directory
 SERVER_DIR: Path = Path(__file__).parent.parent 
+NOTIF_PATH = SERVER_DIR / 'data' / 'notification.json'
 
 
 def update_geojson(args: dict, add: bool=True) -> "json":
@@ -106,7 +107,20 @@ def update_geojson(args: dict, add: bool=True) -> "json":
 
 
 
-    
+def update_notification(args: dict): 
+    info_todo = args.get('todoItems', [])
+    info_warning = args.get('infoWarning', '')
+    is_warning = args.get('isWarning', False)
+
+    data = {
+        "infoWarning": info_warning, 
+        "infoTodo": info_todo, 
+        "isWarning": is_warning,
+    }
+    with open(NOTIF_PATH, 'w') as jf:
+        json.dump(data, jf, indent=4)
+    return jsonify(data)
+
 
 
 

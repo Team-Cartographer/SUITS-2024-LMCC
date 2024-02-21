@@ -17,7 +17,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams } from "@/api/fetchServer";
 import { useState } from "react";
 
 interface PanicData {
@@ -36,9 +36,14 @@ const PanicButton = () => {
   const onPanic = async () => {
     try {
       console.log(inputValue);
-      await fetchWithoutParams<PanicData>(
-        `api/v0?get=notif&infoWarning=${inputValue}&isWarning=true`,
-      );
+      await fetchWithParams<PanicData>(
+        `api/v0`,
+        {
+          notif: 'update',
+          infoWarning: inputValue,
+          isWarning: "true",
+          todoItems: null
+        });
     } catch (err) {
       const error = err as Error;
       console.error("Error updating image:", error);
