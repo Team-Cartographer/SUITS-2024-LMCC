@@ -2,7 +2,7 @@
 
 import lmcc_config from "@/lmcc_config.json";
 import { useVignette } from "@/hooks/context/vignette-context";
-import { fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithoutParams, fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { Button } from "./button";
 
@@ -45,7 +45,13 @@ const Notifier = () => {
       });
 
     const clearAlerts = async () => {
-        await fetchWithoutParams<PanicData>(`api/v0?get=notif&infoWarning=&infoTodo=&isWarning=false`)
+        await fetchWithParams(`api/v0`,
+        {
+          notif: 'update',
+          infoWarning: '',
+          isWarning: "false",
+          todoItems: ''
+        })
     }
 
       return (

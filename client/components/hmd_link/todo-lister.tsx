@@ -20,6 +20,7 @@ const TodoLister = () => {
             )
             if (notificationData) { 
                 setNotifData(notificationData); 
+                console.log(notificationData);
             } else { 
                 throw Error('could not get notification data'); 
             }
@@ -38,7 +39,7 @@ const TodoLister = () => {
     return ( 
         <div className="flex flex-col self-start gap-x-2">
             <div>
-                item1
+                item2
             </div>
             <div>
                 item2
