@@ -114,7 +114,7 @@ def update_notification(args: dict):
 
     data = {
         "infoWarning": info_warning, 
-        "infoTodo": info_todo, 
+        "todoItems": info_todo, 
         "isWarning": is_warning,
     }
     with open(NOTIF_PATH, 'w') as jf:
