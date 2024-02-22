@@ -58,16 +58,13 @@ const Notifier = () => {
           {isVignetteVisible && 
             <div className="vignette-overlay fixed inset-0 z-50 pointer-events-none" />
           }
-          {panicData && (panicData.infoWarning !== "" || panicData.todoItems !== null) && (
+          {panicData && (panicData.infoWarning !== "") && (
             <div className="fixed bottom-5 left-5 bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
               {panicData.infoWarning !== "" && panicData.infoWarning !== null && (
-                <p className={`text-sm text-white font-semibold ${(panicData.todoItems === null) && "pb-4"}`}>
+                <p className={`text-sm text-white font-semibold`}>
                     <span className="underline">Warning Info:</span> {panicData.infoWarning}
                 </p>
               )}
-              {panicData.todoItems !== null && (
-                <p className="text-sm text-white font-semibold mt-2 pb-4"><span className="underline">Todo Item:</span> {panicData.todoItems}</p>
-              ) }
               <Button onClick={clearAlerts}>
                 Clear Alerts
               </Button>

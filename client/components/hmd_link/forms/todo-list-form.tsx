@@ -29,12 +29,15 @@ export function TodoAreaForm({ onFormSubmit }: TodoProps) {
   })
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
-    onFormSubmit(data)
+    onFormSubmit(data);
+    form.reset({
+      todoitem: '', 
+    });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row self-start space-x-2">
         <FormField
           control={form.control}
           name="todoitem"
@@ -42,8 +45,7 @@ export function TodoAreaForm({ onFormSubmit }: TodoProps) {
             <FormItem>
               <FormControl>
                 <Textarea
-                  placeholder="Add a todo list item here..."
-                  className="resize"
+                  placeholder="Items Here..."
                   {...field}
                 />
               </FormControl>

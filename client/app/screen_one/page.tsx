@@ -20,6 +20,7 @@ const HomePage = () => {
         <Timers />
         <CameraFeed />
         <CameraFeed />
+        <TodoLister />
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />
@@ -30,7 +31,6 @@ const HomePage = () => {
       <div className=" bg-slate-600 flex flex-grow items-center justify-center rounded-l-2xl p-2 pl-3">
         <div className="flex flex-col items-center justify-center gap-y-10">
           <Map />
-          <TodoLister />
         </div>
       </div>
     </div>

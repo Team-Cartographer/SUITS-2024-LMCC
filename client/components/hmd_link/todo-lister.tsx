@@ -29,7 +29,6 @@ const TodoLister = () => {
             )
             if (notificationData) { 
                 setNotifData(notificationData); 
-                console.log(notificationData.todoItems);
             } else { 
                 throw Error('could not get notification data'); 
             }
@@ -50,13 +49,11 @@ const TodoLister = () => {
 
     const sendTodoItem = async (new_item: string) => {
         const current_list = notifData?.todoItems
-        if (current_list) {
-            await fetchWithParams('api/v0',
-            {
-                notif: "update",
-                todoItems: current_list.concat([new_item, "False"])
-            })
-        }
+        await fetchWithParams('api/v0',
+        {
+            notif: "update",
+            todoItems: [...(current_list || []), [new_item, "False"]]
+        })
     }
 
     const toggleTaskStatus = async (index: number) => {
@@ -85,13 +82,13 @@ const TodoLister = () => {
       };
 
     return ( 
-        <div className="flex flex-col text-sm self-start gap-x-2">
-            <div className="text-lg font-bold pb-2">
+        <div className="flex flex-col text-sm self-start gap-x-2 p-4">
+            <div className="text-lg font-bold pb-2 underline self-start">
                 HMD Todo List
             </div>
-            <div className="pb-2">
-                {notifData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (
-                    <div key={index} style={{ textDecoration: taskStatus !== "False" ? 'line-through' : 'none' }} className="flex flex-row">
+            <div className="pb-4 self-start">
+                {notifData?.todoItems && notifData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (
+                    <div key={index} style={{ textDecoration: taskStatus !== "False" ? 'line-through' : 'none' }} className="flex flex-row pl-3">
                         <input
                         type="checkbox"
                         checked={taskStatus !== "False"}
@@ -106,6 +103,11 @@ const TodoLister = () => {
                     </div>
                     ))
                 }
+                {(notifData?.todoItems || []).length === 0 && (
+                    <div className="text-muted-foreground">
+                        All Tasks Are Currently Complete...Good Work!
+                    </div>
+                )}
             </div>
             <TodoAreaForm onFormSubmit={onFormSubmit} />
         </div>
