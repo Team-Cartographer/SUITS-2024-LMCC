@@ -83,21 +83,6 @@ def send_biom_data(eva):
 
 
 
-
-def send_notification(args: dict):
-    info_todo = args.get('infoTodo', None)
-    info_warning = args.get('infoWarning', None)
-    is_warning = args.get('isWarning', None)
-
-    if info_todo or info_warning or is_warning:
-        data = {
-            "infoWarning": info_warning, 
-            "infoTodo": info_todo, 
-            "isWarning": is_warning,
-        }
-        with open(NOTIF_PATH, 'w') as jf:
-            json.dump(data, jf, indent=4)
-        return jsonify(data)
-    else: 
-        with open(NOTIF_PATH, 'r') as f:
-            return json.load(f)
+def send_notification():
+    with open(NOTIF_PATH, 'r') as f:
+        return json.load(f)

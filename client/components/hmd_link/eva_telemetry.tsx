@@ -1,7 +1,6 @@
 /**
  * @author @abhi-arya1
  * @function EvaTelemetry
- * @fileoverview https://docs.google.com/document/d/1Xy8z90BzejGYqI_AKgyO51-lsJwjt9BTSWW9DCOqp5Q/
  */
 
 

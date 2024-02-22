@@ -9,8 +9,9 @@
 import Timers from "@/components/ui/timing";
 import PanicButton from "@/components/hmd_link/panic_button";
 import ConnectionStrength from "@/components/hmd_link/conn_strength";
-import Map from "@/components/ui/map";
+import Map from "@/components/nav/map";
 import { CameraFeed } from "@/components/hmd_link/camera_feed";
+import TodoLister from "@/components/hmd_link/todo-lister";
 
 const HomePage = () => {
   return (
@@ -19,6 +20,7 @@ const HomePage = () => {
         <Timers />
         <CameraFeed />
         <CameraFeed />
+        <TodoLister />
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />
@@ -27,7 +29,9 @@ const HomePage = () => {
         <ConnectionStrength desc="ROVER" ping={10} />
       </div>
       <div className=" bg-slate-600 flex flex-grow items-center justify-center rounded-l-2xl p-2 pl-3">
-        <Map />
+        <div className="flex flex-col items-center justify-center gap-y-10">
+          <Map />
+        </div>
       </div>
     </div>
   );

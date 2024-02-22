@@ -1,20 +1,19 @@
 "use client";
 
-import lmcc_config from "@/lmcc_config.json";
 import { useVignette } from "@/hooks/context/vignette-context";
-import { fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithoutParams, fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { Button } from "./button";
 
 interface PanicData {
     infoWarning: string;
-    infoTodo: string;
+    todoItems: [];
     isWarning: string;
   }
 
 const defaultValue: PanicData = {
     infoWarning: "",
-    infoTodo: "",
+    todoItems: [],
     isWarning: "",
   };
 
@@ -45,7 +44,13 @@ const Notifier = () => {
       });
 
     const clearAlerts = async () => {
-        await fetchWithoutParams<PanicData>(`api/v0?get=notif&infoWarning=&infoTodo=&isWarning=false`)
+        await fetchWithParams(`api/v0`,
+        {
+          notif: 'update',
+          infoWarning: '',
+          isWarning: "false",
+          todoItems: ''
+        })
     }
 
       return (
@@ -53,16 +58,13 @@ const Notifier = () => {
           {isVignetteVisible && 
             <div className="vignette-overlay fixed inset-0 z-50 pointer-events-none" />
           }
-          {panicData && (panicData.infoWarning !== "" || panicData.infoTodo !== "") && (
-            <div className="fixed bottom-5 left-5 bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
+          {panicData && (panicData.infoWarning !== "") && (
+            <div className="fixed bottom-5 left-[35rem] bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
               {panicData.infoWarning !== "" && panicData.infoWarning !== null && (
-                <p className={`text-sm text-white font-semibold ${(panicData.infoTodo === "" || panicData.infoTodo === null) && "pb-4"}`}>
+                <p className={`text-sm text-white font-semibold pb-2`}>
                     <span className="underline">Warning Info:</span> {panicData.infoWarning}
                 </p>
               )}
-              {panicData.infoTodo !== "" && panicData.infoTodo !== null && (
-                <p className="text-sm text-white font-semibold mt-2 pb-4"><span className="underline">Todo Item:</span> {panicData.infoTodo}</p>
-              ) }
               <Button onClick={clearAlerts}>
                 Clear Alerts
               </Button>

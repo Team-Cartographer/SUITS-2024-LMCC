@@ -17,12 +17,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
 
 interface PanicData {
   infoWarning: string;
-  infoTodo: string;
+  todoItems: [string, string][];
   isWarning: string;
 }
 
@@ -36,9 +36,17 @@ const PanicButton = () => {
   const onPanic = async () => {
     try {
       console.log(inputValue);
-      await fetchWithoutParams<PanicData>(
-        `api/v0?get=notif&infoWarning=${inputValue}&isWarning=true`,
-      );
+      let curr_data = await fetchWithoutParams<PanicData>('api/v0?get=notif')
+      let curr_todo = curr_data?.todoItems
+
+      await fetchWithParams<PanicData>(
+        `api/v0`,
+        {
+          notif: 'update',
+          infoWarning: inputValue,
+          isWarning: "true",
+          todoItems: curr_todo
+        });
     } catch (err) {
       const error = err as Error;
       console.error("Error updating image:", error);
