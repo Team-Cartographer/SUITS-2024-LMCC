@@ -1,7 +1,6 @@
 /**
  * @author @abhi-arya1
  * @function ConnectionStrength
- * @fileoverview https://docs.google.com/document/d/12t25fQjffmaiEypirbH_cjmmGfv19-wLZXoTAJ37Qf0/edit?usp=sharing
  */
 
 import { SignalHigh, SignalLow, SignalMedium } from "lucide-react";

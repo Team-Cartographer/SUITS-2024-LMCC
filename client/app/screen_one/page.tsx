@@ -9,7 +9,7 @@
 import Timers from "@/components/ui/timing";
 import PanicButton from "@/components/hmd_link/panic_button";
 import ConnectionStrength from "@/components/hmd_link/conn_strength";
-import Map from "@/components/ui/map";
+import Map from "@/components/nav/map";
 import { CameraFeed } from "@/components/hmd_link/camera_feed";
 import TodoLister from "@/components/hmd_link/todo-lister";
 
