@@ -8,7 +8,8 @@
  */
 // ./app/screen_two/page.tsx
 import React from 'react';
-import MediaPlayer from '@/components/rover/rover_live_view';
+import MediaPlayer from './components/rover/rover_live_view';
+import './components/rover/rover_live_view'; // Add this line to import the missing module's type declarations
 
 const App = () => {
   return (
