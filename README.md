@@ -53,6 +53,8 @@ If you answer with `N`, your setup is complete. You can simply open the external
 
 For most testing cases, please answer `Y`, unless you have another computer on the same network with the LMCC server ready to use.
 
+**Keep in mind that the LMCC window must be full screen. Portions of our app may not work properly with a collapsed window!**
+
 ### Platform-Specific Instructions
 
 Since the App is built for Mac, Linux, and Windows, you can follow your platform specific instructions below:
