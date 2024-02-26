@@ -9,6 +9,7 @@
 import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
+import { useNetwork } from "@/hooks/context/network-provider";
 
 // Note that all scaling must be based off of 1024x815 dimensions!
 
@@ -22,9 +23,6 @@ const MAP_WIDTH = 3720;
     and multiply the rect height, width, and x, y in const handleImageClick(); 
 */
 
-
-// Gets feature information for GeoJSON files 
-// if you need more than this to be typed, just add it here
 interface GeoJSONFeature {
     type: 'Feature';
     geometry: {
@@ -43,48 +41,26 @@ interface GeoJSON {
     features: GeoJSONFeature[];
 }
 
+
 // Map Component
 const Map = () => {
     const [mapImage, setMapImage] = useState(''); // URL to Map Image
     const [err, setErr] = useState(''); // Potential Error in getting Map
     const [points, setPoints] = useState<GeoJSONFeature[]>([]) // Set of points to have from the map
+    const networkProvider = useNetwork();
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
         const interval = setInterval(() => {
-            fetchImage();
-            fetchGeoJSONPoints();
+            const mapData = networkProvider.getGeoJSONData();
+            const mapImage = networkProvider.getMapImage();
+            setMapImage(mapImage);
+            setPoints(mapData.features);
         }, lmcc_config.tickspeed); 
         return () => {
             clearInterval(interval);
         };
-    }, []);
-
-
-    // Fetches the current GeoJSON points and sets them to the state 
-    const fetchGeoJSONPoints = async () => {
-        const data = await fetchWithoutParams<GeoJSON>('api/v0?get=map_info');
-        if (data && data.features) {
-            setPoints(data.features);
-        }
-    };
-
-    // Fetches the current map image and sets them to the URL state, checking for errors
-    const fetchImage = async () => {
-        try {
-            const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
-            if (imageBlob) {
-                const imageObjectURL = URL.createObjectURL(imageBlob);
-                setMapImage(imageObjectURL);
-            } else {
-                throw new Error('Image blob is undefined');
-            }
-        } catch (err) {
-            const error = err as Error;
-            setErr(error.message);
-            console.error('Error fetching image:', error);
-        }
-    }
+    });
 
     // Checks if the image was clicked, and whether that click was/wasn't near an existing point
     const handleImageClick = async (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
@@ -96,7 +72,7 @@ const Map = () => {
         const x = Math.round(event.clientX - rect.left) / SCALING_FACTOR;
         const y = Math.round(event.clientY - rect.top) / SCALING_FACTOR;
 
-        fetchGeoJSONPoints();
+        setPoints(networkProvider.getGeoJSONData().features);
 
         // This looks whether the click was within a pixel radius of size "tolerance" to another point (defined on line 95). 
         const nearPoint = points.find(point => {
