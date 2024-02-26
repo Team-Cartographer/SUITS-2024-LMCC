@@ -1,11 +1,11 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import lmcc_config from "@/lmcc_config.json"
-import { fetchWithParams, fetchWithoutParams, fetchImageWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
+import { fetchWithoutParams } from "@/api/fetchServer";
 
-const TICKSPEED = lmcc_config.tickspeed
+const TICKSPEED = 250
 
+////////////////////////////////////////////////
 
 const formatTime = (seconds: number) => {  //build formatted timer 
 	const hours = Math.floor(seconds / 3600); // build hours timer 
@@ -67,22 +67,18 @@ const defaultGEOJSONValue: GeoJSON = {
 	features: []
 }
 
-const defaultMapImageValue: string = ''
-
 ////////////////////////////////////////////////////////////////
 
 interface NetworkContextType {
 	getMissionTimes: () => TimerType;
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
-	getMapImage: () => string;
 }
 
 const defaultNetworkValue: NetworkContextType = {
 	getMissionTimes: () => defaultTimerValue,
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
-	getMapImage: () => defaultMapImageValue,
 };
 
 
@@ -96,7 +92,6 @@ export const NetworkProvider = ({ children }: any) => {
 	const [dcuTime, setDcuTime] = useState("00:00:00");
 	const [notificationData, setNotifData] = useState<PanicData>()
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
-	const [mapImage, setMapImage] = useState('');
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -147,14 +142,6 @@ export const NetworkProvider = ({ children }: any) => {
 				} else {
 					throw new Error('Map Info is undefined')
 				}
-
-				const mapBlob = await fetchImageWithoutParams('api/v0?get=map_img');
-				if (mapBlob) {
-					const imageObjectURL = URL.createObjectURL(mapBlob);
-					setMapImage(imageObjectURL);
-				} else {
-					throw new Error('Image blob is undefined');
-				}
 				
 			} catch (error) {
 				console.error('error fetching some data:', error); 
@@ -187,16 +174,11 @@ export const NetworkProvider = ({ children }: any) => {
 		return mapGeoJSON || defaultGEOJSONValue
 	}
 
-	const getMapImage = () => {
-		return mapImage
-	}
-
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
 			getNotifData,
-			getGeoJSONData,
-			getMapImage
+			getGeoJSONData
 		}}>
 		{children}
 		</NetworkContext.Provider>

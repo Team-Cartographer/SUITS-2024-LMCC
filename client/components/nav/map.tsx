@@ -52,15 +52,32 @@ const Map = () => {
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
         const interval = setInterval(() => {
-            const mapData = networkProvider.getGeoJSONData();
-            const mapImage = networkProvider.getMapImage();
-            setMapImage(mapImage);
+            fetchImage();
+            const mapData = networkProvider.getGeoJSONData()
             setPoints(mapData.features);
-        }, lmcc_config.tickspeed); 
+        }, 100); 
         return () => {
             clearInterval(interval);
         };
     });
+
+
+    // Fetches the current map image and sets them to the URL state, checking for errors
+    const fetchImage = async () => {
+        try {
+            const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
+            if (imageBlob) {
+                const imageObjectURL = URL.createObjectURL(imageBlob);
+                setMapImage(imageObjectURL);
+            } else {
+                throw new Error('Image blob is undefined');
+            }
+        } catch (err) {
+            const error = err as Error;
+            setErr(error.message);
+            console.error('Error fetching image:', error);
+        }
+    }
 
     // Checks if the image was clicked, and whether that click was/wasn't near an existing point
     const handleImageClick = async (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {

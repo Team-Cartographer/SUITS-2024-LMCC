@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { TodoAreaForm } from "./forms/todo-list-form";
 import * as z from "zod"
 import { X } from "lucide-react";
+import { useNetwork } from "@/hooks/context/network-provider";
 
 interface PanicData {
     infoWarning: string, 
@@ -21,24 +22,12 @@ const FormSchema = z.object({
 
 const TodoLister = () => {
     const [notifData, setNotifData] = useState<PanicData>();
-
-    const fetchPanicData = async () => {
-        try {
-            const notificationData = await fetchWithoutParams<PanicData>(
-                `api/v0?get=notif`,
-            )
-            if (notificationData) { 
-                setNotifData(notificationData); 
-            } else { 
-                throw Error('could not get notification data'); 
-            }
-        } catch (err) {
-            console.error("Error fetching panic data:", err);
-        }
-    };
+    const networkProvider = useNetwork();
 
     useEffect(() => {
-        const intervalId = setInterval(fetchPanicData, 400); 
+        const intervalId = setInterval(() => {
+            setNotifData(networkProvider.getNotifData())
+        }, 100); 
         return () => clearInterval(intervalId);
       });
 
