@@ -4,7 +4,7 @@ import { useVignette } from "@/hooks/context/vignette-context";
 import { fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { Button } from "./button";
-import { useNetwork } from "@/hooks/context/network-provider";
+import { useNetwork } from "@/hooks/context/network-context";
 
 interface PanicData {
     infoWarning: string;

@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { TodoAreaForm } from "./forms/todo-list-form";
 import * as z from "zod"
 import { X } from "lucide-react";
-import { useNetwork } from "@/hooks/context/network-provider";
+import { useNetwork } from "@/hooks/context/network-context";
 
 interface PanicData {
     infoWarning: string, 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { VignetteProvider } from "@/hooks/context/vignette-context";
-import { NetworkProvider } from "@/hooks/context/network-provider";
+import { NetworkProvider } from "@/hooks/context/network-context";
 
 const inter = Inter({ subsets: ["latin"] });
 

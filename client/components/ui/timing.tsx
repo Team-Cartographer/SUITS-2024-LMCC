@@ -8,7 +8,7 @@
 
 import React, { useEffect, useState } from "react";
 import Clock from "react-live-clock";
-import { useNetwork } from "@/hooks/context/network-provider";
+import { useNetwork } from "@/hooks/context/network-context";
 
 const MissionClock = () => {   
 	return (

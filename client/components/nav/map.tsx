@@ -9,7 +9,7 @@
 import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
-import { useNetwork } from "@/hooks/context/network-provider";
+import { useNetwork } from "@/hooks/context/network-context";
 
 // Note that all scaling must be based off of 1024x815 dimensions!
 
