@@ -23,7 +23,7 @@ import { useState } from "react";
 interface PanicData {
   infoWarning: string;
   todoItems: [string, string][];
-  isWarning: string;
+  isWarning: boolean;
 }
 
 const PanicButton = () => {
@@ -44,7 +44,7 @@ const PanicButton = () => {
         {
           notif: 'update',
           infoWarning: inputValue,
-          isWarning: "true",
+          isWarning: true,
           todoItems: curr_todo
         });
     } catch (err) {

@@ -1,20 +1,27 @@
 "use client";
 
-
 /**
  * @author @abhi-arya1, @adyxn
  * @function Timers
  */
 
 import React, { useEffect, useState } from "react";
-import Clock from "react-live-clock";
 import { useNetwork } from "@/hooks/context/network-context";
 
 const MissionClock = () => {   
+	const date = new Date();
+	const [time, setTime] = useState("");
+
+	useEffect(() => {
+		const interval = setInterval(async () => {
+			setTime(`${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
+		}, 1000);
+		return () => clearInterval(interval);
+	});
 	return (
-	<div className="flex flex-row">
-		<div className="text-4xl font-semibold mb-4 absolute pt-0">
-			<Clock format={"hh:mm:ss A"} ticking={true} timezone={"US/Pacific"} /> 
+	<div className="flex flex-row" suppressHydrationWarning>
+		<div className="text-4xl font-semibold mb-4 absolute pt-0" suppressHydrationWarning>
+			<span suppressHydrationWarning>{time}</span>
 		</div>
 	</div>
 	);
@@ -52,7 +59,7 @@ const Timers = () => {
 						<MissionClock />
 				</div>
 
-				<div className="flex flex-col pl-32">
+				<div className="flex flex-col pl-16">
 					<p className="font-bold text-md">Mission Elapsed Time</p>
 					<div className="flex flex-row">
 						<div className="text-4xl font-semibold mb-4 absolute pt-0">

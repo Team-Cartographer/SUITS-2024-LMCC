@@ -71,11 +71,11 @@ const TodoLister = () => {
       };
 
     return ( 
-        <div className="flex flex-col text-sm self-start gap-x-2 p-4">
-            <div className="text-lg font-bold pb-2 underline self-start">
+        <div className="flex flex-col text-sm self-end gap-x-2 p-4">
+            <div className="text-lg font-bold pb-2 underline self-end">
                 HMD Todo List
             </div>
-            <div className="pb-4 self-start">
+            <div className="pb-4 self-end">
                 {notifData?.todoItems && notifData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (
                     <div key={index} style={{ textDecoration: taskStatus !== "False" ? 'line-through' : 'none' }} className="flex flex-row pl-3">
                         <input

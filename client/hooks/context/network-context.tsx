@@ -142,7 +142,7 @@ export const NetworkProvider = ({ children }: any) => {
 				} else {
 					throw new Error('Map Info is undefined')
 				}
-				
+			
 			} catch (error) {
 				console.error('error fetching some data:', error); 
 			}

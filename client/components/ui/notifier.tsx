@@ -54,7 +54,7 @@ const Notifier = () => {
             <div className="vignette-overlay fixed inset-0 z-50 pointer-events-none" />
           }
           {panicData && (panicData.infoWarning !== "") && (
-            <div className="fixed bottom-5 left-[35rem] bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
+            <div className="fixed bottom-5 left-5 bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
               {panicData.infoWarning !== "" && panicData.infoWarning !== null && (
                 <p className={`text-sm text-white font-semibold pb-2`}>
                     <span className="underline">Warning Info:</span> {panicData.infoWarning}

@@ -37,7 +37,7 @@ export function TodoAreaForm({ onFormSubmit }: TodoProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row self-start space-x-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row self-end space-x-2">
         <FormField
           control={form.control}
           name="todoitem"
