@@ -27,9 +27,8 @@ const Notifier = () => {
         const intervalId = setInterval(async () => {
           const notification = networkProvider.getNotifData();
           setPanicData(notification);
-          console.log(notification);
 
-          if (notification.isWarning) {
+          if (notification.isWarning === true) {
             displayVignette();
           } else if (notification.isWarning === false) {
             hideVignette();

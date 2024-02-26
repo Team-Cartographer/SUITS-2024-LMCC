@@ -3,8 +3,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithoutParams } from "@/api/fetchServer";
 
-const TICKSPEED = 250
-
 ////////////////////////////////////////////////
 
 const formatTime = (seconds: number) => {  //build formatted timer 
@@ -85,6 +83,8 @@ const defaultNetworkValue: NetworkContextType = {
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
+	const TICKSPEED = 250
+
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");
 	const [uiaTime, setUiaTime] = useState("00:00:00");
