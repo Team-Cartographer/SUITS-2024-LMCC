@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { VignetteProvider } from "@/hooks/context/vignette-context";
+import { NetworkProvider } from "@/hooks/context/network-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,9 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
+      <NetworkProvider>
       <VignetteProvider>
         <body className={inter.className}>{children}</body>
       </VignetteProvider>
+      </NetworkProvider>
     </html>
   );
 }
