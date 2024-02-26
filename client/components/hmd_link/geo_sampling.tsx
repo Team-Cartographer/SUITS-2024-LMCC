@@ -21,6 +21,11 @@ import { Switch } from "@/components/ui/switch"
 
 import { DataTable } from "@/components/ui/data_table";
 import { ColumnDef } from "@tanstack/react-table"
+import { Chart } from "react-google-charts";
+
+declare module 'react-google-charts' {
+    export class Chart extends React.Component<any, any> {}
+  }
 
 interface SpecData {
     Al2O3: number;
@@ -102,6 +107,22 @@ const GeoSampler = () => {
         return () => clearInterval(intervalID);
     }, []);
 
+    const chartData = EVA1SpecItem?[['Element', 'Value'], ...Object.entries(EVA1SpecItem.data)]
+        : [];
+
+    const options = {
+        title: EVA1SpecItem?.name || '',
+        legend: { position: 'none' }
+    };
+
+    const columns = [
+        {
+            type: 'number',
+            label: 'Value'
+        },
+    ];
+
+
   return (
     <div className="container mx-auto mt-8">
         <h1 className="text-2xl font-bold mb-4">Geological Sampling</h1>
@@ -115,7 +136,7 @@ const GeoSampler = () => {
                 <TableRow>
                     <TableHead className="w-[150px]">Sample Name</TableHead>
                     <TableHead>Sample ID</TableHead>
-                    <TableHead>Method</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead className="text-right">Display?</TableHead>
                 </TableRow>
             </TableHeader>
@@ -123,9 +144,10 @@ const GeoSampler = () => {
                 <TableRow>
                     <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
                     <TableCell>{EVA1SpecItem?.id}</TableCell>
-                    <TableCell>TBD</TableCell>
+                    <TableCell>Collected</TableCell>
                     {/*
-                    <TableCell className="text-right"><Switch checked={switchState} onChange={handleSwitchChange} />
+                    <TableCell className="text-right"><Switch checked={field.value} onCheckedChange={field.onChange} />
+                    </TableCell>
                     */}
                     <TableCell className="text-right"><Switch />
                     </TableCell>
@@ -133,70 +155,14 @@ const GeoSampler = () => {
             </TableBody>
         </Table>
 
-        <Table>
-            <TableCaption>Sample Composition Data</TableCaption>
-            <TableHeader>
-                <TableRow>
-                    <TableHead className="w-[150px]">Sample Name</TableHead>
-                    <TableHead>Mineral</TableHead>
-                    <TableHead>Composition</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>SiO2</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.SiO2}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>Al2O3</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.Al2O3}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>MnO</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.MnO}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>CaO</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.CaO}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>P2O3</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.P2O3}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>TiO2</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.TiO2}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>FeO</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.FeO}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>MgO</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.MgO}</TableCell>
-                </TableRow>
-
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>K2O</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.K2O}</TableCell>
-                </TableRow>
-                <TableRow>
-                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
-                    <TableCell>Other</TableCell>
-                    <TableCell>{EVA1SpecItem?.data.other}</TableCell>
-                </TableRow>
-            </TableBody>
-        </Table>
+        <Chart
+            chartType="BarChart"
+            width="100%"
+            height="300px"
+            data={chartData}
+            options={options}
+            loader={<div>Loading Chart</div>}
+        />
     </div>
   );
 };
