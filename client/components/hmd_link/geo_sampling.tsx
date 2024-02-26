@@ -18,9 +18,12 @@ import {
     TableRow,
   } from "@/components/ui/table"
 import { Switch } from "@/components/ui/switch"
-
-import { DataTable } from "@/components/ui/data_table";
-import { ColumnDef } from "@tanstack/react-table"
+import {
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
+  } from "@/components/ui/accordion"  
 import { Chart } from "react-google-charts";
 
 declare module 'react-google-charts' {
@@ -142,29 +145,43 @@ const GeoSampler = () => {
             </TableHeader>
             <TableBody>
                 <TableRow>
+                    <TableCell className="w-[50px]">{EVA1SpecItem?.name}</TableCell>
+                    <TableCell className="w-[50px]">{EVA1SpecItem?.id}</TableCell>
+                    <TableCell className="w-[50px]">Collected</TableCell>
+                    <Accordion type="multiple" collapsible>
+                        <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                                Display {EVA1SpecItem?.name} data
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <Chart
+                                    chartType="BarChart"
+                                    width="100%"
+                                    height="300px"
+                                    data={chartData}
+                                    options={options}
+                                    loader={<div>Loading Chart</div>}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                {/*
                     <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
                     <TableCell>{EVA1SpecItem?.id}</TableCell>
                     <TableCell>Collected</TableCell>
-                    {/*
-                    <TableCell className="text-right"><Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </TableCell>
-                    */}
                     <TableCell className="text-right"><Switch />
                     </TableCell>
+                    */}
                 </TableRow>
             </TableBody>
         </Table>
-
-        <Chart
-            chartType="BarChart"
-            width="100%"
-            height="300px"
-            data={chartData}
-            options={options}
-            loader={<div>Loading Chart</div>}
-        />
     </div>
   );
 };
 
 export default GeoSampler;
+
+{/*
+<TableCell className="text-right"><Switch checked={field.value} onCheckedChange={field.onChange} />
+</TableCell>
+*/}
