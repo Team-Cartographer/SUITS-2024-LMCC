@@ -19,9 +19,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <NetworkProvider>
-      <VignetteProvider>
-        <body className={inter.className}>{children}</body>
-      </VignetteProvider>
+        <VignetteProvider>
+          <body className={inter.className}>{children}</body>
+        </VignetteProvider>
       </NetworkProvider>
     </html>
   );

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
 import { fetchWithParams, fetchWithoutParams, fetchImageWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
+import { FlashOnOutlined } from "@mui/icons-material";
 
 const TICKSPEED = lmcc_config.tickspeed
 
@@ -19,6 +20,12 @@ interface PanicData {
     infoWarning: string, 
     todoItems: [string, string][], 
     isWarning: boolean,
+}
+
+const defaultPanicValue: PanicData = {
+    infoWarning: "", 
+    todoItems: [], 
+    isWarning: false,
 }
 
 interface TimerType { 
@@ -38,15 +45,14 @@ const defaultTimerValue: TimerType = {
 	
 }
 
-
 interface NetworkContextType {
 	getMissionTimes: () => TimerType;
-	hideVignette: () => void;
+	getNotifData: () => PanicData;
 }
 
 const defaultValue: NetworkContextType = {
 	getMissionTimes: () => defaultTimerValue,
-	hideVignette: () => {},
+	getNotifData: () => defaultPanicValue,
 };
 
 
@@ -108,14 +114,18 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	};
 
-	const hideVignette = () => {
-		
-	};
+	const getNotifData = (): PanicData => {
+		return {
+			infoWarning: notificationData?.infoWarning || "Error",
+			todoItems: notificationData?.todoItems || [["Error", "Error"]],
+			isWarning: notificationData?.isWarning || false
+		}
+	}
 
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
-			hideVignette 
+			getNotifData
 		}}>
 		{children}
 		</NetworkContext.Provider>
