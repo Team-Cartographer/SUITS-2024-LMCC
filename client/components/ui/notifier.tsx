@@ -19,7 +19,7 @@ const defaultValue: PanicData = {
   };
 
 const Notifier = () => {
-    const { isVignetteVisible } = useVignette();
+    const { displayVignette, hideVignette, isVignetteVisible } = useVignette();
     const [panicData, setPanicData] = useState<PanicData>(defaultValue);
     const networkProvider = useNetwork();
 
@@ -27,7 +27,15 @@ const Notifier = () => {
         const intervalId = setInterval(async () => {
           const notification = networkProvider.getNotifData();
           setPanicData(notification);
-        }, 500); 
+          console.log(notification);
+
+          if (notification.isWarning) {
+            displayVignette();
+          } else if (notification.isWarning === false) {
+            hideVignette();
+          }
+
+        }, 200); 
         return () => clearInterval(intervalId);
       });
 
@@ -36,8 +44,8 @@ const Notifier = () => {
         {
           notif: 'update',
           infoWarning: '',
-          isWarning: "false",
-          todoItems: ''
+          isWarning: false,
+          todoItems: [...(panicData.todoItems || [])]
         })
     }
 

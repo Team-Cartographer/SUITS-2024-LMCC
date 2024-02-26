@@ -164,8 +164,8 @@ export const NetworkProvider = ({ children }: any) => {
 
 	const getNotifData = (): PanicData => {
 		return {
-			infoWarning: notificationData?.infoWarning || "Error",
-			todoItems: notificationData?.todoItems || [["Error", "Error"]],
+			infoWarning: notificationData?.infoWarning || "",
+			todoItems: notificationData?.todoItems || [],
 			isWarning: notificationData?.isWarning || false
 		}
 	}
