@@ -58,10 +58,6 @@ interface SpecData {
 spec: Spec;
 }
 
-let EVA1SpecItem: SpecItem | null;
-let EVA2SpecItem: SpecItem | null;
-
-
 const GeoSampler = () => {
   const networkProvider = useNetwork();
   const [idValue, setIdValue] = useState(0);
@@ -76,26 +72,10 @@ const GeoSampler = () => {
 
     const fetchSampleID = async () => {
         try {
-            const specData = await fetchWithoutParams<SpecData>("mission/spec");
-            console.log('API Response:', specData);
-
-            if (specData) {
-                console.log(specData.spec["eva1"].id);
-                setIdValue(specData.spec["eva1"].id);
-
-                setEVA1SpecItem({
-                    data: specData.spec["eva1"].data,
-                    id: specData.spec["eva1"].id,
-                    name: specData.spec["eva1"].name
-                })
-                
-                setEVA2SpecItem({
-                    data: specData.spec["eva2"].data,
-                    id: specData.spec["eva2"].id,
-                    name: specData.spec["eva2"].name
-                })
-
-            }
+            const specData = networkProvider.getSpecData()
+            setIdValue(specData.eva1?.id || 0);
+            setEVA1SpecItem(specData.eva1);
+            setEVA2SpecItem(specData.eva2);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
@@ -110,13 +90,10 @@ const GeoSampler = () => {
             );
     
             if (!itemExists) {
-                console.log("HERE");
                 await fetchWithParams('api/v0', {
                     notif: "update",
                     todoItems: [...(todoItems || []), updated]
                 });
-            } else {
-                console.log("Item already exists");
             }
         }
     }

@@ -65,18 +65,59 @@ const defaultGEOJSONValue: GeoJSON = {
 	features: []
 }
 
+
+interface SpecData {
+    Al2O3: number;
+    CaO: number;
+    FeO: number;
+    K2O: number;
+    MgO: number;
+    MnO: number;
+    P2O3: number;
+    SiO2: number;
+    TiO2: number;
+    other: number;
+  }
+  
+interface SpecItem {
+data: SpecData;
+id: number;
+name: string;
+}
+
+interface Spec {
+[key: string]: SpecItem;
+}
+
+interface SpecData {
+spec: Spec;
+}
+
+interface EVASpecItems {
+	eva1: SpecItem | null
+	eva2: SpecItem | null
+}
+
+const defaultSpecValue: EVASpecItems = {
+	eva1: null,
+	eva2: null 
+}
+
 ////////////////////////////////////////////////////////////////
 
 interface NetworkContextType {
 	getMissionTimes: () => TimerType;
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
+	getSpecData: () => EVASpecItems
 }
 
 const defaultNetworkValue: NetworkContextType = {
 	getMissionTimes: () => defaultTimerValue,
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
+	getSpecData: () => defaultSpecValue
+
 };
 
 
@@ -92,6 +133,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [dcuTime, setDcuTime] = useState("00:00:00");
 	const [notificationData, setNotifData] = useState<PanicData>()
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
+	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
+	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -142,6 +185,22 @@ export const NetworkProvider = ({ children }: any) => {
 				} else {
 					throw new Error('Map Info is undefined')
 				}
+
+				const specData = await fetchWithoutParams<SpecData>("mission/spec");
+				if (specData) {
+					setEVA1SpecItem({
+						data: specData.spec["eva1"].data,
+						id: specData.spec["eva1"].id,
+						name: specData.spec["eva1"].name
+					})
+					setEVA2SpecItem({
+						data: specData.spec["eva2"].data,
+						id: specData.spec["eva2"].id,
+						name: specData.spec["eva2"].name
+					})
+				} else { 
+					throw new Error('Spec Data is Undefined!')
+				}
 			
 			} catch (error) {
 				console.error('error fetching some data:', error); 
@@ -174,11 +233,19 @@ export const NetworkProvider = ({ children }: any) => {
 		return mapGeoJSON || defaultGEOJSONValue
 	}
 
+	const getSpecData = (): EVASpecItems => {
+		return {
+			eva1: eva1SpecItem || null,
+			eva2: eva2SpecItem || null,
+		}
+	}
+
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
 			getNotifData,
-			getGeoJSONData
+			getGeoJSONData,
+			getSpecData,
 		}}>
 		{children}
 		</NetworkContext.Provider>
