@@ -15,6 +15,7 @@ const MissionClock = () => {
 	useEffect(() => {
 		const interval = setInterval(async () => {
 			setTime(`${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
+			console.log(time);
 		}, 1000);
 		return () => clearInterval(interval);
 	});
