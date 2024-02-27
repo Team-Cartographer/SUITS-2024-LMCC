@@ -7,21 +7,13 @@
 
 import React, { useEffect, useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
+import Clock from 'react-live-clock'
 
 const MissionClock = () => {   
-	const date = new Date();
-	const [time, setTime] = useState("");
-
-	useEffect(() => {
-		const interval = setInterval(async () => {
-			setTime(`${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`)
-		}, 1000);
-		return () => clearInterval(interval);
-	});
 	return (
-	<div className="flex flex-row" suppressHydrationWarning>
-		<div className="text-4xl font-semibold mb-4 absolute pt-0" suppressHydrationWarning>
-			<span suppressHydrationWarning>{time}</span>
+	<div className="flex flex-row">
+		<div className="text-4xl font-semibold mb-4 absolute pt-0">
+			<span suppressHydrationWarning><Clock format={'HH:mm:ss'} ticking={true} timezone={'US/Pacific'}/></span>
 		</div>
 	</div>
 	);

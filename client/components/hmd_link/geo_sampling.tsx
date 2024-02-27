@@ -25,6 +25,7 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"  
 import { Chart } from "react-google-charts";
+import { useNetwork } from "@/hooks/context/network-context";
 
 declare module 'react-google-charts' {
     export class Chart extends React.Component<any, any> {}
@@ -43,29 +44,27 @@ interface SpecData {
     other: number;
   }
   
-  interface SpecItem {
-    data: SpecData;
-    id: number;
-    name: string;
-  }
-  
-  interface Spec {
-    [key: string]: SpecItem;
-  }
-  
-  interface SpecData {
-    spec: Spec;
-  }
+interface SpecItem {
+data: SpecData;
+id: number;
+name: string;
+}
 
-let EVA1SpecItem: SpecItem | null;
-let EVA2SpecItem: SpecItem | null;
+interface Spec {
+[key: string]: SpecItem;
+}
 
+interface SpecData {
+spec: Spec;
+}
 
 const GeoSampler = () => {
+  const networkProvider = useNetwork();
   const [idValue, setIdValue] = useState(0);
   const [EVA1SpecItem, setEVA1SpecItem] = useState<SpecItem | null>(null);
   const [EVA2SpecItem, setEVA2SpecItem] = useState<SpecItem | null>(null);
   const [switchState, setSwitchState] = useState<boolean>(false);
+  const [todoItems, setTodoItems] = useState<[string, string][]>();
     
     const handleSwitchChange = () => {
         setSwitchState((prevChecked) => !prevChecked);
@@ -73,42 +72,42 @@ const GeoSampler = () => {
 
     const fetchSampleID = async () => {
         try {
-            const specData = await fetchWithoutParams<SpecData>("mission/spec");
-            console.log('API Response:', specData);
-
-            if (specData) {
-                console.log(specData.spec["eva1"].id);
-                setIdValue(specData.spec["eva1"].id);
-
-                setEVA1SpecItem({
-                    data: specData.spec["eva1"].data,
-                    id: specData.spec["eva1"].id,
-                    name: specData.spec["eva1"].name
-                })
-                
-                setEVA2SpecItem({
-                    data: specData.spec["eva2"].data,
-                    id: specData.spec["eva2"].id,
-                    name: specData.spec["eva2"].name
-                })
-
-            }
-
-            
-
+            const specData = networkProvider.getSpecData()
+            setIdValue(specData.eva1?.id || 0);
+            setEVA1SpecItem(specData.eva1);
+            setEVA2SpecItem(specData.eva2);
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    const addTodoItems = async () => {
+        if (EVA1SpecItem && EVA1SpecItem.name !== undefined && EVA1SpecItem.id !== undefined) {
+            const updated = [`Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
+    
+            const itemExists = todoItems && todoItems.some(item => 
+                item[0] === updated[0]
+            );
+    
+            if (!itemExists) {
+                await fetchWithParams('api/v0', {
+                    notif: "update",
+                    todoItems: [...(todoItems || []), updated]
+                });
+            }
+        }
+    }
     
 
     useEffect(() => {
-        fetchSampleID();
-        const intervalID = setInterval(fetchSampleID, 500);
+        const intervalID = setInterval(() => {
+            fetchSampleID();
+            setTodoItems(networkProvider.getNotifData().todoItems)
+            addTodoItems();
+        }, 100);
 
         return () => clearInterval(intervalID);
-    }, []);
+    });
 
     const chartData = EVA1SpecItem?[['Element', 'Value'], ...Object.entries(EVA1SpecItem.data)]
         : [];
@@ -148,7 +147,7 @@ const GeoSampler = () => {
                     <TableCell className="w-[50px]">{EVA1SpecItem?.name}</TableCell>
                     <TableCell className="w-[50px]">{EVA1SpecItem?.id}</TableCell>
                     <TableCell className="w-[50px]">Collected</TableCell>
-                    <Accordion type="multiple" collapsible>
+                    <Accordion type="multiple">
                         <AccordionItem value="item-1">
                             <AccordionTrigger>
                                 Display {EVA1SpecItem?.name} data

@@ -17,6 +17,8 @@ const SCALING_FACTOR = 1/(lmcc_config.scale_factor);
 const MAP_HEIGHT = 3543;
 const MAP_WIDTH = 3720;
 
+let MAP_URLS: string[] = []
+
 /* 
     When you are running this file and want to resize the map, 
     make sure to divide the height and width by the scale factor, 
@@ -41,7 +43,6 @@ interface GeoJSON {
     features: GeoJSONFeature[];
 }
 
-
 // Map Component
 const Map = () => {
     const [mapImage, setMapImage] = useState(''); // URL to Map Image
@@ -55,7 +56,7 @@ const Map = () => {
             fetchImage();
             const mapData = networkProvider.getGeoJSONData()
             setPoints(mapData.features);
-        }, 100); 
+        }, 150); 
         return () => {
             clearInterval(interval);
         };
@@ -67,8 +68,13 @@ const Map = () => {
         try {
             const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
             if (imageBlob) {
-                const imageObjectURL = URL.createObjectURL(imageBlob);
-                setMapImage(imageObjectURL);
+                for (let mapUrl of MAP_URLS) {
+                    URL.revokeObjectURL(mapUrl);
+                }
+                const newUrl = URL.createObjectURL(imageBlob);
+                setMapImage(newUrl);
+                MAP_URLS = [...MAP_URLS, newUrl]
+                console.log(MAP_URLS);
             } else {
                 throw new Error('Image blob is undefined');
             }
@@ -144,7 +150,7 @@ const Map = () => {
     return ( 
         <div className="">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {mapImage && <img className="rounded-3xl" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+            {mapImage && <img className="rounded-3xl" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
         </div>
     );
 }
