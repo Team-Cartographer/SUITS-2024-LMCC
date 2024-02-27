@@ -107,13 +107,13 @@ def get_tss_url() -> None:
     has_existing_url = True
 
     while True:
+        url = None
         if TSS_PATH.exists() and not check_failed:
             with open(TSS_PATH, "r") as json_file:
                 tss_data = load(json_file)
-            url = tss_data["TSS_URL"]
-            has_existing_url = True
+            url = tss_data.get("TSS_URL")
 
-        if not has_existing_url:
+        if not url:
             url = input(f"\nenter tss url: ")
 
         if not match(pattern, url):
@@ -122,8 +122,7 @@ def get_tss_url() -> None:
 
         if not check_tss_url(url):
             print(f'error: your tss url may have changed, please enter it here (ex: http://123.456.78.9:14141)')
-            check_failed, has_existing_url = True, False
-            continue 
+            continue
         else:
             save_tss_to_json(url)
             print('done!')
