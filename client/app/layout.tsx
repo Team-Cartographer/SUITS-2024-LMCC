@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <NetworkProvider>
         <VignetteProvider>
-          <body className={inter.className}>{children}</body>
+          <body className={inter.className} suppressHydrationWarning={true}>{children}</body>
         </VignetteProvider>
       </NetworkProvider>
     </html>

@@ -148,7 +148,7 @@ const GeoSampler = () => {
                     <TableCell className="w-[50px]">{EVA1SpecItem?.name}</TableCell>
                     <TableCell className="w-[50px]">{EVA1SpecItem?.id}</TableCell>
                     <TableCell className="w-[50px]">Collected</TableCell>
-                    <Accordion type="multiple" collapsible>
+                    <Accordion type="multiple">
                         <AccordionItem value="item-1">
                             <AccordionTrigger>
                                 Display {EVA1SpecItem?.name} data
