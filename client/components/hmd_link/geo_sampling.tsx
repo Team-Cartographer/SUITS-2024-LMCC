@@ -25,6 +25,7 @@ import {
     AccordionTrigger,
   } from "@/components/ui/accordion"  
 import { Chart } from "react-google-charts";
+import { useNetwork } from "@/hooks/context/network-context";
 
 declare module 'react-google-charts' {
     export class Chart extends React.Component<any, any> {}
@@ -43,29 +44,31 @@ interface SpecData {
     other: number;
   }
   
-  interface SpecItem {
-    data: SpecData;
-    id: number;
-    name: string;
-  }
-  
-  interface Spec {
-    [key: string]: SpecItem;
-  }
-  
-  interface SpecData {
-    spec: Spec;
-  }
+interface SpecItem {
+data: SpecData;
+id: number;
+name: string;
+}
+
+interface Spec {
+[key: string]: SpecItem;
+}
+
+interface SpecData {
+spec: Spec;
+}
 
 let EVA1SpecItem: SpecItem | null;
 let EVA2SpecItem: SpecItem | null;
 
 
 const GeoSampler = () => {
+  const networkProvider = useNetwork();
   const [idValue, setIdValue] = useState(0);
   const [EVA1SpecItem, setEVA1SpecItem] = useState<SpecItem | null>(null);
   const [EVA2SpecItem, setEVA2SpecItem] = useState<SpecItem | null>(null);
   const [switchState, setSwitchState] = useState<boolean>(false);
+  const [todoItems, setTodoItems] = useState<[string, string][]>();
     
     const handleSwitchChange = () => {
         setSwitchState((prevChecked) => !prevChecked);
@@ -93,22 +96,41 @@ const GeoSampler = () => {
                 })
 
             }
-
-            
-
         } catch (error) {
             console.error('Error fetching data:', error);
         }
     };
 
+    const addTodoItems = async () => {
+        if (EVA1SpecItem && EVA1SpecItem.name !== undefined && EVA1SpecItem.id !== undefined) {
+            const updated = [`Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
+    
+            const itemExists = todoItems && todoItems.some(item => 
+                item[0] === updated[0]
+            );
+    
+            if (!itemExists) {
+                console.log("HERE");
+                await fetchWithParams('api/v0', {
+                    notif: "update",
+                    todoItems: [...(todoItems || []), updated]
+                });
+            } else {
+                console.log("Item already exists");
+            }
+        }
+    }
     
 
     useEffect(() => {
-        fetchSampleID();
-        const intervalID = setInterval(fetchSampleID, 500);
+        const intervalID = setInterval(() => {
+            fetchSampleID();
+            setTodoItems(networkProvider.getNotifData().todoItems)
+            addTodoItems();
+        }, 100);
 
         return () => clearInterval(intervalID);
-    }, []);
+    });
 
     const chartData = EVA1SpecItem?[['Element', 'Value'], ...Object.entries(EVA1SpecItem.data)]
         : [];
