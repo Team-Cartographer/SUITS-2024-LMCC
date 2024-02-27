@@ -13,7 +13,7 @@ const MissionClock = () => {
 	return (
 	<div className="flex flex-row">
 		<div className="text-4xl font-semibold mb-4 absolute pt-0">
-			<Clock format={'HH:mm:ss'} ticking={true} timezone={'US/Pacific'} />
+			<span suppressHydrationWarning><Clock format={'HH:mm:ss'} ticking={true} timezone={'US/Pacific'}/></span>
 		</div>
 	</div>
 	);
