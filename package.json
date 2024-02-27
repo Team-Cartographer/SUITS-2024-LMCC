@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-<<<<<<< HEAD
-    "react-live-clock": "^6.1.19"
-=======
-    "react-google-charts": "^4.0.1"
->>>>>>> main
-  }
-}
