@@ -17,6 +17,8 @@ const SCALING_FACTOR = 1/(lmcc_config.scale_factor);
 const MAP_HEIGHT = 3543;
 const MAP_WIDTH = 3720;
 
+let MAP_URLS: string[] = []
+
 /* 
     When you are running this file and want to resize the map, 
     make sure to divide the height and width by the scale factor, 
@@ -66,8 +68,13 @@ const Map = () => {
         try {
             const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
             if (imageBlob) {
-                URL.revokeObjectURL(mapImage);
-                setMapImage(URL.createObjectURL(imageBlob));
+                for (let mapUrl of MAP_URLS) {
+                    URL.revokeObjectURL(mapUrl);
+                }
+                const newUrl = URL.createObjectURL(imageBlob);
+                setMapImage(newUrl);
+                MAP_URLS = [...MAP_URLS, newUrl]
+                console.log(MAP_URLS);
             } else {
                 throw new Error('Image blob is undefined');
             }
