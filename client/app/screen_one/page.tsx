@@ -12,6 +12,7 @@ import ConnectionStrength from "@/components/hmd_link/conn_strength";
 import Map from "@/components/nav/map";
 import { CameraFeed } from "@/components/hmd_link/camera_feed";
 import TodoLister from "@/components/hmd_link/todo-lister";
+import ContentManager from "@/components/general/content-manager";
 
 const HomePage = () => {
   return (
@@ -30,7 +31,7 @@ const HomePage = () => {
       </div>
       <div className=" bg-slate-600 flex flex-grow items-center justify-center rounded-l-2xl p-2 pl-3">
         <div className="flex flex-col items-center justify-center gap-y-10">
-          <Map />
+          <ContentManager />
         </div>
       </div>
     </div>
