@@ -2,6 +2,9 @@ import { useState } from "react";
 import Map from "../nav/map";
 import { Button } from "../ui/button";
 import ProcedureLists from "../hmd_link/procedure-lists";
+import dynamic from "next/dynamic";
+
+const NoSSR_GeoSampler = dynamic(() => import('@/components/hmd_link/geo_sampling'), { ssr: false })
 
 interface WindowNames {
     [key: string]: JSX.Element;
@@ -9,12 +12,14 @@ interface WindowNames {
 
 const windowNames: WindowNames = {
     "map": <Map />,
-    "lists": <ProcedureLists />
+    "lists": <ProcedureLists />,
+    "geo": <NoSSR_GeoSampler />
 }
 
 const windows = {
     "map": "Map",
-    "lists": "Procedure Lists"
+    "lists": "Procedure Lists",
+    "geo": "Geological Sampling"
 }
 
 const ContentManager = () => {
