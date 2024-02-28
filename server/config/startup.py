@@ -118,10 +118,12 @@ def get_tss_url() -> None:
 
         if not match(pattern, url):
             print(f'error: please enter a tss url in the correct format (ex: http://123.456.78.9:14141)')
+            check_failed = True
             continue
 
         if not check_tss_url(url):
             print(f'error: your tss url may have changed, please enter it here (ex: http://123.456.78.9:14141)')
+            check_failed = True
             continue
         else:
             save_tss_to_json(url)
