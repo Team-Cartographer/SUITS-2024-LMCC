@@ -1,9 +1,5 @@
 import { useState } from "react";
-import Map from "../nav/map";
 import { Button } from "../ui/button";
-import dynamic from "next/dynamic";
-
-const NoSSR_GeoSampler = dynamic(() => import('@/components/hmd_link/geo_sampling'), { ssr: false })
 
 interface WindowNames {
     [key: string]: JSX.Element;
