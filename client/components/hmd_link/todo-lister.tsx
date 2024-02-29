@@ -6,12 +6,7 @@ import { TodoAreaForm } from "./forms/todo-list-form";
 import * as z from "zod"
 import { X } from "lucide-react";
 import { useNetwork } from "@/hooks/context/network-context";
-
-interface PanicData {
-    infoWarning: string, 
-    todoItems: [string, string][], 
-    isWarning: boolean,
-}
+import { PanicData } from "@/hooks/types";
 
 type Task = [string, string]
 

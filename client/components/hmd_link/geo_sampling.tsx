@@ -5,7 +5,7 @@
  * @function GeoSampler
  */
 
-import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams } from "@/api/fetchServer";
 import { useState } from "react";
 import { useEffect } from "react";
 import {
@@ -17,7 +17,6 @@ import {
     TableHeader,
     TableRow,
   } from "@/components/ui/table"
-import { Switch } from "@/components/ui/switch"
 import {
     Accordion,
     AccordionContent,
@@ -31,32 +30,8 @@ declare module 'react-google-charts' {
     export class Chart extends React.Component<any, any> {}
   }
 
-interface SpecData {
-    Al2O3: number;
-    CaO: number;
-    FeO: number;
-    K2O: number;
-    MgO: number;
-    MnO: number;
-    P2O3: number;
-    SiO2: number;
-    TiO2: number;
-    other: number;
-  }
-  
-interface SpecItem {
-data: SpecData;
-id: number;
-name: string;
-}
+import { SpecItem } from "@/hooks/types"
 
-interface Spec {
-[key: string]: SpecItem;
-}
-
-interface SpecData {
-spec: Spec;
-}
 
 const GeoSampler = () => {
   const networkProvider = useNetwork();

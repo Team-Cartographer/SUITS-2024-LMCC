@@ -2,6 +2,14 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithoutParams } from "@/api/fetchServer";
+import { 
+	GeoJSON, 
+	PanicData,
+	TimerType,
+	SpecData,
+	SpecItem,
+	EVASpecItems,
+} from "../types";
 
 ////////////////////////////////////////////////
 
@@ -13,24 +21,10 @@ const formatTime = (seconds: number) => {  //build formatted timer
 	return [hours, minutes, secs].map(v => v < 10 ? "0" + v : v).join(":");
 };
 
-interface PanicData {
-    infoWarning: string, 
-    todoItems: [string, string][], 
-    isWarning: boolean,
-}
-
 const defaultPanicValue: PanicData = {
     infoWarning: "", 
     todoItems: [], 
     isWarning: false,
-}
-
-interface TimerType { 
-	mission: string 
-	uia: string
-	spec: string
-	dcu: string, 
-	rover: string
 }
 
 const defaultTimerValue: TimerType = {
@@ -42,60 +36,9 @@ const defaultTimerValue: TimerType = {
 	
 }
 
-interface GeoJSONFeature {
-    type: 'Feature';
-    geometry: {
-        type: 'Point';
-        coordinates: [number, number];
-    };
-    properties: {
-        name: string;
-        description: string;
-    };
-}
-
-// Gets GeoJSON interface type hinting
-interface GeoJSON {
-    type: 'FeatureCollection';
-    features: GeoJSONFeature[];
-}
-
 const defaultGEOJSONValue: GeoJSON = {
 	type: 'FeatureCollection',
 	features: []
-}
-
-
-interface SpecData {
-    Al2O3: number;
-    CaO: number;
-    FeO: number;
-    K2O: number;
-    MgO: number;
-    MnO: number;
-    P2O3: number;
-    SiO2: number;
-    TiO2: number;
-    other: number;
-  }
-  
-interface SpecItem {
-data: SpecData;
-id: number;
-name: string;
-}
-
-interface Spec {
-[key: string]: SpecItem;
-}
-
-interface SpecData {
-spec: Spec;
-}
-
-interface EVASpecItems {
-	eva1: SpecItem | null
-	eva2: SpecItem | null
 }
 
 const defaultSpecValue: EVASpecItems = {
