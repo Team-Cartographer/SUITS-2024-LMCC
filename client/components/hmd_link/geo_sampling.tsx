@@ -11,7 +11,6 @@ import { useEffect } from "react";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
@@ -108,7 +107,6 @@ const GeoSampler = () => {
             {EVA1SpecItem?.name}, {EVA1SpecItem?.id}
         </p>
         <Table>
-            <TableCaption>Caption is here for now.</TableCaption>
             <TableHeader>
                 <TableRow>
                     <TableHead className="w-[150px]">Sample Name</TableHead>

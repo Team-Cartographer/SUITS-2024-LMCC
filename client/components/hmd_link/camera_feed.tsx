@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import lmcc_config from "@/lmcc_config.json"
+import EvaTelemetry from './eva_telemetry';
 
 
 const fetchVideoWithoutParams = async (path: string): Promise<Response | undefined> => {
@@ -62,7 +63,8 @@ export function CameraFeed() {
         fetchURL();
     }, []);
         return (
-            <div className="justify-center items-center pt-12">
+            <div className="justify-center items-center pt-10">
+            <EvaTelemetry evaNumber='2' bpm='98' temp='345' oxygenation='99' />
             <video controls width="1400">
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.

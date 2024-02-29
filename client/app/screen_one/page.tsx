@@ -17,7 +17,7 @@ const NoSSR_Timers = dynamic(() => import('@/components/ui/timing'), { ssr: fals
 
 const HomePage = () => {
   return (
-    <div className="h-full flex flex-row gap-x-4">
+    <div className="h-full flex flex-row gap-x-8">
       <div className="flex flex-col items-left pl-3 justify-start max-w-[600px]">
         <NoSSR_Timers />
         <CameraFeed />
