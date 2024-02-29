@@ -84,15 +84,6 @@ body,
   pointer-events: none; /* Ensure clicks pass through */
 }
 
-ol {
-  list-style-type: none; /* Remove default markers */
-  padding-left: 20; /* Optional: Removes indentation if desired */
-}
-ol li::before {
-  content: ">>"; /* Custom marker, e.g., an arrow */
-  padding-right: 8px; /* Space between the marker and the list item text */
-  color: rgb(108, 108, 209); /* Custom color for the marker */
-}
 
 @layer base {
   * {
