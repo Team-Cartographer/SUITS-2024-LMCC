@@ -5,12 +5,7 @@ import { fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { Button } from "./button";
 import { useNetwork } from "@/hooks/context/network-context";
-
-interface PanicData {
-    infoWarning: string;
-    todoItems: [string, string][];
-    isWarning: boolean;
-  }
+import { PanicData } from "@/hooks/types"
 
 const defaultValue: PanicData = {
     infoWarning: "",

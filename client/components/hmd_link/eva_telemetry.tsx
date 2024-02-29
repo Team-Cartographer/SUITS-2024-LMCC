@@ -30,11 +30,11 @@ function EvaTelemetry({
     return (
         <div className={className}>
             <div
-                className={`flex flex-row gap-x-6 p-4 text-3xl ${
+                className={`flex flex-row gap-x-6 text-3xl ${
                     bpmCritical || tempCritical || oxygenationCritical
                         ? `bg-red-500 bg-opacity-50`
                         : 'bg-gray-750'
-                } rounded-t-3xl items-center justify-start`}
+                } rounded-t-3xl p-1 font-semibold items-center justify-center`}
             >
                 <p>EVA {evaNumber}:</p>
                 <p

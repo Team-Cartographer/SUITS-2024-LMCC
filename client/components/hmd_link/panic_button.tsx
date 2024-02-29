@@ -19,12 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
-
-interface PanicData {
-  infoWarning: string;
-  todoItems: [string, string][];
-  isWarning: boolean;
-}
+import { PanicData } from "@/hooks/types";
 
 const PanicButton = () => {
   const [inputValue, setInputValue] = useState("");

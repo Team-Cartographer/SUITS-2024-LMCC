@@ -6,10 +6,11 @@
  * The minimap component for the LMCC console. 
  */
 
-import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
 import { useNetwork } from "@/hooks/context/network-context";
+import { GeoJSONFeature } from "@/hooks/types";
 
 // Note that all scaling must be based off of 1024x815 dimensions!
 
@@ -25,23 +26,6 @@ let MAP_URLS: string[] = []
     and multiply the rect height, width, and x, y in const handleImageClick(); 
 */
 
-interface GeoJSONFeature {
-    type: 'Feature';
-    geometry: {
-        type: 'Point';
-        coordinates: [number, number];
-    };
-    properties: {
-        name: string;
-        description: string;
-    };
-}
-
-// Gets GeoJSON interface type hinting
-interface GeoJSON {
-    type: 'FeatureCollection';
-    features: GeoJSONFeature[];
-}
 
 // Map Component
 const Map = () => {
