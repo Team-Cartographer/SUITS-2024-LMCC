@@ -24,25 +24,31 @@ def send_map_info():
 
 
 def send_map():
+    # Define the path to the map image and geojson file
     map_path = SERVER_DIR / 'images' / 'rockyard_map_png.png'
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
     
+    # Open the map image
     image = Image.open(map_path)
     draw = ImageDraw.Draw(image)
 
+    # Open the geojson file and load its contents
     with open(geojson_path, 'r') as file:
         data = json.load(file)
     
+    # Extract pin coordinates from the geojson data
     pins = []
     for feature in data['features']:
         pins.append(feature['properties']['description'])
 
+    # Draw pins on the map image
     for pin in pins:
         x, y = map(int, pin.split('x'))
         x, y = x/5, y/5.
         radius = 3
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
 
+    # Save the modified map image to an in-memory buffe
     img_io = io.BytesIO()
     image.save(img_io, 'PNG')
     img_io.seek(0)

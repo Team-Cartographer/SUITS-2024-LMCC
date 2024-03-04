@@ -35,9 +35,10 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     - A JSON response object with the key 'update_status' set to 'OK' indicating the update 
       was successful.
     """
-
+     # Define the path to the GeoJSON file
     geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
 
+    # Retrieve pins and dimensions from the provided arguments
     pins = args.get('pins', [])
     # DEPRECATED
     # dims = args.get('dimensions', [])
@@ -47,14 +48,17 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     with open(geojson_path, 'r') as file:
         geojson_data = json.load(file)
 
+    # Create a history of existing pins
     history = []
     for feature in geojson_data['features']:
         history.append(feature['properties']['description'])
     
+    # If add is False, remove pins from the history
     if not add:
         for pin in pins: 
             history = [item for item in history if item != pin]
 
+        # Update the GeoJSON data with the modified pin list
         updated_features = []
         for i, item in enumerate(history): 
             x, y = map(int, item.split('x'))
@@ -74,7 +78,7 @@ def update_geojson(args: dict, add: bool=True) -> "json":
         
         geojson_data['features'] = updated_features
 
-    
+    # If add is True, add new pins to the existing history
     if add:
         pins.extend(history) 
         for pin in pins:
@@ -92,11 +96,11 @@ def update_geojson(args: dict, add: bool=True) -> "json":
                     "description": pin
                 }
             }
-
+            # If the pin is not in the history, add it to the GeoJSON data
             if not pin in history:
                 geojson_data['features'].append(item_data)
 
-
+    # Write the updated GeoJSON data back to the file
     with open(geojson_path, 'w') as file:
         json.dump(geojson_data, file, indent=4)
 
@@ -108,15 +112,18 @@ def update_geojson(args: dict, add: bool=True) -> "json":
 
 
 def update_notification(args: dict): 
+    # Extract todoItems, infoWarning, and isWarning from the provided arguments
     info_todo = args.get('todoItems', [])
     info_warning = args.get('infoWarning', '')
     is_warning = args.get('isWarning', False)
 
+    # Create a dictionary with the extracted data
     data = {
         "infoWarning": info_warning, 
         "todoItems": info_todo, 
         "isWarning": is_warning,
     }
+    # Write the data to the notification file
     with open(NOTIF_PATH, 'w') as jf:
         json.dump(data, jf, indent=4)
     return jsonify(data)
