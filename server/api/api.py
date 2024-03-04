@@ -119,21 +119,22 @@ def handle_GET_args(args: dict) -> Any:
     Returns:
     - A response depending on the argument values, either data or an error message in JSON format.
     """
+    # Check the value of the 'get' key in the 'args' dictionary
     if get_arg('get', args) == 'map_img':
-        return gh.send_map()
+        return gh.send_map()            # Return a map image
     elif get_arg('get', args) == 'map_info':
-        return gh.send_map_info()
+        return gh.send_map_info()       # Return map information
     elif get_arg('get', args) == 'astar':
-        return gh.a_star()
+        return gh.a_star()              # Execute the A* algorithm
     elif get_arg('get', args) == 'notif':
-        return gh.send_notification()
+        return gh.send_notification()   # Return notification data
     elif get_arg('get', args) == "biodata":
         eva = get_arg('eva', args)
-        if eva == "one" or eva == "two":
-            return gh.send_biom_data(eva)
+        if eva == "one" or eva == "two":    # Return biological data based on 'eva' key value ('one' or 'two')
+            return gh.send_biom_data(eva)   
         else: 
             return jsonify({'error': 'invalid eva'})
-    else: 
+    else:   # If 'get' key is not recognized, return an error message
         return jsonify({
             'error': 'args were invalid'
         })
@@ -157,14 +158,15 @@ def handle_POST_args(args: dict) -> Any:
     Returns:
     - A response depending on the argument values, either performing an update or returning an error message in JSON format.
     """
+    # Check the value associated with the 'map' key in 'args'
     if get_arg('map', args) == 'add':
-        return ph.update_geojson(args)
+        return ph.update_geojson(args)              # Call function to add data to the geojson map
     elif get_arg('map', args) == 'rm':
-        return ph.update_geojson(args, add=False)
+        return ph.update_geojson(args, add=False)   # Call function to remove data from the geojson map
     elif get_arg('notif', args) == 'update':
-        return ph.update_notification(args)
+        return ph.update_notification(args)         # Call function to update notification data
     else:
         return jsonify({
-            'error': 'args were invalid'
+            'error': 'args were invalid'            # Return an error message for invalid arguments
         })
 

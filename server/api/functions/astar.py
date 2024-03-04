@@ -94,12 +94,18 @@ def create_random_test_grid(grid_size):
 
 
 if __name__ == "__main__":
+    # Generate a random test grid with size 50x50
     path_data = create_random_test_grid(50)
     grid, start, end = path_data
+
+    # Find the optimal path using the A* algorithm
     path = a_star(grid, start, end)
+
+    # If a path is found, draw the path on an image of the grid and display it
     if path:
         image = draw_path_image(grid, path, start, end)
         image.show()
+    # If no path is found, print a message indicating so
     else:
         print('No optimal path found')
     # print(path)

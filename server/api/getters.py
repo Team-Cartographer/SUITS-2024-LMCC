@@ -15,9 +15,14 @@ NOTIF_PATH = DATA_DIR / 'notification.json'
 
 
 def send_map_info():
+    # Define the path to the GeoJSON file
     mapping_json_path = SERVER_DIR / 'data' / 'rockyard.geojson'
+
+    # Read the GeoJSON file and load its contents
     with open(mapping_json_path, 'r') as json_file:
         data = json.load(json_file)
+    
+    # Return the map information
     return data 
 
 
@@ -59,7 +64,21 @@ def send_map():
 
 
 def a_star(grid, start, end):
+    """
+    Executes the A* algorithm on a grid to find the optimal path from the start point to the end point.
+
+    Parameters:
+    - grid: The grid on which the algorithm will be executed.
+    - start: The starting point for the path.
+    - end: The ending point for the path.
+
+    Returns:
+    - A JSON string containing the optimal path if found, or None if no path is found.
+    """
+    # Execute the A* algorithm to find the optimal path
     path = astar(grid, start, end)
+
+    # If a path is found, convert it to JSON format and return it
     if path:
         path_json = json.dumps({'path': path})
         return path_json
@@ -68,12 +87,26 @@ def a_star(grid, start, end):
 
     
 def send_biom_data(eva):
+    """
+    Generates and returns random biometric data.
+
+    Generates random values for heart rate, blood pressure, breathing rate, and body temperature.
+    Constructs a JSON response containing the biometric data with units.
+
+    Parameters:
+    - eva: The identifier for the biological data source.
+
+    Returns:
+    - JSON response containing randomly generated biometric data.
+    """
+    # Generate random values for heart rate, blood pressure, breathing rate, and body temperature
     heart_rate = random.randint(70,104)
     systolic_pressure = random.randint(90,140)
     diastolic_pressure = random.randint(60,90)
     breathing_rate = random.randint(12,20)
     body_temperature = random.uniform(97.7,99.5)
 
+    # Construct a JSON response containing the biometric data with units
     biometric_data = {
         'eva': eva,
         'data': {   
@@ -90,5 +123,6 @@ def send_biom_data(eva):
 
 
 def send_notification():
+    # Open the 'notifications.json' file and load its contents
     with open(NOTIF_PATH, 'r') as f:
         return json.load(f)
