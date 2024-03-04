@@ -1,29 +1,28 @@
-from typing import Any
+from typing import Any, List, Tuple
 from PIL import Image, ImageDraw
+import numpy as np
 
-
-def draw_path_image(grid: Any, path: list[tuple[int, int]], start: tuple[int, int], end: tuple[int, int]) -> Image:
+def draw_path_image(grid: np.ndarray, path: List[Tuple[int, int]], start: Tuple[int, int], end: Tuple[int, int]) -> Image.Image:
     """
     Creates an image representation of a path on a grid.
 
     Parameters:
-    - grid (Any): A 2D array-like structure representing the grid with weightings at each node.
-    - path (list[tuple[int, int]]): A list of tuples representing the coordinates of the path on the grid.
-    - start (tuple[int, int]): A tuple representing the starting coordinate on the grid.
-    - end (tuple[int, int]): A tuple representing the end coordinate on the grid.
+    - grid (np.ndarray): A 2D array-like structure representing the grid with weightings at each node.
+    - path (List[Tuple[int, int]]): A list of tuples representing the coordinates of the path on the grid.
+    - start (Tuple[int, int]): A tuple representing the starting coordinate on the grid.
+    - end (Tuple[int, int]): A tuple representing the end coordinate on the grid.
 
     Returns:
     - An Image object representing the grid with the path, start point, and end point visually marked.
     """
-    scale = 20  # Increase the scaling factor for a higher definition image if needed
-    img = Image.new("RGB", (grid.shape[1] * scale, grid.shape[0] * scale), "white")
-    draw = ImageDraw.Draw(img)
-
+    scale: int = 20  # Increase the scaling factor for a higher definition image if needed
+    img: Image.Image = Image.new("RGB", (grid.shape[1] * scale, grid.shape[0] * scale), "white")
+    draw: ImageDraw.ImageDraw = ImageDraw.Draw(img)
 
     # Draw the grid (with node weightings)
     for y in range(grid.shape[0]):
         for x in range(grid.shape[1]):
-            color = int(255 - grid[y][x] * 255 / 9)  # Darker for higher values
+            color: int = int(255 - grid[y][x] * 255 / 9)  # Darker for higher values
             draw.rectangle([x*scale, y*scale, (x+1)*scale-1, (y+1)*scale-1], fill=(color, color, color))
 
 

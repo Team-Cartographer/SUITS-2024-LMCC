@@ -1,6 +1,7 @@
 # all POST request helpers go in here
 from flask import jsonify
 from pathlib import Path
+from typing import Any, Dict, List
 import json
 from .utils import get_lat_lon_from_tif
 
@@ -9,7 +10,7 @@ SERVER_DIR: Path = Path(__file__).parent.parent
 NOTIF_PATH = SERVER_DIR / 'data' / 'notification.json'
 
 
-def update_geojson(args: dict, add: bool=True) -> "json":
+def update_geojson(args: Dict[str, Any], add: bool=True) -> "json":
     """
     Updates a GeoJSON file based on the provided arguments to either add or remove pins.
 
@@ -19,10 +20,10 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     are removed.
 
     Parameters:
-    - args (dict): A dictionary containing the following keys:
-        - 'pins' (list of str): A list of pins to add or remove. Each pin is a string in 
+    - args (Dict[str, Any]): A dictionary containing the following keys:
+        - 'pins' (List[str]): A list of pins to add or remove. Each pin is a string in 
           the format 'x_coordx y_coord'.
-        - 'dimensions' (list of int): Optional. A list containing two integers [height, width] 
+        - 'dimensions' (List[int], optional): A list containing two integers [height, width] 
           representing the dimensions of the image associated with the GeoJSON file. If not 
           provided, default values of 1024 for height and 815 for width are used.
     - add (bool, optional): A flag to determine if pins are to be added (True) or removed (False). 
@@ -35,21 +36,17 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     - A JSON response object with the key 'update_status' set to 'OK' indicating the update 
       was successful.
     """
-     # Define the path to the GeoJSON file
-    geojson_path = SERVER_DIR / 'data' / 'rockyard.geojson'
+    # Define the path to the GeoJSON file
+    geojson_path: Path = SERVER_DIR / 'data' / 'rockyard.geojson'
 
     # Retrieve pins and dimensions from the provided arguments
-    pins = args.get('pins', [])
-    # DEPRECATED
-    # dims = args.get('dimensions', [])
-    # height = dims[0]
-    # width = dims[1]
+    pins: List[str] = args.get('pins', [])
 
     with open(geojson_path, 'r') as file:
-        geojson_data = json.load(file)
+        geojson_data: Dict[str, Any] = json.load(file)
 
     # Create a history of existing pins
-    history = []
+    history: List[str] = []
     for feature in geojson_data['features']:
         history.append(feature['properties']['description'])
     
@@ -59,11 +56,11 @@ def update_geojson(args: dict, add: bool=True) -> "json":
             history = [item for item in history if item != pin]
 
         # Update the GeoJSON data with the modified pin list
-        updated_features = []
+        updated_features: List[Dict[str, Any]] = []
         for i, item in enumerate(history): 
             x, y = map(int, item.split('x'))
             lat, lon = get_lat_lon_from_tif(x, y)
-            item_data = {
+            item_data: Dict[str, Any] = {
                 "type": "Feature",
                 "geometry": {
                     "type": "Point",
@@ -85,7 +82,7 @@ def update_geojson(args: dict, add: bool=True) -> "json":
             x, y = map(int, pin.split('x'))
             lat, lon = get_lat_lon_from_tif(x, y)
 
-            item_data = {
+            item_data: Dict[str, Any] = {
                 "type": "Feature",
                 "geometry": {
                     "type": "Point",
@@ -104,28 +101,29 @@ def update_geojson(args: dict, add: bool=True) -> "json":
     with open(geojson_path, 'w') as file:
         json.dump(geojson_data, file, indent=4)
 
-    return jsonify({
-        'update_status': 'OK'
-        })
+    return {'update_status': 'OK'}
 
 
 
 
-def update_notification(args: dict): 
+def update_notification(args: Dict[str, Any]) -> "json":
+   
     # Extract todoItems, infoWarning, and isWarning from the provided arguments
-    info_todo = args.get('todoItems', [])
-    info_warning = args.get('infoWarning', '')
-    is_warning = args.get('isWarning', False)
+    info_todo: list = args.get('todoItems', [])
+    info_warning: str = args.get('infoWarning', '')
+    is_warning: bool = args.get('isWarning', False)
 
     # Create a dictionary with the extracted data
-    data = {
+    data: Dict[str, Any] = {
         "infoWarning": info_warning, 
         "todoItems": info_todo, 
         "isWarning": is_warning,
     }
+    
     # Write the data to the notification file
     with open(NOTIF_PATH, 'w') as jf:
         json.dump(data, jf, indent=4)
+    
     return jsonify(data)
 
 

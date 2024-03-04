@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, Union
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from . import getters as gh
@@ -21,7 +21,7 @@ class LMCCAPIError(Exception):
 
 
 
-def get_arg(key: str, args_dict: dict) -> bool | Any:
+def get_arg(key: str, args_dict: dict) -> Union[bool, Any]:
     """
     Returns the value of `args_dict[key]` if found, else returns `False`
     """
