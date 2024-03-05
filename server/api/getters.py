@@ -6,6 +6,7 @@ from flask import jsonify
 from pathlib import Path
 import json
 import random
+from io import BytesIO
 
 SERVER_DIR = Path(__file__).parent.parent 
 DATA_DIR = SERVER_DIR / 'data'
