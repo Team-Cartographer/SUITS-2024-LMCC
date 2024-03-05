@@ -1,16 +1,15 @@
-from typing import Any, List, Tuple
 from PIL import Image, ImageDraw
 import numpy as np
 
-def draw_path_image(grid: np.ndarray, path: List[Tuple[int, int]], start: Tuple[int, int], end: Tuple[int, int]) -> Image.Image:
+def draw_path_image(grid: np.ndarray, path: list[tuple[int, int]], start: tuple[int, int], end: tuple[int, int]) -> Image.Image:
     """
     Creates an image representation of a path on a grid.
 
     Parameters:
     - grid (np.ndarray): A 2D array-like structure representing the grid with weightings at each node.
-    - path (List[Tuple[int, int]]): A list of tuples representing the coordinates of the path on the grid.
-    - start (Tuple[int, int]): A tuple representing the starting coordinate on the grid.
-    - end (Tuple[int, int]): A tuple representing the end coordinate on the grid.
+    - path (list[tuple[int, int]]): A list of tuples representing the coordinates of the path on the grid.
+    - start (tuple[int, int]): A tuple representing the starting coordinate on the grid.
+    - end (tuple[int, int]): A tuple representing the end coordinate on the grid.
 
     Returns:
     - An Image object representing the grid with the path, start point, and end point visually marked.

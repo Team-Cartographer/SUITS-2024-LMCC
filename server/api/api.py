@@ -1,4 +1,3 @@
-from typing import Any, Union
 from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from . import getters as gh
@@ -21,7 +20,7 @@ class LMCCAPIError(Exception):
 
 
 
-def get_arg(key: str, args_dict: dict) -> Union[bool, Any]:
+def get_arg(key: str, args_dict: dict) -> bool:
     """
     Returns the value of `args_dict[key]` if found, else returns `False`
     """
@@ -102,7 +101,7 @@ def api_v0():
 
 
 
-def handle_GET_args(args: dict) -> Any: 
+def handle_GET_args(args: dict) -> dict:
     """
     Processes GET request arguments for specific functionalities.
 
@@ -143,7 +142,7 @@ def handle_GET_args(args: dict) -> Any:
 
 
 
-def handle_POST_args(args: dict) -> Any:
+def handle_POST_args(args: dict):
     """
     Processes POST request arguments for map updates.
 
@@ -169,4 +168,3 @@ def handle_POST_args(args: dict) -> Any:
         return jsonify({
             'error': 'args were invalid'            # Return an error message for invalid arguments
         })
-
