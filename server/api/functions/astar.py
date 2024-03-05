@@ -25,14 +25,14 @@ class Node:
     def __lt__(self, compare):
         'Define the order of nodes based on their total cost (for priority queue)'
         return self.cost_to_reach < compare.cost_to_reach
+
     
+def a_star(grid: list[list[int]], start: tuple[int, int], end: tuple[int, int]) -> list[tuple[int, int]] | None:
+    start_node: Node = Node(None, start)
+    end_node: Node = Node(None, end)
     
-def a_star(grid, start, end):
-    start_node = Node(None, start)
-    end_node = Node(None, end)
-    
-    open_list = []
-    closed_list = []
+    open_list: list[tuple[int, Node]] = []
+    closed_list: list[Node] = []
     
     # Add the start node to the open list
     heapq.heappush(open_list, (start_node.total_cost, start_node))
@@ -51,7 +51,6 @@ def a_star(grid, start, end):
                 current = current.parent
             return path[::-1]  # Return reversed path
         
-        
         children = []
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0)]: # Check adjacent squares
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
@@ -60,10 +59,8 @@ def a_star(grid, start, end):
             if node_position[0] > (len(grid) - 1) or node_position[0] < 0 or node_position[1] > (len(grid[len(grid)-1]) -1) or node_position[1] < 0:
                 continue
 
-
             new_node = Node(current_node, node_position)
             children.append(new_node)
-            
             
         for child in children:
             if child in closed_list:
@@ -74,7 +71,6 @@ def a_star(grid, start, end):
             child.heuristic_cost = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
             child.total_cost = child.cost_to_reach + child.heuristic_cost
 
-
             if len([i for i in open_list if child == i[1] and child.cost_to_reach > i[1].cost_to_reach]) > 0:
                 continue
 
@@ -83,7 +79,7 @@ def a_star(grid, start, end):
     return None
 
 
-def create_random_test_grid(grid_size):
+def create_random_test_grid(grid_size: int) -> tuple[np.ndarray, tuple[int, int], tuple[int, int]]:
     'Generates random square test grid in specified size'
     grid = np.random.randint(1, 10, size=(grid_size, grid_size))
     start = (grid_size - 1, 0)
@@ -92,14 +88,18 @@ def create_random_test_grid(grid_size):
     return (grid, start, end)
 
 
-
 if __name__ == "__main__":
+    # Generate a random test grid with size 50x50
     path_data = create_random_test_grid(50)
     grid, start, end = path_data
+
+    # Find the optimal path using the A* algorithm
     path = a_star(grid, start, end)
+
+    # If a path is found, print it
     if path:
-        image = draw_path_image(grid, path, start, end)
-        image.show()
+        print("Optimal path found:", path)
+    # If no path is found, print a message indicating so
     else:
         print('No optimal path found')
     # print(path)

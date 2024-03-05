@@ -142,14 +142,15 @@ def create_data_endpoints():
     if they don't exist. Initializes 'rockyard.geojson' with an empty GeoJSON 
     feature collection.
     """
+    # Create 'data' directory if it doesn't exist
     if not DATA_PATH.exists():
         mkdir(DATA_PATH)
     
-
+    # Create 'rockyard.geojson' if it doesn't exist    
     with open(ROCKYARD_PATH, 'w') as rockyard:
         dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
 
-
+    # Create 'geodata.npy' if it doesn't exist
     if not TIFF_DATA_PATH.exists():
         with rasterio.open(TIFF_PATH) as src:
             width, height = src.width, src.height
@@ -163,7 +164,7 @@ def create_data_endpoints():
 
             np.save(TIFF_DATA_PATH, coordinates)
 
-
+    # Create 'notification.json' if it doesn't exist
     with open(NOTIF_PATH, 'w') as notif: 
         dump({
             "infoWarning": '', 
