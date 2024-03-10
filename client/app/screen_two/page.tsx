@@ -5,7 +5,7 @@ import PanicButton from "@/components/hmd_link/panic_button";
 import { RoverTelemetry } from "@/components/rover/rover_telemetry";
 
 /**
- * @author @abhi-arya1 @ivanvuong @areich128
+ * @author @abhi-arya1 @ivanvuong @areich128 @hrishikesh-srihari
  * @function TelemetryPage
  * @fileoverview Coming once all "TODO:" are complete
  */
@@ -22,8 +22,8 @@ function TelemetryPage() {
       </div>
     </div>
     <div className="absolute top-0 right-0 p-1 h-full flex flex-row gap-x-1 justify-start text-3xl font-bold"> <Timers /></div>
-    <div className="absolute top-10 left-[900px] p-1 h-full flex flex-row gap-x-1 justify-start text-3xl font-bold"> <PanicButton /></div>
-    <div className="absolute top-[500px] left-[250px] p-1 h-full flex flex-row gap-x-1 justify-start text-7xl font-bold"> <RoverTelemetry /></div>
+    <div className="absolute top-10 left-[650px] p-1 h-full flex flex-row gap-x-1 justify-start text-3xl font-bold"> <PanicButton /></div>
+    <div className="absolute top-[600px] left-[50px] p-1 h-full flex flex-row gap-x-1 justify-start font-bold"> <RoverTelemetry /></div>
     </div>
     )
   }
