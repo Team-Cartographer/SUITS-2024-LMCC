@@ -9,6 +9,7 @@ import {
 	SpecData,
 	SpecItem,
 	EVASpecItems,
+	BiometricData,
 } from "../types";
 
 ////////////////////////////////////////////////
@@ -46,21 +47,30 @@ const defaultSpecValue: EVASpecItems = {
 	eva2: null 
 }
 
+const defaultBiometricDataValue: BiometricData = {
+	eva: '',
+	bpm: '',
+	temp: '',
+	breathing_rate: '',
+	blood_pressure: ['',''],
+}
+
 ////////////////////////////////////////////////////////////////
 
 interface NetworkContextType {
 	getMissionTimes: () => TimerType;
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
-	getSpecData: () => EVASpecItems
+	getSpecData: () => EVASpecItems;
+	getBiometricData: () => BiometricData
 }
 
 const defaultNetworkValue: NetworkContextType = {
 	getMissionTimes: () => defaultTimerValue,
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
-	getSpecData: () => defaultSpecValue
-
+	getSpecData: () => defaultSpecValue,
+	getBiometricData: () => defaultBiometricDataValue,
 };
 
 
@@ -78,6 +88,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
 	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
+	const [biometricDataEva1, setBiometricDataEva1] = useState<BiometricData>();
+	const [biometricDataEva2, setBiometricDataEva2] = useState<BiometricData>();
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -127,6 +139,18 @@ export const NetworkProvider = ({ children }: any) => {
 					setMapGeoJSON(mapData);
 				} else {
 					throw new Error('Map Info is undefined')
+				}
+
+				const biometricDataEva1 = await fetchWithoutParams<BiometricData>('api/v0?get=biodata&eva=one');
+				const biometricDataEva2 = await fetchWithoutParams<BiometricData>('api/v0?get=biodata&eva=two');
+				if (biometricDataEva1) {
+					setBiometricDataEva1(biometricDataEva1)
+				}
+				else if (biometricDataEva2) {
+					setBiometricDataEva2(biometricDataEva2) 
+				}
+				else {
+					throw new Error('Biometric Data is undefined')
 				}
 
 				const specData = await fetchWithoutParams<SpecData>("mission/spec");
@@ -183,12 +207,23 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	}
 
+	const getBiometricData = (): BiometricData => {
+		return {
+			eva: '1',
+			bpm: '1',
+			temp: '1',
+			breathing_rate: '1',
+			blood_pressure: ['1','1'],
+		}
+	}
+
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
 			getNotifData,
 			getGeoJSONData,
 			getSpecData,
+			getBiometricData,
 		}}>
 		{children}
 		</NetworkContext.Provider>

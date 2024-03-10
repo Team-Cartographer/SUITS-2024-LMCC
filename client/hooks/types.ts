@@ -70,6 +70,16 @@ interface EVASpecItems {
 	eva2: SpecItem | null
 }
 
+// BIOMETRICDATA /////////////////////////////////////////////////////////////
+
+interface BiometricData {
+    eva: string;
+    bpm: string;
+    temp: string;
+    breathing_rate: string;
+    blood_pressure: [string, string]
+}
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -81,4 +91,5 @@ export type {
     SpecData,
     SpecItem,
     EVASpecItems, 
+    BiometricData,
 }
