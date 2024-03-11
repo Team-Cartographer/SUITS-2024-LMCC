@@ -63,8 +63,7 @@ export function CameraFeed() {
         fetchURL();
     }, []);
         return (
-            <div className="justify-center items-center pt-10">
-            <EvaTelemetry evaNumber='2' bpm='98' temp='345' breathing_rate='20' blood_pressure={['99','100']} />
+            <div className="justify-center items-center pt-[113px]">
             <video controls width="1400">
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.

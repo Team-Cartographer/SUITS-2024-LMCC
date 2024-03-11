@@ -10,6 +10,7 @@ import {
 	SpecItem,
 	EVASpecItems,
 	BiometricData,
+	BiometricItem,
 } from "../types";
 
 ////////////////////////////////////////////////
@@ -49,10 +50,32 @@ const defaultSpecValue: EVASpecItems = {
 
 const defaultBiometricDataValue: BiometricData = {
 	eva: '',
+    data: {
+        blood_pressure: {
+            unit: '',
+            value: ''
+        },
+        body_temperature: {
+            unit: '',
+            value: ''
+        },
+        breathing_rate: {
+            unit: '',
+            value: ''
+        },
+        heart_rate: {
+            unit: '',
+            value: ''
+        }
+    }
+}
+
+const defaultBiometricItemValue: BiometricItem = {
+	eva: '',
 	bpm: '',
 	temp: '',
 	breathing_rate: '',
-	blood_pressure: ['',''],
+	blood_pressure: [],
 }
 
 ////////////////////////////////////////////////////////////////
@@ -62,7 +85,7 @@ interface NetworkContextType {
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
 	getSpecData: () => EVASpecItems;
-	getBiometricData: () => BiometricData
+	getBiometricData: (evaNumber: number) => BiometricItem;
 }
 
 const defaultNetworkValue: NetworkContextType = {
@@ -70,7 +93,7 @@ const defaultNetworkValue: NetworkContextType = {
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
 	getSpecData: () => defaultSpecValue,
-	getBiometricData: () => defaultBiometricDataValue,
+	getBiometricData: (evaNumber: number) => defaultBiometricItemValue,
 };
 
 
@@ -88,8 +111,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
 	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
-	const [biometricDataEva1, setBiometricDataEva1] = useState<BiometricData>();
-	const [biometricDataEva2, setBiometricDataEva2] = useState<BiometricData>();
+	const [biometricDataEva1, setBiometricDataEva1] = useState<BiometricData>(defaultBiometricDataValue);
+	const [biometricDataEva2, setBiometricDataEva2] = useState<BiometricData>(defaultBiometricDataValue);
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -146,7 +169,11 @@ export const NetworkProvider = ({ children }: any) => {
 				if (biometricDataEva1) {
 					setBiometricDataEva1(biometricDataEva1)
 				}
-				else if (biometricDataEva2) {
+				else {
+					throw new Error('Biometric Data is undefined')
+				}
+
+				if (biometricDataEva2) {
 					setBiometricDataEva2(biometricDataEva2) 
 				}
 				else {
@@ -207,15 +234,24 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	}
 
-	const getBiometricData = (): BiometricData => {
-		return {
-			eva: '1',
-			bpm: '1',
-			temp: '1',
-			breathing_rate: '1',
-			blood_pressure: ['1','1'],
+	const getBiometricData = (evaNumber: number): BiometricItem => {
+		let biometricData;
+		if (evaNumber === 1) {
+			biometricData = biometricDataEva1;
+		} else if (evaNumber === 2) {
+			biometricData = biometricDataEva2;
+		} else {
+			throw new Error(`Invalid Eva number: ${evaNumber}`);
 		}
-	}
+	
+			return {
+				eva: biometricData.eva,
+				bpm: biometricData.data.heart_rate.value,
+				temp: biometricData.data.body_temperature.value,
+				breathing_rate: biometricData.data.breathing_rate.value,
+				blood_pressure: [biometricData.data.blood_pressure.value.slice(0,1),biometricData.data.blood_pressure.value.slice(1,2)]
+			};
+};
 
 	return (
 		<NetworkContext.Provider value={{ 

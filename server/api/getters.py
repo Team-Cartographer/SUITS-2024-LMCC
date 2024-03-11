@@ -115,10 +115,10 @@ def send_biom_data(eva: str) -> dict:
         }
     }
     
-    biometric_data['data']['heart_rate'] = {'value': heart_rate, 'unit': 'bpm'}
-    biometric_data['data']['blood_pressure'] = {'value': str(systolic_pressure) + '/' + str(diastolic_pressure), 'unit': 'mm Hg'}
-    biometric_data['data']['breathing_rate'] = {'value': breathing_rate, 'unit': 'breaths/min'}
-    biometric_data['data']['body_temperature'] = {'value': body_temperature, 'unit': 'F'}
+    biometric_data['data']['heart_rate'] = {'value': str(heart_rate), 'unit': 'bpm'}
+    biometric_data['data']['blood_pressure'] = {'value': (str(systolic_pressure), str(diastolic_pressure)), 'unit': 'mm Hg'}
+    biometric_data['data']['breathing_rate'] = {'value': str(breathing_rate), 'unit': 'breaths/min'}
+    biometric_data['data']['body_temperature'] = {'value': str(round(body_temperature, 3)), 'unit': 'F'}
 
     return biometric_data
 

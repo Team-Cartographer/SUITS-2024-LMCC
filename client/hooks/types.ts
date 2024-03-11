@@ -1,6 +1,8 @@
 
 // MAP /////////////////////////////////////////////////////////////
 
+import { Data } from "ws";
+
 interface GeoJSONFeature {
     type: 'Feature';
     geometry: {
@@ -74,10 +76,25 @@ interface EVASpecItems {
 
 interface BiometricData {
     eva: string;
+    data: {
+        heart_rate: BiometricMeasurement;
+        body_temperature: BiometricMeasurement;
+        breathing_rate: BiometricMeasurement;
+        blood_pressure: BiometricMeasurement;
+    };
+}
+
+interface BiometricMeasurement {
+    unit: string;
+    value: string;
+}
+
+interface BiometricItem {
+    eva: string | number;
     bpm: string;
     temp: string;
     breathing_rate: string;
-    blood_pressure: [string, string]
+    blood_pressure: (string)[];
 }
 
 // EXPORT /////////////////////////////////////////////////////////////
@@ -92,4 +109,5 @@ export type {
     SpecItem,
     EVASpecItems, 
     BiometricData,
+    BiometricItem, 
 }

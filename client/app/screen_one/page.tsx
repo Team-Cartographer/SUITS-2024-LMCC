@@ -12,6 +12,7 @@ import ConnectionStrength from "@/components/hmd_link/conn_strength";
 import { CameraFeed } from "@/components/hmd_link/camera_feed";
 import TodoLister from "@/components/hmd_link/todo-lister";
 import ContentManager from "@/components/general/content-manager";
+import EvaTelemetry from "@/components/hmd_link/eva_telemetry";
  
 const NoSSR_Timers = dynamic(() => import('@/components/ui/timing'), { ssr: false })
 
@@ -23,6 +24,12 @@ const HomePage = () => {
         <CameraFeed />
         <CameraFeed />
         <TodoLister />
+        <div className="justify-center items-center pt-7 mt-[-945px]">
+            <EvaTelemetry evaNumber={1} bpm='' temp='' breathing_rate='' blood_pressure={['','']} />
+        </div>
+        <div className="justify-center items-center pt-7 mt-[308px]">
+            <EvaTelemetry evaNumber={2} bpm={''} temp={''} breathing_rate={''} blood_pressure={['','']} />
+        </div>
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />

@@ -2,6 +2,7 @@
  * @author @abhi-arya1 @ivanvuong
  * @function EvaTelemetry
  */
+import { useNetwork } from "@/hooks/context/network-context";
 
 const BPM_LOWER_THRESH = 60;
 const BPM_UPPER_THRESH = 100;
@@ -16,7 +17,7 @@ const BP_DIA_UPPER_THRESH = 120;
 
 interface TelemetryArgs {
     className?: string;
-    evaNumber: string;
+    evaNumber: number;
     bpm: string;
     temp: string;
     breathing_rate: string;
@@ -31,8 +32,15 @@ function EvaTelemetry({
     breathing_rate,
     blood_pressure,
 }: TelemetryArgs) {
+    const { getBiometricData } = useNetwork();
+    const biometricDataEva = getBiometricData(evaNumber)
+    bpm = biometricDataEva.bpm;
+    temp = biometricDataEva.temp;
+    breathing_rate = biometricDataEva.breathing_rate;
+    blood_pressure = [biometricDataEva.blood_pressure[0], biometricDataEva.blood_pressure[1]];
+
     let bpmCritical: boolean = parseInt(bpm, 10) > BPM_UPPER_THRESH || parseInt(bpm, 10) < BPM_LOWER_THRESH;
-    let tempCritical: boolean = parseInt(temp, 10) > TEMP_UPPER_THRESH || parseInt(bpm, 10) < TEMP_LOWER_THRESH;
+    let tempCritical: boolean = parseInt(temp, 10) > TEMP_UPPER_THRESH || parseInt(temp, 10) < TEMP_LOWER_THRESH;
     let breathingRateCritical: boolean = parseInt(breathing_rate, 10) > BR_UPPER_THRESH || parseInt(breathing_rate, 10) < BR_LOWER_THRESH;
     let bloodPressureCritical: boolean = parseInt(blood_pressure[0], 10) > BP_SYS_UPPER_THRESH || parseInt(blood_pressure[0], 10) < BP_SYS_LOWER_THRESH
     || parseInt(blood_pressure[1], 10) > BP_DIA_UPPER_THRESH || parseInt(blood_pressure[1], 10) < BP_DIA_LOWER_THRESH;
@@ -40,10 +48,10 @@ function EvaTelemetry({
     return (
         <div className={className}>
             <div
-                className={`flex flex-row gap-x-6 text-3xl ${
+                className={`flex flex-row gap-x-6 text-2xl pl-9 ${
                     bpmCritical || tempCritical || breathingRateCritical || bloodPressureCritical
-                        ? `bg-red-500 bg-opacity-50`
-                        : 'bg-gray-750'
+                        ? 'bg-red-500 bg-opacity-50'
+                        : 'bg-slate-600'
                 } rounded-t-3xl p-1 font-semibold items-center justify-center`}
             >
                 <p>EVA {evaNumber}:</p>
