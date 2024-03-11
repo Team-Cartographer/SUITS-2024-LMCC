@@ -174,15 +174,36 @@ const windowNames: WindowNames = {
             <div>4. Otherwise proceed</div>
             <div>c. Wait for go to proceed from MCC</div>
         </div>
+    ),
+    "emergency": (
+        <div>
+            <div>1. MCC Notices error and reports error to EVA</div>
+            <div>2. EVA confirms error</div>
+            <div>3. MCC gives EVA procedure for fixing the error (EVA hopefully has procedure on display)</div>
+            <div>a. Both LMCC and HMC should have caution and warning systems</div>
+            <div>b. O2 Error</div>
+            <div>i. Swap O2 switch to secondary position</div>
+            <div>ii. Relay O2 position switch to LMCC</div>
+            <div>iii. Begin navigation back to airlock</div>
+            <div>c. Fan Error</div>
+            <div>i. Swap FAN switch to secondary position</div>
+            <div>ii. Relay FAN position switch to LMCC</div>
+            <div>iii. Begin navigation back to airlock</div>
+            <div>d. Abort Procedure (LMCC)</div>
+            <div>i. Relay abort mission and return to airlock command to EVs</div>
+            <div>4. EVA Fixes Error</div>
+            <div>5. MCC requests that EVA returns to base to repair error</div>
+        </div>
     )
 }
 
 const windows = {
-    "uia": "UIA/DCU/Egress",
+    "uia": "Egress",
     "rover": "Rover",
     "ingress": "Ingress",
     "geo": "Geological Sampling",
-    "rep": "Equipment Diagnosis & Repairs"
+    "rep": "Equipment Diagnosis & Repairs",
+    "emergency": "Error"
 }
 
 const ProcedureLists = () => {
