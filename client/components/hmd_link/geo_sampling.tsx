@@ -101,10 +101,9 @@ const GeoSampler = () => {
 
   return (
     <div className="container mx-auto mt-8">
-        <h1 className="text-2xl font-bold mb-4">Geological Sampling</h1>
-        <h2 className="text-1xl font-bold mb-4">Sample Name, ID</h2>
+        <h1  style={{ textAlign: 'center' }} className="text-2xl font-bold mb-4">Geological Sampling </h1>
         <p className={`text-l ${idValue !== 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {EVA1SpecItem?.name}, {EVA1SpecItem?.id}
+            EVA 1 Data:
         </p>
         <Table>
             <TableHeader>
@@ -124,6 +123,51 @@ const GeoSampler = () => {
                         <AccordionItem value="item-1">
                             <AccordionTrigger>
                                 Display {EVA1SpecItem?.name} data
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <Chart
+                                    chartType="BarChart"
+                                    width="100%"
+                                    height="300px"
+                                    data={chartData}
+                                    options={options}
+                                    loader={<div>Loading Chart</div>}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                {/*
+                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
+                    <TableCell>{EVA1SpecItem?.id}</TableCell>
+                    <TableCell>Collected</TableCell>
+                    <TableCell className="text-right"><Switch />
+                    </TableCell>
+                    */}
+                </TableRow>
+            </TableBody>
+        </Table>
+        <div style={{ height: '60px' }}></div>
+        <p className={`text-l ${idValue !== 0 ? 'text-green-500' : 'text-red-500'}`}>
+            EVA 2 Data:
+        </p>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="w-[150px]">Sample Name</TableHead>
+                    <TableHead>Sample ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Display?</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                    <TableCell className="w-[50px]">{EVA2SpecItem?.name}</TableCell>
+                    <TableCell className="w-[50px]">{EVA2SpecItem?.id}</TableCell>
+                    <TableCell className="w-[50px]">Collected</TableCell>
+                    <Accordion type="multiple">
+                        <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                                Display {EVA2SpecItem?.name} data
                             </AccordionTrigger>
                             <AccordionContent>
                                 <Chart
