@@ -11,6 +11,7 @@ import {
 	EVASpecItems,
 	BiometricData,
 	BiometricItem,
+	RoverData,
 } from "../types";
 
 ////////////////////////////////////////////////
@@ -78,6 +79,14 @@ const defaultBiometricItemValue: BiometricItem = {
 	blood_pressure: [],
 }
 
+const defaultRoverValue: RoverData = { 
+	rover: {
+		posx: 0,
+		posy: 0,
+		qr_id: 0,
+	}
+}
+
 ////////////////////////////////////////////////////////////////
 
 interface NetworkContextType {
@@ -86,6 +95,7 @@ interface NetworkContextType {
 	getGeoJSONData: () => GeoJSON;
 	getSpecData: () => EVASpecItems;
 	getBiometricData: (evaNumber: number) => BiometricItem;
+	getRoverData: () => RoverData;
 }
 
 const defaultNetworkValue: NetworkContextType = {
@@ -94,6 +104,7 @@ const defaultNetworkValue: NetworkContextType = {
 	getGeoJSONData: () => defaultGEOJSONValue,
 	getSpecData: () => defaultSpecValue,
 	getBiometricData: (evaNumber: number) => defaultBiometricItemValue,
+	getRoverData: () => defaultRoverValue,
 };
 
 
@@ -113,6 +124,7 @@ export const NetworkProvider = ({ children }: any) => {
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
 	const [biometricDataEva1, setBiometricDataEva1] = useState<BiometricData>(defaultBiometricDataValue);
 	const [biometricDataEva2, setBiometricDataEva2] = useState<BiometricData>(defaultBiometricDataValue);
+	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -195,7 +207,14 @@ export const NetworkProvider = ({ children }: any) => {
 				} else { 
 					throw new Error('Spec Data is Undefined!')
 				}
-			
+
+				const roverDataTemp = await fetchWithoutParams<RoverData>('mission/rover');
+				if (roverDataTemp) { 
+					setRoverData(roverDataTemp);
+				} else { 
+					throw new Error('Rover Data is Undefined!')
+				}
+
 			} catch (error) {
 				console.error('error fetching some data:', error); 
 			}
@@ -234,6 +253,10 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	}
 
+	const getRoverData = (): RoverData => { 
+		return roverData || defaultRoverValue
+	}
+
 	const getBiometricData = (evaNumber: number): BiometricItem => {
 		let biometricData;
 		if (evaNumber === 1) {
@@ -251,7 +274,7 @@ export const NetworkProvider = ({ children }: any) => {
 				breathing_rate: biometricData.data.breathing_rate.value,
 				blood_pressure: [biometricData.data.blood_pressure.value.slice(0,1),biometricData.data.blood_pressure.value.slice(1,2)]
 			};
-};
+	};
 
 	return (
 		<NetworkContext.Provider value={{ 
@@ -260,6 +283,7 @@ export const NetworkProvider = ({ children }: any) => {
 			getGeoJSONData,
 			getSpecData,
 			getBiometricData,
+			getRoverData,
 		}}>
 		{children}
 		</NetworkContext.Provider>

@@ -1,8 +1,6 @@
 
 // MAP /////////////////////////////////////////////////////////////
 
-import { Data } from "ws";
-
 interface GeoJSONFeature {
     type: 'Feature';
     geometry: {
@@ -97,6 +95,16 @@ interface BiometricItem {
     blood_pressure: (string)[];
 }
 
+///// ROVER /////////////////////////////////////////////////////////////
+
+interface RoverData {
+    rover: {
+        posx: number, 
+        posy: number, 
+        qr_id: number,
+    }
+}
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -110,4 +118,5 @@ export type {
     EVASpecItems, 
     BiometricData,
     BiometricItem, 
+    RoverData,
 }
