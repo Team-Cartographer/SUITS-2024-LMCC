@@ -9,6 +9,9 @@ import {
 	SpecData,
 	SpecItem,
 	EVASpecItems,
+	BiometricData,
+	BiometricItem,
+	RoverData,
 } from "../types";
 
 ////////////////////////////////////////////////
@@ -46,21 +49,62 @@ const defaultSpecValue: EVASpecItems = {
 	eva2: null 
 }
 
+const defaultBiometricDataValue: BiometricData = {
+	eva: '',
+    data: {
+        blood_pressure: {
+            unit: '',
+            value: ''
+        },
+        body_temperature: {
+            unit: '',
+            value: ''
+        },
+        breathing_rate: {
+            unit: '',
+            value: ''
+        },
+        heart_rate: {
+            unit: '',
+            value: ''
+        }
+    }
+}
+
+const defaultBiometricItemValue: BiometricItem = {
+	eva: '',
+	bpm: '',
+	temp: '',
+	breathing_rate: '',
+	blood_pressure: [],
+}
+
+const defaultRoverValue: RoverData = { 
+	rover: {
+		posx: 0,
+		posy: 0,
+		qr_id: 0,
+	}
+}
+
 ////////////////////////////////////////////////////////////////
 
 interface NetworkContextType {
 	getMissionTimes: () => TimerType;
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
-	getSpecData: () => EVASpecItems
+	getSpecData: () => EVASpecItems;
+	getBiometricData: (evaNumber: number) => BiometricItem;
+	getRoverData: () => RoverData;
 }
 
 const defaultNetworkValue: NetworkContextType = {
 	getMissionTimes: () => defaultTimerValue,
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
-	getSpecData: () => defaultSpecValue
-
+	getSpecData: () => defaultSpecValue,
+	getBiometricData: (evaNumber: number) => defaultBiometricItemValue,
+	getRoverData: () => defaultRoverValue,
 };
 
 
@@ -78,6 +122,9 @@ export const NetworkProvider = ({ children }: any) => {
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
 	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
+	const [biometricDataEva1, setBiometricDataEva1] = useState<BiometricData>(defaultBiometricDataValue);
+	const [biometricDataEva2, setBiometricDataEva2] = useState<BiometricData>(defaultBiometricDataValue);
+	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -129,6 +176,22 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('Map Info is undefined')
 				}
 
+				const biometricDataEva1 = await fetchWithoutParams<BiometricData>('api/v0?get=biodata&eva=one');
+				const biometricDataEva2 = await fetchWithoutParams<BiometricData>('api/v0?get=biodata&eva=two');
+				if (biometricDataEva1) {
+					setBiometricDataEva1(biometricDataEva1)
+				}
+				else {
+					throw new Error('Biometric Data is undefined')
+				}
+
+				if (biometricDataEva2) {
+					setBiometricDataEva2(biometricDataEva2) 
+				}
+				else {
+					throw new Error('Biometric Data is undefined')
+				}
+
 				const specData = await fetchWithoutParams<SpecData>("mission/spec");
 				if (specData) {
 					setEVA1SpecItem({
@@ -144,7 +207,14 @@ export const NetworkProvider = ({ children }: any) => {
 				} else { 
 					throw new Error('Spec Data is Undefined!')
 				}
-			
+
+				const roverDataTemp = await fetchWithoutParams<RoverData>('mission/rover');
+				if (roverDataTemp) { 
+					setRoverData(roverDataTemp);
+				} else { 
+					throw new Error('Rover Data is Undefined!')
+				}
+
 			} catch (error) {
 				console.error('error fetching some data:', error); 
 			}
@@ -183,12 +253,37 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	}
 
+	const getRoverData = (): RoverData => { 
+		return roverData || defaultRoverValue
+	}
+
+	const getBiometricData = (evaNumber: number): BiometricItem => {
+		let biometricData;
+		if (evaNumber === 1) {
+			biometricData = biometricDataEva1;
+		} else if (evaNumber === 2) {
+			biometricData = biometricDataEva2;
+		} else {
+			throw new Error(`Invalid Eva number: ${evaNumber}`);
+		}
+	
+			return {
+				eva: biometricData.eva,
+				bpm: biometricData.data.heart_rate.value,
+				temp: biometricData.data.body_temperature.value,
+				breathing_rate: biometricData.data.breathing_rate.value,
+				blood_pressure: [biometricData.data.blood_pressure.value.slice(0,1),biometricData.data.blood_pressure.value.slice(1,2)]
+			};
+	};
+
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
 			getNotifData,
 			getGeoJSONData,
 			getSpecData,
+			getBiometricData,
+			getRoverData,
 		}}>
 		{children}
 		</NetworkContext.Provider>

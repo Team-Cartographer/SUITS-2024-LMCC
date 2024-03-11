@@ -70,6 +70,41 @@ interface EVASpecItems {
 	eva2: SpecItem | null
 }
 
+// BIOMETRICDATA /////////////////////////////////////////////////////////////
+
+interface BiometricData {
+    eva: string;
+    data: {
+        heart_rate: BiometricMeasurement;
+        body_temperature: BiometricMeasurement;
+        breathing_rate: BiometricMeasurement;
+        blood_pressure: BiometricMeasurement;
+    };
+}
+
+interface BiometricMeasurement {
+    unit: string;
+    value: string;
+}
+
+interface BiometricItem {
+    eva: string | number;
+    bpm: string;
+    temp: string;
+    breathing_rate: string;
+    blood_pressure: (string)[];
+}
+
+///// ROVER /////////////////////////////////////////////////////////////
+
+interface RoverData {
+    rover: {
+        posx: number, 
+        posy: number, 
+        qr_id: number,
+    }
+}
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -81,4 +116,7 @@ export type {
     SpecData,
     SpecItem,
     EVASpecItems, 
+    BiometricData,
+    BiometricItem, 
+    RoverData,
 }

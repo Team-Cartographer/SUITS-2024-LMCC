@@ -129,7 +129,7 @@ def handle_GET_args(args: dict) -> dict:
         return gh.send_notification()   # Return notification data
     elif get_arg('get', args) == "biodata":
         eva = get_arg('eva', args)
-        if eva == "one" or eva == "two":    # Return biological data based on 'eva' key value ('one' or 'two')
+        if eva == "one" or eva == "two":    # Return biological data based on 'eva' key value ('1' or '2')
             return gh.send_biom_data(eva)   
         else: 
             return jsonify({'error': 'invalid eva'})
