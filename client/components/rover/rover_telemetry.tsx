@@ -2,8 +2,7 @@
 
 /**
  * @author @ivanvuong @abhi-arya1 @hrishikesh-srihari
- * @function Telemetry
- * @fileoverview 
+ * @function RoverTelemetry
  */
 
 import { useNetwork } from "@/hooks/context/network-context";
