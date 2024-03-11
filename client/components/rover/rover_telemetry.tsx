@@ -6,10 +6,7 @@
  * @fileoverview 
  */
 
-import { RoverData } from "@/hooks/types";
-
 import { useNetwork } from "@/hooks/context/network-context";
-import { useEffect, useState } from "react";
 
 export function RoverTelemetry() {
     const networkProvider = useNetwork(); 
