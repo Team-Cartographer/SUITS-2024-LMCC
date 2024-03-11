@@ -62,12 +62,34 @@ const windowNames: WindowNames = {
     ),
     "rover": (
         <div>
-            Testing Rover
+            <div>Rover will be autonomously moving around the base of the mountain. When the
+            Communications Tower repair is complete the LMCC will begin receiving location data on the
+            rover. At this point LMCC2 will manually command the rover up the mountain.</div>
+            <div>• At the top of the mountain the rover will “collect samples” (via QR code)</div>
+            <div>• LMCC2 will then pilot the rover to a rendezvous point with EV2 for transfer of the
+            collected samples</div>
         </div>
     ),
     "ingress": (
         <div>
-            Testing Ingress
+            <div>1. Connect UIA to DCU</div>
+            <div>a. PLUG: Connect UIA and DCU via the cable</div>
+            <div>b. SWITCH: UIA EMU POWER to ON (activates the Umbilical on the UIA side)</div>
+            <div>c. SWITCH: DCU BATT to Umbilical (activated the Umbilical on the DCU side)</div>
+            <div>2. Vent O2 Tanks</div>
+            <div>a. SWITCH: UIA OXY VENT to ON (vents the content of the primary tank)</div>
+            <div>b. Wait until Primary and secondary OXY Tanks are empty</div>
+            <div>c. SWITCH: UIA OXY VENT to OFF (conclude venting the primary tank)</div>
+            <div>3. Flush Water Coolant</div>
+            <div>a. SWITCH: DCU PUMP to OPEN (Allows coolant to flow between suits and UIA)</div>
+            <div>b. Flush Water Coolant</div>
+            <div>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out
+            of suit)</div>
+            <div>ii. Wait until Water Coolant Tank is empty</div>
+            <div>iii. SWITCH: UIA WATER WASTE to OFF (conclude flushing the water coolant)</div>
+            <div>4. Disconnect IMU to DCU</div>
+            <div>a. SWITCH: UIA EMU POWER to OFF (deactivated the Umbilical on the UIA side)</div>
+            <div>b. UNPLUG: Connect UIA and DCU via the cable</div>
         </div>
     ),
     "geo": (
@@ -106,7 +128,51 @@ const windowNames: WindowNames = {
     ),
     "rep": (
         <div className="overflow-scroll list-decimal gap-y-3">
-            Temp Repairs 
+            <div>Arrive at worksite</div>
+            <div>1. Inspect Worksite for Damage</div>
+            <div>a. Relay to MCC arrival and inspection start</div>
+            <div>b. Begin inspection of the worksite</div>
+            <div>c. Once issue is discovered, relay issue to MCC</div>
+            <div>d. Wait to receive repair procedures from MCC</div>
+            <div>Note:</div>
+            <div>i. This can be the MCC referring the crewmember to one procedure pre-
+            saved to a library in the HMD. Additional procedures will soon be
+            provided in addition to the Cable Repair procedure.</div>
+            <div>ii. Growth: MCC can send new procedures.</div>
+            <div>e. Continue to appropriate procedure.</div>
+            <div>Cable Repair</div>
+            <div>2. Shut down comm tower (EV1)</div>
+            <div>a. Select power button on screen</div>
+            <div>b. Select shut down option</div>
+            <div>c. Relay system shutdown complete</div>
+            <div>3. Power down MMRTG (EV2)</div>
+            <div>a. Set power switch to off position</div>
+            <div>b. Relay power down to mcc</div>
+            <div>c. Return to comm tower for cable swap task</div>
+            <div>4. Cable swap</div>
+            <div>a. Retrieve functional cable (EV1)</div>
+            <div>b. Take one end of cable to MMRTG site, relay when arrived (EV2)</div>
+            <div>c. Disconnect damaged cable from comm tower, relay when complete (EV1)</div>
+            <div>d. Disconnect damaged cable from MMRTG, relay when complete (EV2)</div>
+            <div>e. Connect functional cable to comm tower, relay when complete (EV1)</div>
+            <div>f. Connect functional cable to MMRTG, relay when complete (EV2)</div>
+            <div>g. Relay cable swap complete to MCC (EV1)</div>
+            <div>5. Restore power</div>
+            <div>a. Set MMRTG power switch to on position (EV2)</div>
+            <div>b. Power on comm tower by pressing power button (EV1)</div>
+            <div>c. Wait for system start up (EV1)</div>
+            <div>d. Relay successful system start (EV1)</div>
+            <div>6. Verify Successful Repair (Both EVs)</div>
+            <div>a. Verify channel is live on comm tower display</div>
+            <div>b. Test if comm channel is functional</div>
+            <div>i. Follow channel switch protocol</div>
+            <div>ii. Protocol:</div>
+            <div>1. MCC relays channel switch start</div>
+            <div>2. EV will swap to repaired channel</div>
+            <div>3. If no comms are received within 10 seconds, EV will return to
+            working channel</div>
+            <div>4. Otherwise proceed</div>
+            <div>c. Wait for go to proceed from MCC</div>
         </div>
     )
 }
