@@ -26,8 +26,7 @@ const windowNames: WindowNames = {
         <div>iii. Wait until Primary OXY Tank is at 3000 psi</div>
         <div>iv. SWITCH: UIA OXY SUPPLY to OFF (concludes filling the primary tank)</div>
         <div>b. Fill Secondary Tank</div>
-        <div>i. SWITCH: DCU OXY to Secondary (sets the secondary tank as the active
-        tank)</div>
+        <div>i. SWITCH: DCU OXY to Secondary (sets the secondary tank as the active tank)</div>
         <div>ii. SWITCH: UIA OXY SUPPLY to ON (fills the secondary tank with oxygen)</div>
         <div>iii. Wait until Secondary OXY Tank is at 3000 psi</div>
         <div>iv. SWITCH: UIA OXY SUPPLY to OFF (concludes filling the secondary tank)</div>
@@ -35,8 +34,7 @@ const windowNames: WindowNames = {
         <div>5. Prepare Water Coolant</div>
         <div>a. SWITCH: DCU PUMP to OPEN (Allows coolant to flow between suits and UIA)</div>
         <div>b. Flush Water Coolant</div>
-        <div>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out
-        of suit)</div>
+        <div>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out of suit)</div>
         <div>ii. Wait until Water Coolant Tank is empty</div>
         <div>iii. SWITCH: UIA WATER WASTE to OFF (conclude flushing the water coolant)</div>
         <div>c. Fill Water Coolant</div>
@@ -83,8 +81,7 @@ const windowNames: WindowNames = {
             <div>3. Flush Water Coolant</div>
             <div>a. SWITCH: DCU PUMP to OPEN (Allows coolant to flow between suits and UIA)</div>
             <div>b. Flush Water Coolant</div>
-            <div>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out
-            of suit)</div>
+            <div>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant outof suit)</div>
             <div>ii. Wait until Water Coolant Tank is empty</div>
             <div>iii. SWITCH: UIA WATER WASTE to OFF (conclude flushing the water coolant)</div>
             <div>4. Disconnect IMU to DCU</div>
@@ -93,7 +90,7 @@ const windowNames: WindowNames = {
         </div>
     ),
     "geo": (
-        <div className="overflow: scroll; gap-y-3">
+        <div className="overflow-scroll gap-y-2">
             <div>XRF Scan (both EVs)</div>
             <div>1. Relay arrival at worksite</div>
             <div>2. Wait for instructions and go from LMCC</div>
@@ -212,7 +209,7 @@ const ProcedureLists = () => {
     const renderWindow = () => {
         let pane = windowNames[visibleWindow]
         return (
-            <div style={{ height: '100%', width: '100%' }} className="flex items-center justify-center overflow-auto">
+            <div style={{ height: '100%', width: '100%' }} className="flex flex-col items-center justify-center overflow-auto">
                 {pane}
             </div>
         );
@@ -229,7 +226,7 @@ const ProcedureLists = () => {
             <div className="flex flex-row gap-x-2 pb-4">
                 {renderButtons}
             </div>
-            <div className="" style={{ height: '620px', width: '710px' }}>
+            <div className="" style={{ height: '620px', width: '100%' }}>
                 {renderWindow()}
             </div>
         </div>
