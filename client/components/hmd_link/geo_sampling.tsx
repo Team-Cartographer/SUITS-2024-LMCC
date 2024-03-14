@@ -59,7 +59,21 @@ const GeoSampler = () => {
 
     const addTodoItems = async () => {
         if (EVA1SpecItem && EVA1SpecItem.name !== undefined && EVA1SpecItem.id !== undefined) {
-            const updated = [`Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
+            const updated = [`(EVA 1) Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
+    
+            const itemExists = todoItems && todoItems.some(item => 
+                item[0] === updated[0]
+            );
+    
+            if (!itemExists) {
+                await fetchWithParams('api/v0', {
+                    notif: "update",
+                    todoItems: [...(todoItems || []), updated]
+                });
+            }
+        }
+        if (EVA2SpecItem && EVA2SpecItem.name !== undefined && EVA2SpecItem.id !== undefined) {
+            const updated = [`(EVA 2) Pick up Spec Item: ${EVA2SpecItem.name} (ID: ${EVA2SpecItem.id})`, "False"];
     
             const itemExists = todoItems && todoItems.some(item => 
                 item[0] === updated[0]
