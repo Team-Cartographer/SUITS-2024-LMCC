@@ -48,8 +48,12 @@ const fetchVideo = async () => {
     };
 };
 
+interface CameraFeedProps {
+    className?: string
+}
 
-export function CameraFeed() {
+
+export function CameraFeed({ className }: CameraFeedProps) {
     const [videoUrl, setVideoUrl] = useState<string | undefined>(undefined);
     useEffect(() => {
         const fetchURL = async () => {
@@ -63,7 +67,7 @@ export function CameraFeed() {
         fetchURL();
     }, []);
         return (
-            <div className="justify-center items-center pt-[113px]">
+            <div className={`justify-center items-center ${className}`}>
             <video controls width="1400">
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -74,7 +78,7 @@ export function CameraFeed() {
 
 export function TempYoutubeVideo() {
 return (
-    <div className="justify-center items-center pt-10">
+    <div className="justify-center items-center">
         <div>
             <iframe
                 width="1236" 

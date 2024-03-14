@@ -48,7 +48,7 @@ function EvaTelemetry({
     return (
         <div className={className}>
             <div
-                className={`flex flex-row gap-x-6 text-2xl pl-9 ${
+                className={`flex flex-row gap-x-6 text-xl ${
                     bpmCritical || tempCritical || breathingRateCritical || bloodPressureCritical
                         ? 'bg-red-500 bg-opacity-50'
                         : 'bg-slate-600'
