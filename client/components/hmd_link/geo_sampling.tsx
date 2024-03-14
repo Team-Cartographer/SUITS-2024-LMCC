@@ -34,7 +34,8 @@ import { SpecItem } from "@/hooks/types"
 
 const GeoSampler = () => {
   const networkProvider = useNetwork();
-  const [idValue, setIdValue] = useState(0);
+  const [id1Value, setId1Value] = useState(0);
+  const [id2Value, setId2Value] = useState(0);
   const [EVA1SpecItem, setEVA1SpecItem] = useState<SpecItem | null>(null);
   const [EVA2SpecItem, setEVA2SpecItem] = useState<SpecItem | null>(null);
   const [switchState, setSwitchState] = useState<boolean>(false);
@@ -47,7 +48,8 @@ const GeoSampler = () => {
     const fetchSampleID = async () => {
         try {
             const specData = networkProvider.getSpecData()
-            setIdValue(specData.eva1?.id || 0);
+            setId1Value(specData.eva1?.id || 0);
+            setId2Value(specData.eva2?.id || 0);
             setEVA1SpecItem(specData.eva1);
             setEVA2SpecItem(specData.eva2);
         } catch (error) {
@@ -83,11 +85,19 @@ const GeoSampler = () => {
         return () => clearInterval(intervalID);
     });
 
-    const chartData = EVA1SpecItem?[['Element', 'Value'], ...Object.entries(EVA1SpecItem.data)]
+    const chart1Data = EVA1SpecItem?[['Element', 'Value'], ...Object.entries(EVA1SpecItem.data)]
         : [];
 
-    const options = {
+    const chart2Data = EVA2SpecItem?[['Element', 'Value'], ...Object.entries(EVA2SpecItem.data)]
+        : [];
+
+    const options1 = {
         title: EVA1SpecItem?.name || '',
+        legend: { position: 'none' }
+    };
+
+    const options2 = {
+        title: EVA2SpecItem?.name || '',
         legend: { position: 'none' }
     };
 
@@ -101,10 +111,9 @@ const GeoSampler = () => {
 
   return (
     <div className="container mx-auto mt-8">
-        <h1 className="text-2xl font-bold mb-4">Geological Sampling</h1>
-        <h2 className="text-1xl font-bold mb-4">Sample Name, ID</h2>
-        <p className={`text-l ${idValue !== 0 ? 'text-green-500' : 'text-red-500'}`}>
-            {EVA1SpecItem?.name}, {EVA1SpecItem?.id}
+        <h1  style={{ textAlign: 'center' }} className="text-2xl font-bold mb-4">Geological Sampling </h1>
+        <p className={`text-l ${id1Value !== 0 ? 'text-green-500' : 'text-red-500'}`}>
+            EVA 1 Data:
         </p>
         <Table>
             <TableHeader>
@@ -130,8 +139,53 @@ const GeoSampler = () => {
                                     chartType="BarChart"
                                     width="100%"
                                     height="300px"
-                                    data={chartData}
-                                    options={options}
+                                    data={chart1Data}
+                                    options={options1}
+                                    loader={<div>Loading Chart</div>}
+                                />
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+                {/*
+                    <TableCell className="font-medium">{EVA1SpecItem?.name}</TableCell>
+                    <TableCell>{EVA1SpecItem?.id}</TableCell>
+                    <TableCell>Collected</TableCell>
+                    <TableCell className="text-right"><Switch />
+                    </TableCell>
+                    */}
+                </TableRow>
+            </TableBody>
+        </Table>
+        <div style={{ height: '60px' }}></div>
+        <p className={`text-l ${id2Value !== 0 ? 'text-green-500' : 'text-red-500'}`}>
+            EVA 2 Data:
+        </p>
+        <Table>
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="w-[150px]">Sample Name</TableHead>
+                    <TableHead>Sample ID</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Display?</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                <TableRow>
+                    <TableCell className="w-[50px]">{EVA2SpecItem?.name}</TableCell>
+                    <TableCell className="w-[50px]">{EVA2SpecItem?.id}</TableCell>
+                    <TableCell className="w-[50px]">Collected</TableCell>
+                    <Accordion type="multiple">
+                        <AccordionItem value="item-1">
+                            <AccordionTrigger>
+                                Display {EVA2SpecItem?.name} data
+                            </AccordionTrigger>
+                            <AccordionContent>
+                                <Chart
+                                    chartType="BarChart"
+                                    width="100%"
+                                    height="300px"
+                                    data={chart2Data}
+                                    options={options2}
                                     loader={<div>Loading Chart</div>}
                                 />
                             </AccordionContent>
