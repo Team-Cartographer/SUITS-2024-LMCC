@@ -173,7 +173,7 @@ const windowNames: WindowNames = {
         </div>
     ),
     "emergency": (
-        <div>
+        <div className="overflow-scroll gap-y-2">
             <div>1. MCC Notices error and reports error to EVA</div>
             <div>2. EVA confirms error</div>
             <div>3. MCC gives EVA procedure for fixing the error (EVA hopefully has procedure on display)</div>
@@ -190,6 +190,9 @@ const windowNames: WindowNames = {
             <div>i. Relay abort mission and return to airlock command to EVs</div>
             <div>4. EVA Fixes Error</div>
             <div>5. MCC requests that EVA returns to base to repair error</div>
+            <div>Heart Rate/Temperature</div>
+            <div>Alert that the heart rate is too high and the DE will need to slow down for a second.</div>
+            <h2>MAKE SURE TO CHECK THE TelemetryValueRanges pdf in the TSS2024 repo for FURTHER ERROR CASES</h2>
         </div>
     )
 }
