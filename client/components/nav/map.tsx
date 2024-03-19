@@ -6,15 +6,19 @@
  * The minimap component for the LMCC console. 
  */
 
-import { fetchWithParams, fetchImageWithoutParams, fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import lmcc_config from "@/lmcc_config.json"
+import { useNetwork } from "@/hooks/context/network-context";
+import { GeoJSONFeature } from "@/hooks/types";
 
 // Note that all scaling must be based off of 1024x815 dimensions!
 
 const SCALING_FACTOR = 1/(lmcc_config.scale_factor);
 const MAP_HEIGHT = 3543;
 const MAP_WIDTH = 3720;
+
+let MAP_URLS: string[] = []
 
 /* 
     When you are running this file and want to resize the map, 
@@ -23,62 +27,38 @@ const MAP_WIDTH = 3720;
 */
 
 
-// Gets feature information for GeoJSON files 
-// if you need more than this to be typed, just add it here
-interface GeoJSONFeature {
-    type: 'Feature';
-    geometry: {
-        type: 'Point';
-        coordinates: [number, number];
-    };
-    properties: {
-        name: string;
-        description: string;
-    };
-}
-
-// Gets GeoJSON interface type hinting
-interface GeoJSON {
-    type: 'FeatureCollection';
-    features: GeoJSONFeature[];
-}
-
 // Map Component
 const Map = () => {
     const [mapImage, setMapImage] = useState(''); // URL to Map Image
     const [err, setErr] = useState(''); // Potential Error in getting Map
     const [points, setPoints] = useState<GeoJSONFeature[]>([]) // Set of points to have from the map
+    const networkProvider = useNetwork();
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
-        fetchImage();
-        fetchGeoJSONPoints();
-
         const interval = setInterval(() => {
             fetchImage();
-            fetchGeoJSONPoints();
-        }, lmcc_config.tickspeed); 
+            const mapData = networkProvider.getGeoJSONData()
+            setPoints(mapData.features);
+        }, 150); 
         return () => {
             clearInterval(interval);
         };
-    }, []);
+    });
 
-
-    // Fetches the current GeoJSON points and sets them to the state 
-    const fetchGeoJSONPoints = async () => {
-        const data = await fetchWithoutParams<GeoJSON>('api/v0?get=map_info');
-        if (data && data.features) {
-            setPoints(data.features);
-        }
-    };
 
     // Fetches the current map image and sets them to the URL state, checking for errors
     const fetchImage = async () => {
         try {
             const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
             if (imageBlob) {
-                const imageObjectURL = URL.createObjectURL(imageBlob);
-                setMapImage(imageObjectURL);
+                for (let mapUrl of MAP_URLS) {
+                    URL.revokeObjectURL(mapUrl);
+                }
+                const newUrl = URL.createObjectURL(imageBlob);
+                setMapImage(newUrl);
+                MAP_URLS = [...MAP_URLS, newUrl]
+                console.log(MAP_URLS);
             } else {
                 throw new Error('Image blob is undefined');
             }
@@ -99,7 +79,7 @@ const Map = () => {
         const x = Math.round(event.clientX - rect.left) / SCALING_FACTOR;
         const y = Math.round(event.clientY - rect.top) / SCALING_FACTOR;
 
-        fetchGeoJSONPoints();
+        setPoints(networkProvider.getGeoJSONData().features);
 
         // This looks whether the click was within a pixel radius of size "tolerance" to another point (defined on line 95). 
         const nearPoint = points.find(point => {
@@ -154,7 +134,7 @@ const Map = () => {
     return ( 
         <div className="">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {mapImage && <img className="rounded-3xl" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+            {mapImage && <img className="rounded-3xl" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
         </div>
     );
 }

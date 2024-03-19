@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * @author @abhi-arya1
  * @function PanicButton
@@ -14,18 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { fetchWithoutParams } from "@/api/fetchServer";
-import { FormEvent, useState } from "react";
-
-interface PanicData {
-    infoWarning: string;
-    infoTodo: string;
-    isWarning: boolean;
-}
+} from "@/components/ui/alert-dialog";
+import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
+import { useState } from "react";
+import { PanicData } from "@/hooks/types";
 
 const PanicButton = () => {
-  const [inputValue, setInputValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
+
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
   };
@@ -33,26 +31,34 @@ const PanicButton = () => {
   const onPanic = async () => {
     try {
       console.log(inputValue);
-      await fetchWithoutParams<PanicData>(`api/v0?get=notif&infoWarning=${inputValue}&isWarning=true`);
+      let curr_data = await fetchWithoutParams<PanicData>('api/v0?get=notif')
+      let curr_todo = curr_data?.todoItems
 
+      await fetchWithParams<PanicData>(
+        `api/v0`,
+        {
+          notif: 'update',
+          infoWarning: inputValue,
+          isWarning: true,
+          todoItems: curr_todo
+        });
     } catch (err) {
-        const error = err as Error;
-        console.error('Error updating image:', error);
+      const error = err as Error;
+      console.error("Error updating image:", error);
     }
     console.log("Panic Pressed");
-    setInputValue('');
-  }
-
+    setInputValue("");
+  };
 
   return (
     <div>
       <AlertDialog>
-        <AlertDialogTrigger className="flex bg-red-600 text-red-200 hover:bg-red-700 w-14 h-12 items-center justify-center rounded-xl">
-            <AlertTriangle className="h-7 w-7"/>
+        <AlertDialogTrigger className="flex h-12 w-14 items-center justify-center rounded-xl bg-red-600 text-red-200 hover:bg-red-700">
+          <AlertTriangle className="h-7 w-7" />
         </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle className="pb-2">Send a Warning</AlertDialogTitle>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="pb-2">Send a Warning</AlertDialogTitle>
             <AlertDialogDescription>
               <div>
                 <form onSubmit={onPanic}>
@@ -60,11 +66,16 @@ const PanicButton = () => {
                     type="text"
                     value={inputValue}
                     onChange={handleInputChange}
-                    className="h-full w-full p-2 rounded-lg bg-background text-muted-foreground outline outline-1 outline-muted-foreground"
+                    className="bg-background text-muted-foreground outline-muted-foreground h-full w-full rounded-lg p-2 outline outline-1"
                     placeholder="Warning Info Here..."
                   />
                   <div className="fixed bottom-0 right-0 p-3 pb-6 pr-5">
-                    <AlertDialogAction onClick={onPanic} className="bg-red-600 text-white hover:bg-red-700">Send</AlertDialogAction>
+                    <AlertDialogAction
+                      onClick={onPanic}
+                      className="bg-red-600 text-white hover:bg-red-700"
+                    >
+                      Send
+                    </AlertDialogAction>
                   </div>
                 </form>
               </div>

@@ -1,5 +1,6 @@
 from os import mkdir
 from re import match
+from tabnanny import check
 from urllib.parse import urlparse
 from json import dump, load
 from pathlib import Path
@@ -63,7 +64,7 @@ def save_tss_to_json(url: str) -> None:
 
 
 
-def check_tss_url(url: str):
+def check_tss_url(url: str) -> bool:
     """
     Checks the connectivity to the TSS server using the provided URL.
 
@@ -81,10 +82,9 @@ def check_tss_url(url: str):
         response = get(url, timeout=1)
         if response.status_code == 200:
             print('\ntss server connection successful!')
-    except (ConnectionError, Timeout):
-        print(f'\ncould not connect to tss server at {url}. please make sure it is active')
-        print(f'if you need to change the url, do so in {TSS_PATH}\n')
-        exit(2)
+        return True 
+    except (ConnectionError, Timeout, Exception):
+        return False
 
 
 
@@ -102,21 +102,30 @@ def get_tss_url() -> None:
 
     Returns None.
     """
-    if TSS_PATH.exists():
-        with open(TSS_PATH, "r") as json_file:
-            tss_data = load(json_file)
-        check_tss_url(tss_data["TSS_URL"])
-        print('done!')
-        return 
     pattern = r'^http://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):14141/?$'
+    check_failed = False
+    has_existing_url = True
 
     while True:
-        url = input(f"\nenter tss url: ")
+        url = None
+        if TSS_PATH.exists() and not check_failed:
+            with open(TSS_PATH, "r") as json_file:
+                tss_data = load(json_file)
+            url = tss_data.get("TSS_URL")
+
+        if not url:
+            url = input(f"\nenter tss url: ")
+
         if not match(pattern, url):
-            print(f'error: please enter a tss url in the correct format (ex: http://123.456.78.9:1234)')
+            print(f'error: please enter a tss url in the correct format (ex: http://123.456.78.9:14141)')
+            check_failed = True
+            continue
+
+        if not check_tss_url(url):
+            print(f'error: your tss url may have changed, please enter it here (ex: http://123.456.78.9:14141)')
+            check_failed = True
             continue
         else:
-            check_tss_url(url)
             save_tss_to_json(url)
             print('done!')
             break
@@ -133,14 +142,15 @@ def create_data_endpoints():
     if they don't exist. Initializes 'rockyard.geojson' with an empty GeoJSON 
     feature collection.
     """
+    # Create 'data' directory if it doesn't exist
     if not DATA_PATH.exists():
         mkdir(DATA_PATH)
     
-
+    # Create 'rockyard.geojson' if it doesn't exist    
     with open(ROCKYARD_PATH, 'w') as rockyard:
         dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
 
-
+    # Create 'geodata.npy' if it doesn't exist
     if not TIFF_DATA_PATH.exists():
         with rasterio.open(TIFF_PATH) as src:
             width, height = src.width, src.height
@@ -154,7 +164,7 @@ def create_data_endpoints():
 
             np.save(TIFF_DATA_PATH, coordinates)
 
-
+    # Create 'notification.json' if it doesn't exist
     with open(NOTIF_PATH, 'w') as notif: 
         dump({
             "infoWarning": '', 
