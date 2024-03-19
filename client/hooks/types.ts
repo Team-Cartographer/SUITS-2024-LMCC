@@ -73,26 +73,34 @@ interface EVASpecItems {
 // BIOMETRICDATA /////////////////////////////////////////////////////////////
 
 interface BiometricData {
-    eva: string;
-    data: {
-        heart_rate: BiometricMeasurement;
-        body_temperature: BiometricMeasurement;
-        breathing_rate: BiometricMeasurement;
-        blood_pressure: BiometricMeasurement;
-    };
+    batt_time_left: number;
+    co2_production: number;
+    coolant_gas_pressure: number;
+    coolant_liquid_pressure: number;
+    coolant_m1: number;
+    fan_pri_rpm: number;
+    fan_sec_rpm: number;
+    heart_rate: number;
+    helmet_pressure_co2: number;
+    oxy_consumption: number;
+    oxy_pri_pressure: number;
+    oxy_pri_storage: number;
+    oxy_sec_pressure: number;
+    oxy_sec_storage: number;
+    oxy_time_left: number;
+    scrubber_a_co2_storage: number;
+    scrubber_b_co2_storage: number;
+    suit_pressure_co2: number;
+    suit_pressure_other: number;
+    suit_pressure_oxy: number;
+    suit_pressure_total: number;
+    temperature: number;
 }
 
-interface BiometricMeasurement {
-    unit: string;
-    value: string;
-}
-
-interface BiometricItem {
-    eva: string | number;
-    bpm: string;
-    temp: string;
-    breathing_rate: string;
-    blood_pressure: (string)[];
+interface Biometric {
+    telemetry: {
+        [eva: string]: BiometricData;
+    }
 }
 
 ///// ROVER /////////////////////////////////////////////////////////////
@@ -116,7 +124,7 @@ export type {
     SpecData,
     SpecItem,
     EVASpecItems, 
+    Biometric,
     BiometricData,
-    BiometricItem, 
     RoverData,
 }

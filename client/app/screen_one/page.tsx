@@ -21,9 +21,9 @@ const HomePage = () => {
     <div className="h-full flex flex-row gap-x-8">
       <div className="flex flex-col items-left pl-3 justify-start max-w-[600px]">
         <NoSSR_Timers />
-        <EvaTelemetry evaNumber={1} bpm='' temp='' breathing_rate='' blood_pressure={['','']} className="pt-[4.2rem]" />
+        <EvaTelemetry evaNumber={1} bpm={0.0} temp={0.0} oxy={0.0} className="pt-[4.2rem]" />
         <CameraFeed />
-        <EvaTelemetry evaNumber={2} bpm={''} temp={''} breathing_rate={''} blood_pressure={['','']} />
+        <EvaTelemetry evaNumber={2} bpm={0.0} temp={0.0} oxy={0.0} />
         <CameraFeed />
         <TodoLister />
       </div>

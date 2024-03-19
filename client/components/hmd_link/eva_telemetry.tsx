@@ -4,24 +4,19 @@
  */
 import { useNetwork } from "@/hooks/context/network-context";
 
-const BPM_LOWER_THRESH = 60;
-const BPM_UPPER_THRESH = 100;
-const TEMP_LOWER_THRESH = 97;
-const TEMP_UPPER_THRESH = 99;
-const BR_LOWER_THRESH = 12;
-const BR_UPPER_THRESH = 20;
-const BP_SYS_LOWER_THRESH = 90;
-const BP_SYS_UPPER_THRESH = 140;
-const BP_DIA_LOWER_THRESH = 60;
-const BP_DIA_UPPER_THRESH = 120;
+const BPM_LOWER_THRESH = 50;
+const BPM_UPPER_THRESH = 160;
+const TEMP_LOWER_THRESH = 50;
+const TEMP_UPPER_THRESH = 90;
+const BR_LOWER_THRESH = 0.05;
+const BR_UPPER_THRESH = 0.15;
 
 interface TelemetryArgs {
     className?: string;
     evaNumber: number;
-    bpm: string;
-    temp: string;
-    breathing_rate: string;
-    blood_pressure: [string, string];
+    bpm: number;
+    temp: number;
+    oxy: number;
 }
 
 function EvaTelemetry({
@@ -29,27 +24,23 @@ function EvaTelemetry({
     evaNumber,
     bpm,
     temp,
-    breathing_rate,
-    blood_pressure,
+    oxy,
 }: TelemetryArgs) {
     const { getBiometricData } = useNetwork();
     const biometricDataEva = getBiometricData(evaNumber)
-    bpm = biometricDataEva.bpm;
-    temp = biometricDataEva.temp;
-    breathing_rate = biometricDataEva.breathing_rate;
-    blood_pressure = [biometricDataEva.blood_pressure[0], biometricDataEva.blood_pressure[1]];
+    bpm = biometricDataEva.telemetry.eva.heart_rate;
+    temp = biometricDataEva.telemetry.eva.temperature;
+    oxy = biometricDataEva.telemetry.eva.oxy_consumption;
 
-    let bpmCritical: boolean = parseInt(bpm, 10) > BPM_UPPER_THRESH || parseInt(bpm, 10) < BPM_LOWER_THRESH;
-    let tempCritical: boolean = parseInt(temp, 10) > TEMP_UPPER_THRESH || parseInt(temp, 10) < TEMP_LOWER_THRESH;
-    let breathingRateCritical: boolean = parseInt(breathing_rate, 10) > BR_UPPER_THRESH || parseInt(breathing_rate, 10) < BR_LOWER_THRESH;
-    let bloodPressureCritical: boolean = parseInt(blood_pressure[0], 10) > BP_SYS_UPPER_THRESH || parseInt(blood_pressure[0], 10) < BP_SYS_LOWER_THRESH
-    || parseInt(blood_pressure[1], 10) > BP_DIA_UPPER_THRESH || parseInt(blood_pressure[1], 10) < BP_DIA_LOWER_THRESH;
+    let bpmCritical: boolean = bpm > BPM_UPPER_THRESH || bpm < BPM_LOWER_THRESH;
+    let tempCritical: boolean = temp > TEMP_UPPER_THRESH || temp < TEMP_LOWER_THRESH;
+    let oxyCritical: boolean = oxy > BR_UPPER_THRESH || oxy < BR_LOWER_THRESH;
 
     return (
         <div className={className}>
             <div
                 className={`flex flex-row gap-x-6 text-xl ${
-                    bpmCritical || tempCritical || breathingRateCritical || bloodPressureCritical
+                    bpmCritical || tempCritical || oxyCritical
                         ? 'bg-red-500 bg-opacity-50'
                         : 'bg-slate-600'
                 } rounded-t-3xl p-1 font-semibold items-center justify-center`}
@@ -60,7 +51,7 @@ function EvaTelemetry({
                         bpmCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {bpm} <span className="text-red-500">BPM</span>
+                    {bpm} <span className="text-red-500">BMP</span>
                 </p>
                 <p
                     className={`${
@@ -72,19 +63,11 @@ function EvaTelemetry({
                 </p>
                 <p
                     className={`${
-                        breathingRateCritical ? 'underline italic font-bold' : ''
+                        oxyCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {breathing_rate}
-                    <span className="text-blue-400"> BRPM</span>
-                </p>
-                <p
-                    className={`${
-                        bloodPressureCritical ? 'underline italic font-bold' : ''
-                    }`}
-                >
-                    {blood_pressure[0]}/{blood_pressure[1]}
-                    <span className="text-orange-400"> mmHg</span>
+                    {oxy}
+                    <span className="text-blue-400"> PSI/MIN</span>
                 </p>
             </div>
         </div>

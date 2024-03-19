@@ -9,8 +9,7 @@ import {
 	SpecData,
 	SpecItem,
 	EVASpecItems,
-	BiometricData,
-	BiometricItem,
+	Biometric,
 	RoverData,
 } from "../types";
 
@@ -36,7 +35,6 @@ const defaultTimerValue: TimerType = {
 	spec: "00:00:00",
 	dcu: "00:00:00",
 	rover: "00:00:00"
-	
 }
 
 const defaultGEOJSONValue: GeoJSON = {
@@ -49,41 +47,41 @@ const defaultSpecValue: EVASpecItems = {
 	eva2: null 
 }
 
-const defaultBiometricDataValue: BiometricData = {
-	eva: '',
-    data: {
-        blood_pressure: {
-            unit: '',
-            value: ''
-        },
-        body_temperature: {
-            unit: '',
-            value: ''
-        },
-        breathing_rate: {
-            unit: '',
-            value: ''
-        },
-        heart_rate: {
-            unit: '',
-            value: ''
-        }
-    }
-}
-
-const defaultBiometricItemValue: BiometricItem = {
-	eva: '',
-	bpm: '',
-	temp: '',
-	breathing_rate: '',
-	blood_pressure: [],
-}
 
 const defaultRoverValue: RoverData = { 
 	rover: {
 		posx: 0,
 		posy: 0,
 		qr_id: 0,
+	}
+}
+
+const defaultBiometricValue: Biometric = { 
+	telemetry: {
+		eva: {
+			batt_time_left: 0.0,
+			co2_production: 0.0,
+			coolant_gas_pressure: 0.0,
+			coolant_liquid_pressure: 0.0,
+			coolant_m1: 0.0,
+			fan_pri_rpm: 0.0,
+			fan_sec_rpm: 0.0,
+			heart_rate: 0.0,
+			helmet_pressure_co2: 0.0,
+			oxy_consumption: 0.0,
+			oxy_pri_pressure: 0.0,
+			oxy_pri_storage: 0.0,
+			oxy_sec_pressure: 0.0,
+			oxy_sec_storage: 0.0,
+			oxy_time_left: 0.0,
+			scrubber_a_co2_storage: 0.0,
+			scrubber_b_co2_storage: 0.0,
+			suit_pressure_co2: 0.0,
+			suit_pressure_other: 0.0,
+			suit_pressure_oxy: 0.0,
+			suit_pressure_total: 0.0,
+			temperature: 0.0,
+		}
 	}
 }
 
@@ -94,7 +92,7 @@ interface NetworkContextType {
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
 	getSpecData: () => EVASpecItems;
-	getBiometricData: (evaNumber: number) => BiometricItem;
+	getBiometricData: (evaNumber: number) => Biometric;
 	getRoverData: () => RoverData;
 }
 
@@ -103,7 +101,7 @@ const defaultNetworkValue: NetworkContextType = {
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
 	getSpecData: () => defaultSpecValue,
-	getBiometricData: (evaNumber: number) => defaultBiometricItemValue,
+	getBiometricData: (evaNumber: number) => defaultBiometricValue,
 	getRoverData: () => defaultRoverValue,
 };
 
@@ -122,8 +120,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
 	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
-	const [biometricDataEva1, setBiometricDataEva1] = useState<BiometricData>(defaultBiometricDataValue);
-	const [biometricDataEva2, setBiometricDataEva2] = useState<BiometricData>(defaultBiometricDataValue);
+	const [biometricDataEva1, setBiometricDataEva1] = useState<Biometric>(defaultBiometricValue);
+	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometric>(defaultBiometricValue);
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 
 	useEffect(() => {
@@ -176,17 +174,74 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('Map Info is undefined')
 				}
 
-				const biometricDataEva1 = await fetchWithoutParams<BiometricData>('api/v0?get=biodata&eva=one');
-				const biometricDataEva2 = await fetchWithoutParams<BiometricData>('api/v0?get=biodata&eva=two');
-				if (biometricDataEva1) {
-					setBiometricDataEva1(biometricDataEva1)
+				const biometricData = await fetchWithoutParams<Biometric>('tss/telemetry');
+				if (biometricData) {
+					setBiometricDataEva1(
+						{
+							telemetry: {
+								eva: {
+									batt_time_left: biometricData.telemetry.eva1.batt_time_left,
+									co2_production: biometricData.telemetry.eva1.co2_production,
+									coolant_gas_pressure: biometricData.telemetry.eva1.coolant_gas_pressure,
+									coolant_liquid_pressure: biometricData.telemetry.eva1.coolant_liquid_pressure,
+									coolant_m1: biometricData.telemetry.eva1.coolant_m1,
+									fan_pri_rpm: biometricData.telemetry.eva1.fan_pri_rpm,
+									fan_sec_rpm: biometricData.telemetry.eva1.fan_sec_rpm,
+									heart_rate: biometricData.telemetry.eva1.heart_rate,
+									helmet_pressure_co2: biometricData.telemetry.eva1.helmet_pressure_co2,
+									oxy_consumption: biometricData.telemetry.eva1.oxy_consumption,
+									oxy_pri_pressure: biometricData.telemetry.eva1.oxy_pri_pressure,
+									oxy_pri_storage: biometricData.telemetry.eva1.oxy_pri_storage,
+									oxy_sec_pressure: biometricData.telemetry.eva1.oxy_sec_pressure,
+									oxy_sec_storage: biometricData.telemetry.eva1.oxy_sec_storage,
+									oxy_time_left: biometricData.telemetry.eva1.oxy_time_left,
+									scrubber_a_co2_storage: biometricData.telemetry.eva1.scrubber_a_co2_storage,
+									scrubber_b_co2_storage: biometricData.telemetry.eva1.scrubber_b_co2_storage,
+									suit_pressure_co2: biometricData.telemetry.eva1.suit_pressure_co2,
+									suit_pressure_other:  biometricData.telemetry.eva1.suit_pressure_other,
+									suit_pressure_oxy:  biometricData.telemetry.eva1.suit_pressure_oxy,
+									suit_pressure_total:  biometricData.telemetry.eva1.suit_pressure_total,
+									temperature:  biometricData.telemetry.eva1.temperature,
+									}
+							}
+						}
+					)
 				}
 				else {
 					throw new Error('Biometric Data is undefined')
 				}
 
-				if (biometricDataEva2) {
-					setBiometricDataEva2(biometricDataEva2) 
+				if (biometricData) {
+					setBiometricDataEva2(
+						{
+							telemetry: {
+								eva: {
+									batt_time_left: biometricData.telemetry.eva2.batt_time_left,
+									co2_production: biometricData.telemetry.eva2.co2_production,
+									coolant_gas_pressure: biometricData.telemetry.eva2.coolant_gas_pressure,
+									coolant_liquid_pressure: biometricData.telemetry.eva2.coolant_liquid_pressure,
+									coolant_m1: biometricData.telemetry.eva2.coolant_m1,
+									fan_pri_rpm: biometricData.telemetry.eva2.fan_pri_rpm,
+									fan_sec_rpm: biometricData.telemetry.eva2.fan_sec_rpm,
+									heart_rate: biometricData.telemetry.eva2.heart_rate,
+									helmet_pressure_co2: biometricData.telemetry.eva2.helmet_pressure_co2,
+									oxy_consumption: biometricData.telemetry.eva2.oxy_consumption,
+									oxy_pri_pressure: biometricData.telemetry.eva2.oxy_pri_pressure,
+									oxy_pri_storage: biometricData.telemetry.eva2.oxy_pri_storage,
+									oxy_sec_pressure: biometricData.telemetry.eva2.oxy_sec_pressure,
+									oxy_sec_storage: biometricData.telemetry.eva2.oxy_sec_storage,
+									oxy_time_left: biometricData.telemetry.eva2.oxy_time_left,
+									scrubber_a_co2_storage: biometricData.telemetry.eva2.scrubber_a_co2_storage,
+									scrubber_b_co2_storage: biometricData.telemetry.eva2.scrubber_b_co2_storage,
+									suit_pressure_co2: biometricData.telemetry.eva2.suit_pressure_co2,
+									suit_pressure_other: biometricData.telemetry.eva2.suit_pressure_other,
+									suit_pressure_oxy: biometricData.telemetry.eva2.suit_pressure_oxy,
+									suit_pressure_total: biometricData.telemetry.eva2.suit_pressure_total,
+									temperature: biometricData.telemetry.eva2.temperature,
+									}
+							}
+						}
+					) 
 				}
 				else {
 					throw new Error('Biometric Data is undefined')
@@ -257,7 +312,7 @@ export const NetworkProvider = ({ children }: any) => {
 		return roverData || defaultRoverValue
 	}
 
-	const getBiometricData = (evaNumber: number): BiometricItem => {
+	const getBiometricData = (evaNumber: number): Biometric => {
 		let biometricData;
 		if (evaNumber === 1) {
 			biometricData = biometricDataEva1;
@@ -266,13 +321,33 @@ export const NetworkProvider = ({ children }: any) => {
 		} else {
 			throw new Error(`Invalid Eva number: ${evaNumber}`);
 		}
-	
 			return {
-				eva: biometricData.eva,
-				bpm: biometricData.data.heart_rate.value,
-				temp: biometricData.data.body_temperature.value,
-				breathing_rate: biometricData.data.breathing_rate.value,
-				blood_pressure: [biometricData.data.blood_pressure.value.slice(0,1),biometricData.data.blood_pressure.value.slice(1,2)]
+				telemetry: {
+					eva: {
+						batt_time_left: biometricData.telemetry.eva.batt_time_left,
+						co2_production: biometricData.telemetry.eva.co2_production,
+						coolant_gas_pressure: biometricData.telemetry.eva.coolant_gas_pressure,
+						coolant_liquid_pressure: biometricData.telemetry.eva.coolant_liquid_pressure,
+						coolant_m1: biometricData.telemetry.eva.coolant_m1,
+						fan_pri_rpm: biometricData.telemetry.eva.fan_pri_rpm,
+						fan_sec_rpm: biometricData.telemetry.eva.fan_sec_rpm,
+						heart_rate: biometricData.telemetry.eva.heart_rate,
+						helmet_pressure_co2: biometricData.telemetry.eva.helmet_pressure_co2,
+						oxy_consumption: biometricData.telemetry.eva.oxy_consumption,
+						oxy_pri_pressure: biometricData.telemetry.eva.oxy_pri_pressure,
+						oxy_pri_storage: biometricData.telemetry.eva.oxy_pri_storage,
+						oxy_sec_pressure: biometricData.telemetry.eva.oxy_sec_pressure,
+						oxy_sec_storage: biometricData.telemetry.eva.oxy_sec_storage,
+						oxy_time_left: biometricData.telemetry.eva.oxy_time_left,
+						scrubber_a_co2_storage: biometricData.telemetry.eva.scrubber_a_co2_storage,
+						scrubber_b_co2_storage: biometricData.telemetry.eva.scrubber_b_co2_storage,
+						suit_pressure_co2: biometricData.telemetry.eva.suit_pressure_co2,
+						suit_pressure_other: biometricData.telemetry.eva.suit_pressure_other,
+						suit_pressure_oxy: biometricData.telemetry.eva.suit_pressure_oxy,
+						suit_pressure_total: biometricData.telemetry.eva.suit_pressure_total,
+						temperature: biometricData.telemetry.eva.temperature,
+					}
+				}
 			};
 	};
 
