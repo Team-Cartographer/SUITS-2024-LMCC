@@ -9,9 +9,17 @@ import {
 	SpecData,
 	SpecItem,
 	EVASpecItems,
-	Biometric,
+	Biometrics,
 	RoverData,
 } from "../types";
+import { 
+    defaultPanicValue,
+    defaultRoverValue,
+    defaultGEOJSONValue,
+    defaultSpecValue, 
+    defaultTimerValue, 
+    defaultBiometricValue
+} from "../defaults"
 
 ////////////////////////////////////////////////
 
@@ -23,68 +31,6 @@ const formatTime = (seconds: number) => {  //build formatted timer
 	return [hours, minutes, secs].map(v => v < 10 ? "0" + v : v).join(":");
 };
 
-const defaultPanicValue: PanicData = {
-    infoWarning: "", 
-    todoItems: [], 
-    isWarning: false,
-}
-
-const defaultTimerValue: TimerType = {
-	mission: "00:00:00",
-	uia: "00:00:00",
-	spec: "00:00:00",
-	dcu: "00:00:00",
-	rover: "00:00:00"
-}
-
-const defaultGEOJSONValue: GeoJSON = {
-	type: 'FeatureCollection',
-	features: []
-}
-
-const defaultSpecValue: EVASpecItems = {
-	eva1: null,
-	eva2: null 
-}
-
-
-const defaultRoverValue: RoverData = { 
-	rover: {
-		posx: 0,
-		posy: 0,
-		qr_id: 0,
-	}
-}
-
-const defaultBiometricValue: Biometric = { 
-	telemetry: {
-		eva: {
-			batt_time_left: 0.0,
-			co2_production: 0.0,
-			coolant_gas_pressure: 0.0,
-			coolant_liquid_pressure: 0.0,
-			coolant_m1: 0.0,
-			fan_pri_rpm: 0.0,
-			fan_sec_rpm: 0.0,
-			heart_rate: 0.0,
-			helmet_pressure_co2: 0.0,
-			oxy_consumption: 0.0,
-			oxy_pri_pressure: 0.0,
-			oxy_pri_storage: 0.0,
-			oxy_sec_pressure: 0.0,
-			oxy_sec_storage: 0.0,
-			oxy_time_left: 0.0,
-			scrubber_a_co2_storage: 0.0,
-			scrubber_b_co2_storage: 0.0,
-			suit_pressure_co2: 0.0,
-			suit_pressure_other: 0.0,
-			suit_pressure_oxy: 0.0,
-			suit_pressure_total: 0.0,
-			temperature: 0.0,
-		}
-	}
-}
-
 ////////////////////////////////////////////////////////////////
 
 interface NetworkContextType {
@@ -92,7 +38,7 @@ interface NetworkContextType {
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
 	getSpecData: () => EVASpecItems;
-	getBiometricData: (evaNumber: number) => Biometric;
+	getBiometricData: (evaNumber: number) => Biometrics;
 	getRoverData: () => RoverData;
 }
 
@@ -120,8 +66,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
 	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
-	const [biometricDataEva1, setBiometricDataEva1] = useState<Biometric>(defaultBiometricValue);
-	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometric>(defaultBiometricValue);
+	const [biometricDataEva1, setBiometricDataEva1] = useState<Biometrics>(defaultBiometricValue);
+	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometrics>(defaultBiometricValue);
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 
 	useEffect(() => {
@@ -174,7 +120,7 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('Map Info is undefined')
 				}
 
-				const biometricData = await fetchWithoutParams<Biometric>('tss/telemetry');
+				const biometricData = await fetchWithoutParams<Biometrics>('tss/telemetry');
 				if (biometricData) {
 					setBiometricDataEva1(
 						{
@@ -208,7 +154,7 @@ export const NetworkProvider = ({ children }: any) => {
 					)
 				}
 				else {
-					throw new Error('Biometric Data is undefined')
+					throw new Error('Biometric Data (EVA 1) is undefined')
 				}
 
 				if (biometricData) {
@@ -244,7 +190,7 @@ export const NetworkProvider = ({ children }: any) => {
 					) 
 				}
 				else {
-					throw new Error('Biometric Data is undefined')
+					throw new Error('Biometric Data (EVA 2) is undefined')
 				}
 
 				const specData = await fetchWithoutParams<SpecData>("mission/spec");
@@ -312,7 +258,7 @@ export const NetworkProvider = ({ children }: any) => {
 		return roverData || defaultRoverValue
 	}
 
-	const getBiometricData = (evaNumber: number): Biometric => {
+	const getBiometricData = (evaNumber: number): Biometrics => {
 		let biometricData;
 		if (evaNumber === 1) {
 			biometricData = biometricDataEva1;

@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import lmcc_config from "@/lmcc_config.json"
-import EvaTelemetry from './eva_telemetry';
+import BiometricTelemetry from './biometric_data';
 
 
 const fetchVideoWithoutParams = async (path: string): Promise<Response | undefined> => {

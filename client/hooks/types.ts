@@ -97,7 +97,7 @@ interface BiometricData {
     temperature: number;
 }
 
-interface Biometric {
+interface Biometrics {
     telemetry: {
         [eva: string]: BiometricData;
     }
@@ -124,7 +124,7 @@ export type {
     SpecData,
     SpecItem,
     EVASpecItems, 
-    Biometric,
+    Biometrics,
     BiometricData,
     RoverData,
 }

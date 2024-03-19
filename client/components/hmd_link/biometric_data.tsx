@@ -19,7 +19,7 @@ interface TelemetryArgs {
     oxy: number;
 }
 
-function EvaTelemetry({
+function BiometricTelemetry({
     className = '',
     evaNumber,
     bpm,
@@ -43,7 +43,7 @@ function EvaTelemetry({
                     bpmCritical || tempCritical || oxyCritical
                         ? 'bg-red-500 bg-opacity-50'
                         : 'bg-slate-600'
-                } rounded-t-3xl p-1 font-semibold items-center justify-center`}
+                } rounded-t-3xl p-1 pl-5 pr-5 font-semibold items-start gap-x-4`}
             >
                 <p>EVA {evaNumber}:</p>
                 <p
@@ -51,7 +51,7 @@ function EvaTelemetry({
                         bpmCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {bpm} <span className="text-red-500">BMP</span>
+                    {bpm} <span className="text-red-500">BPM</span>
                 </p>
                 <p
                     className={`${
@@ -74,4 +74,4 @@ function EvaTelemetry({
     );
 }
 
-export default EvaTelemetry;
+export default BiometricTelemetry;
