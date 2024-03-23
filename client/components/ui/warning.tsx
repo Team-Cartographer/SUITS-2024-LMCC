@@ -7,6 +7,7 @@ import { Button } from "./button";
 import { useNetwork } from "@/hooks/context/network-context";
 import { WarningData } from "@/hooks/types"
 import { defaultWarningValue } from "@/hooks/defaults";
+import { EyeOff, Trash } from "lucide-react";
 
 const Notifier = () => {
     const { displayVignette, hideVignette, isVignetteVisible } = useVignette();
@@ -42,16 +43,15 @@ const Notifier = () => {
             <div className="vignette-overlay fixed inset-0 z-50 pointer-events-none" />
           }
           {warningData && (warningData.infoWarning !== "") && (
-            <div className="fixed bottom-5 left-[500px] bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
+            <div className="fixed top-5 right-5 bg-background flex flex-row pl-4 pr-4 pt-4 pb-3 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
               {warningData.infoWarning !== "" && warningData.infoWarning !== null && (
                 <p className={`text-sm text-white font-semibold pb-2`}>
                     <span className="underline">Warning Info:</span> {warningData.infoWarning}
                 </p>
               )}
-              <Button onClick={clearAlerts}>
-                Clear Alerts
-              </Button>
-              <div className="pb-4" /> 
+              <div role="button" className="text-white hover:text-gray-500 h-4 w-4 pr-5 pb-8 pl-3 self-end" onClick={clearAlerts}>
+                <EyeOff />
+              </div>
             </div>
           )}
         </>

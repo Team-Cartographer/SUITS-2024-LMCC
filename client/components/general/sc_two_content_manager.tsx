@@ -17,12 +17,14 @@ const EVADataMap = (evaData: Biometrics) => {
     return(
         <div className="flex flex-col gap-y-3">
             <li>Batt. Time Left:  {evaTelemetry.batt_time_left} sec</li>
-            <li>Oxy. Sec. Stor.:  {evaTelemetry.oxy_pri_storage} %</li>
-            <li>Oxy. Sec. Stor.: {evaTelemetry.oxy_sec_storage} %</li>
+            <li>Oxy. Sec. Stor:  {evaTelemetry.oxy_pri_storage} %</li>
+            <li>Oxy. Sec. Stor: {evaTelemetry.oxy_sec_storage} %</li>
             <li>Oxy. Pri. Pressure: {evaTelemetry.oxy_pri_pressure} psi</li>
             <li>Oxy. Sec. Pressure: {evaTelemetry.oxy_sec_pressure} psi</li>
             <li>Oxy. Time Left {evaTelemetry.oxy_time_left} sec</li>
-            <li>Coolant Stor.: {evaTelemetry.coolant_ml} %</li>
+            <li>Coolant Stor: {evaTelemetry.coolant_ml} %</li>
+            <li>Coolant Liquid Pres: {evaTelemetry.coolant_liquid_pressure} psi</li>
+            <li>Coolant Gas Pres: {evaTelemetry.coolant_gas_pressure} psi</li>
         </div>
     )
 
@@ -40,8 +42,8 @@ const ScreenTwoContentManager = () => {
     const EVA1Data = getTelemetryData(1);
     const EVA2Data = getTelemetryData(2);
 
-    checkNominal(EVA1Data.telemetry.eva)
-    checkNominal(EVA2Data.telemetry.eva)
+    //checkNominal(EVA1Data.telemetry.eva, 1)
+    //checkNominal(EVA2Data.telemetry.eva, 2)
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data),

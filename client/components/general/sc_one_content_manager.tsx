@@ -18,7 +18,7 @@ const windowNames: WindowNames = {
 
 const windows = {
     "map": "Map",
-    "lists": "Procedure Lists",
+    "lists": "Procedures",
     "geo": "Geological Sampling"
 }
 
@@ -42,7 +42,7 @@ const ScreenOneContentManager = () => {
 
     return ( 
         <div className="flex flex-col items-center justify-center p-4 outline outline-4 outline-slate-700 rounded-lg gap-y-2">
-            <div className="" style={{ height: '720px', width: '750px' }}>
+            <div className="" style={{ height: '850px', width: '900px' }}>
                 {renderWindow()}
             </div>
             <div className="flex flex-row gap-x-2">
