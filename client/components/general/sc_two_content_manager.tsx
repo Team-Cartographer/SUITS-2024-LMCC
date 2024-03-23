@@ -43,8 +43,8 @@ const ScreenTwoContentManager = () => {
     const EVA1Data = getTelemetryData(1);
     const EVA2Data = getTelemetryData(2);
 
-    //checkNominal(EVA1Data.telemetry.eva)
-    //checkNominal(EVA2Data.telemetry.eva)
+    checkNominal(EVA1Data.telemetry.eva)
+    checkNominal(EVA2Data.telemetry.eva)
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data),

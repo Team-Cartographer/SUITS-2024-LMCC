@@ -36,6 +36,8 @@ function BiometricTelemetry({
     let tempCritical: boolean = temp > TEMP_UPPER_THRESH || temp < TEMP_LOWER_THRESH;
     let oxyCritical: boolean = oxy > BR_UPPER_THRESH || oxy < BR_LOWER_THRESH;
 
+    
+
     return (
         <div className={className}>
             <div

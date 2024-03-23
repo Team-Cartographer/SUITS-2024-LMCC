@@ -126,5 +126,8 @@ def send_biom_data(eva: str) -> dict:
 
 def send_notification() -> dict:
     # Open the 'notifications.json' file and load its contents
-    with open(NOTIF_PATH, 'r') as f:
-        return json.load(f)
+    try: 
+        with open(NOTIF_PATH, 'r') as f:
+            return json.load(f)
+    except json.JSONDecodeError: 
+        return send_notification()
