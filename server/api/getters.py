@@ -1,5 +1,4 @@
 # all GET request helpers go in here
-from re import L
 from PIL import Image, ImageDraw
 from requests import get
 from .utils import get_lat_lon_from_tif
