@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 /**
@@ -78,7 +79,7 @@ const GeoSampler = () => {
     };
 
     const addTodoItems = async () => {
-        if (EVA1SpecItem && EVA1SpecItem.name !== undefined && EVA1SpecItem.id !== undefined) {
+        if (EVA1SpecItem && EVA1SpecItem.name !== undefined && EVA1SpecItem.id !== undefined && EVA1SpecItem.id !== 0) {
             const updated = [`(EVA 1) Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
     
             const itemExists = todoItems && todoItems.some(item => 
@@ -92,7 +93,7 @@ const GeoSampler = () => {
                 });
             }
         }
-        if (EVA2SpecItem && EVA2SpecItem.name !== undefined && EVA2SpecItem.id !== undefined) {
+        if (EVA2SpecItem && EVA2SpecItem.name !== undefined && EVA2SpecItem.id !== undefined && EVA2SpecItem.id !== 0) {
             const updated = [`(EVA 2) Pick up Spec Item: ${EVA2SpecItem.name} (ID: ${EVA2SpecItem.id})`, "False"];
     
             const itemExists = todoItems && todoItems.some(item => 
