@@ -20,9 +20,9 @@ const ScreenTwoContentManager = () => {
     const EVA1Data = getTelemetryData(1);
     const EVA2Data = getTelemetryData(2);
 
-    //const criticalIDs1 = checkNominalValues(EVA1Data.telemetry.eva, 1)
-    //const criticalIDs2 = checkNominalValues(EVA2Data.telemetry.eva, 2)
-    const [criticalIDs1, criticalIDs2] = [[], []] //FIXME: Remove to add back nominal checks 
+    const criticalIDs1 = checkNominalValues(EVA1Data.telemetry.eva, 1)
+    const criticalIDs2 = checkNominalValues(EVA2Data.telemetry.eva, 2)
+    // const [criticalIDs1, criticalIDs2] = [[], []] // Remove to add back nominal checks, or use these for temp testing
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data, 1, criticalIDs1),
