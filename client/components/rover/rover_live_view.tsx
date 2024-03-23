@@ -6,7 +6,6 @@
  */
 
 import ReactPlayer from "react-player";
-import lmcc_config from "@/lmcc_config.json";
 import { fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 

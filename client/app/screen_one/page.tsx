@@ -25,7 +25,6 @@ const HomePage = () => {
         <CameraFeed />
         <BiometricTelemetry evaNumber={2} bpm={0.0} temp={0.0} oxy={0.0} />
         <CameraFeed />
-        <TodoLister />
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />

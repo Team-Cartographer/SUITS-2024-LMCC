@@ -62,7 +62,7 @@ const TodoLister = () => {
     return ( 
         <div className="flex flex-col text-sm self-start gap-x-2 p-4">
             <div className="text-lg font-bold pb-2 underline self-start">
-                HMD Todo List
+                Todo List
             </div>
             <div className="pb-4 self-start">
                 {todoData?.todoItems && todoData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (

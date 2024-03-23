@@ -1,5 +1,8 @@
 # all GET request helpers go in here
+from re import L
 from PIL import Image, ImageDraw
+from requests import get
+from .utils import get_lat_lon_from_tif
 from .functions import astar
 from flask import send_file
 from flask import jsonify
@@ -14,6 +17,13 @@ DATA_DIR = SERVER_DIR / 'data'
 TODO_PATH = DATA_DIR / 'todo.json'
 WARNING_PATH = DATA_DIR / 'warning.json'
 
+with open("config/tss_data.json", "r") as f:
+    tss_data = json.load(f)
+    f.close()
+
+TSS_ROOT = tss_data["TSS_URL"]
+TSS_HOST = tss_data["TSS_HOST"]
+TSS_PORT = tss_data["TSS_PORT"]
 
 
 def send_map_info() -> dict:
@@ -42,6 +52,20 @@ def send_map() -> bytes:
     # Open the geojson file and load its contents
     with open(geojson_path, 'r') as file:
         data: dict = json.load(file)
+
+    req = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/IMU.json")
+    req2 = get(f"http://{TSS_HOST}:{TSS_PORT}/json_data/ROVER.json")
+    IMU_data = json.loads(req.text)
+    ROVER_data = json.loads(req2.text)
+
+    x_ev1, y_ev1 = 200, 300 #int(IMU_data["imu"]["eva1"]["posx"]), int(IMU_data["imu"]["eva1"]["posy"])
+    x_ev2, y_ev2 = 300, 400 #int(IMU_data["imu"]["eva1"]["posx"]), int(IMU_data["imu"]["eva1"]["posy"])
+    x_rov, y_rov = 400, 200 #int(ROVER_data["rover"]["posx"]),     int(ROVER_data["rover"]["posy"])
+
+    # FIXME: Bring these back and save to GeoJSON 
+    #lat_eva1, lon_eva1 = get_lat_lon_from_tif(x_ev1, y_ev1)
+    #lat_eva2, lon_eva2 = get_lat_lon_from_tif(x_ev2, y_ev2)
+    #lat_rover, lon_rover = get_lat_lon_from_tif(x_rov, y_rov)
     
     # Extract pin coordinates from the geojson data
     pins: list = []
@@ -51,9 +75,14 @@ def send_map() -> bytes:
     # Draw pins on the map image
     for pin in pins:
         x, y = map(int, pin.split('x'))
-        x, y = x/5, y/5.
+        x, y = x/5, y/5
         radius = 3
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+
+    radius = 5
+    draw.ellipse([(x_ev1 - radius, y_ev1 - radius), (x_ev1 + radius, y_ev1 + radius)], fill='lawngreen')
+    draw.ellipse([(x_ev2 - radius, y_ev2 - radius), (x_ev2 + radius, y_ev2 + radius)], fill='deeppink')
+    draw.ellipse([(x_rov - radius, y_rov - radius), (x_rov + radius, y_rov + radius)], fill='aqua')
 
     # Save the modified map image to an in-memory buffer
     img_io = BytesIO()
