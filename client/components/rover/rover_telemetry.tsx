@@ -12,13 +12,20 @@ export function RoverTelemetry() {
     const roverData = networkProvider.getRoverData();
     
     return (
-        <div className="flex flex-col font-semibold">
-            <h3 className="text-2xl justify-center">Telemetry Values</h3>
-            <ul className="list-group">
-                <li className = "list-group-item text-xl mt-5">Pos X: {roverData?.rover.posx}</li>
-                <li className = "list-group-item text-xl mt-5">Pos Y: {roverData?.rover.posy}</li>
-                <li className = "list-group-item text-xl mt-5">QR ID: {roverData?.rover.qr_id}</li>
-            </ul>
+        <div className="flex flex-row bg-slate-900 rounded-t-3xl p-2 pl-5 max-w-[640px] font-semibold items-start gap-x-4">
+                <p>Rover Telemetry</p>
+                <p> 
+                    X: <span> </span>
+                    {roverData?.rover.posx}
+                </p>
+                <p> 
+                    Y:  <span> </span>
+                    {roverData?.rover.posy}
+                </p>
+                <p>
+                    QR ID:  <span> </span>
+                    {roverData?.rover.qr_id}
+                </p>
         </div>
     );
 }

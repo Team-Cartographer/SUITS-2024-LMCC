@@ -9,6 +9,7 @@ import random
 from io import BytesIO
 
 SERVER_DIR = Path(__file__).parent.parent 
+TSS_DATA_PATH = SERVER_DIR / 'config' / 'tss_data.json'
 DATA_DIR = SERVER_DIR / 'data'
 TODO_PATH = DATA_DIR / 'todo.json'
 WARNING_PATH = DATA_DIR / 'warning.json'
@@ -135,3 +136,15 @@ def send_notification(_type: str) -> dict:
                 return json.load(f)
         except json.JSONDecodeError: 
             return send_notification(_type)
+        
+
+
+def send_rover_url() -> str: 
+    with open(TSS_DATA_PATH, 'r') as jf: 
+        data = json.load(jf)
+    
+    rover_url = f'{data["TSS_URL"]}/stream?topic=/camera/image_raw&type=ros_compressed"'
+
+    return jsonify({
+        "rover_url": rover_url
+    })

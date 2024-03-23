@@ -129,6 +129,8 @@ def handle_GET_args(args: dict) -> dict:
         return gh.send_notification('WARNING')   # Return notification data
     elif get_arg('get', args) == 'todo':
         return gh.send_notification('TODO')
+    elif get_arg('get', args) == 'rover_url':
+        return gh.send_rover_url()
     elif get_arg('get', args) == "biodata":
         eva = get_arg('eva', args)
         if eva == "one" or eva == "two":    # Return biological data based on 'eva' key value ('1' or '2')

@@ -63,8 +63,9 @@ const GeoSampler = ({
                     <TableCell className="w-[50px]">
                         <input 
                             type="checkbox" 
-                            onChange={() => {
+                            onChange={(e) => {
                                 setEva1CompletedItems(prevItems => [...prevItems, specItem])
+                                e.target.disabled = true 
                             }}
                         />
                     </TableCell>
@@ -108,10 +109,11 @@ const GeoSampler = ({
                     <TableCell className="w-[50px]">{specItem.name}</TableCell>
                     <TableCell className="w-[50px]">{specItem.id}</TableCell>
                     <TableCell className="w-[50px]">
-                    <input 
+                        <input 
                             type="checkbox" 
-                            onChange={() => {
+                            onChange={(e) => {
                                 setEva2CompletedItems(prevItems => [...prevItems, specItem])
+                                e.target.disabled = true; 
                             }}
                         />
                     </TableCell>

@@ -1,30 +1,41 @@
+"use client"
+
 /**
  * @author @abhi-arya1
  * @function EVALiveView
- * @fileoverview While this document isn't specifically for rover live view, it is essentially the same with different Border Radii:
  */
 
 import ReactPlayer from "react-player";
+import lmcc_config from "@/lmcc_config.json";
+import { fetchWithoutParams } from "@/api/fetchServer";
+import { useEffect, useState } from "react";
 
-interface EVALiveViewProps {
-  url: string;
-  volume?: number;
-}
+const RoverLiveView = () => {
+	const [roverURL, setRoverURL] = useState(''); 
 
-function RoverLiveView({ url, volume = 0.5 }: EVALiveViewProps) {
-  const playerStyle = {
-    borderBottomLeftRadius: "12px",
-    borderBottomRightRadius: "12px",
-    borderTopRightRadius: "12px",
-    borderTopLeftRadius: "12px",
-    overflow: "hidden",
-  };
+	const playerStyle = {
+		borderBottomLeftRadius: "12px",
+		borderBottomRightRadius: "12px",
+		overflow: "hidden",
+	};
 
-  return (
-    <div>
-      <ReactPlayer url={url} playing volume={volume} style={playerStyle} />
-    </div>
-  );
+	useEffect(() => {
+		const getRoverURL = async () => { 
+			await fetchWithoutParams<{rover_url: string}>('api/v0?get=rover_url').then((item) => {
+			if (item && item.rover_url) {
+				setRoverURL(item.rover_url);
+			}
+		})}
+		
+		getRoverURL();
+	})
+
+
+	return (
+		<div>
+			<ReactPlayer url={roverURL} playing volume={0.5} style={playerStyle} controls={true} />
+		</div>
+	);
 }
 
 
