@@ -3,6 +3,7 @@
  * @function EvaTelemetry
  */
 import { useNetwork } from "@/hooks/context/network-context";
+import { checkNominalBiometrics } from "../general/telemetry_range_manager";
 
 const BPM_LOWER_THRESH = 50;
 const BPM_UPPER_THRESH = 160;
@@ -28,6 +29,9 @@ function BiometricTelemetry({
 }: TelemetryArgs) {
     const { getTelemetryData } = useNetwork();
     const biometricDataEva = getTelemetryData(evaNumber)
+
+    //checkNominalBiometrics(biometricDataEva.telemetry.eva, evaNumber);
+
     bpm = biometricDataEva.telemetry.eva.heart_rate;
     temp = biometricDataEva.telemetry.eva.temperature;
     oxy = biometricDataEva.telemetry.eva.oxy_consumption;
@@ -53,14 +57,14 @@ function BiometricTelemetry({
                         bpmCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {bpm} <span className="text-red-500">BPM</span>
+                    {bpm.toFixed(2)} <span className="text-red-500">BPM</span>
                 </p>
                 <p
                     className={`${
                         tempCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {temp}
+                    {temp.toFixed(2)}
                     <span className="text-yellow-600">°F</span>
                 </p>
                 <p
@@ -68,7 +72,7 @@ function BiometricTelemetry({
                         oxyCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {oxy}
+                    {oxy.toFixed(2)}
                     <span className="text-blue-400"> PSI/MIN</span>
                 </p>
             </div>
