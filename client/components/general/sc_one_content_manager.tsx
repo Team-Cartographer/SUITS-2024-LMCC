@@ -21,17 +21,22 @@ const windows = {
 
 const ScreenOneContentManager = () => {
     const [visibleWindow, setVisibleWindow] = useState("map");
+    const networkProvider = useNetwork();
+
+
+    //////////////////////////////////////////////////////////////////////
+    // GEO SAMPLER LOGIC /////////////////////////////////////////////////
 
     const [spec1Items, setSpec1Items] = useState<SpecItem[]>([]);
     const [spec2Items, setSpec2Items] = useState<SpecItem[]>([]);
-    
-    const networkProvider = useNetwork();
     const specData = networkProvider.getSpecData(); 
     const todoItems = networkProvider.getTodoData().todoItems; 
     const [EVA1SpecItem, EVA2SpecItem] = [specData.eva1, specData.eva2]; 
+    const [eva1CompletedItems, setEva1CompletedItems] = useState<SpecItem[]>([]);
+    const [eva2CompletedItems, setEva2CompletedItems] = useState<SpecItem[]>([]);
 
     const addTodoItems = async () => {
-        if (EVA1SpecItem && EVA1SpecItem.id !== 0) {
+        if (EVA1SpecItem && EVA1SpecItem.id !== 0 && !eva1CompletedItems.some(item => item.id === EVA1SpecItem.id)) {
             const updated = [`(EVA 1) Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
     
             const itemExists = todoItems && todoItems.some(item => 
@@ -45,7 +50,7 @@ const ScreenOneContentManager = () => {
                 });
             }
         }
-        if (EVA2SpecItem && EVA2SpecItem.id !== 0) {
+        if (EVA2SpecItem && EVA2SpecItem.id !== 0 && !eva2CompletedItems.some(item => item.id === EVA2SpecItem.id)) {
             const updated = [`(EVA 2) Pick up Spec Item: ${EVA2SpecItem.name} (ID: ${EVA2SpecItem.id})`, "False"];
     
             const itemExists = todoItems && todoItems.some(item => 
@@ -88,6 +93,9 @@ const ScreenOneContentManager = () => {
     }, [EVA1SpecItem, EVA2SpecItem])
 
 
+    //////////////////////////////////////////////////////////////////////
+
+
     const windowNames: WindowNames = {
         "map": <Map />,
         "lists": <ProcedureLists />,
@@ -97,6 +105,8 @@ const ScreenOneContentManager = () => {
             spec2Items={spec2Items}
             EVA1SpecItem={EVA1SpecItem}
             EVA2SpecItem={EVA2SpecItem}
+            setEva1CompletedItems={setEva1CompletedItems}
+            setEva2CompletedItems={setEva2CompletedItems}
             />
     }
 

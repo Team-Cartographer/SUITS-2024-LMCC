@@ -5,10 +5,7 @@
  * @function GeoSampler
  */
 
-import { fetchWithParams } from "@/api/fetchServer";
-import { useState, useEffect } from "react";
 import { Chart } from "react-google-charts";
-import { useNetwork } from "@/hooks/context/network-context";
 import { SpecItem } from "@/hooks/types"
 
 import {
@@ -32,13 +29,17 @@ interface GeoSamplerParams {
     spec2Items: SpecItem[];
     EVA1SpecItem: SpecItem | null;
     EVA2SpecItem: SpecItem | null;
+    setEva1CompletedItems: React.Dispatch<React.SetStateAction<SpecItem[]>>;
+    setEva2CompletedItems: React.Dispatch<React.SetStateAction<SpecItem[]>>;
 }
 
 const GeoSampler = ({
     spec1Items, 
     spec2Items, 
     EVA1SpecItem, 
-    EVA2SpecItem
+    EVA2SpecItem,
+    setEva1CompletedItems,
+    setEva2CompletedItems,
 }: GeoSamplerParams) => {
   return (
     <div style={{ height: '620px', width: '800px' }} className="flex flex-col container mx-auto mt-8">
@@ -60,7 +61,12 @@ const GeoSampler = ({
                     <TableCell className="w-[50px]">{specItem.name}</TableCell>
                     <TableCell className="w-[50px]">{specItem.id}</TableCell>
                     <TableCell className="w-[50px]">
-                    <input type="checkbox" />
+                        <input 
+                            type="checkbox" 
+                            onChange={() => {
+                                setEva1CompletedItems(prevItems => [...prevItems, specItem])
+                            }}
+                        />
                     </TableCell>
                     <Accordion type="multiple">
                         <AccordionItem value={`item-${index}`}>
@@ -102,7 +108,12 @@ const GeoSampler = ({
                     <TableCell className="w-[50px]">{specItem.name}</TableCell>
                     <TableCell className="w-[50px]">{specItem.id}</TableCell>
                     <TableCell className="w-[50px]">
-                        <input type="checkbox" />
+                    <input 
+                            type="checkbox" 
+                            onChange={() => {
+                                setEva2CompletedItems(prevItems => [...prevItems, specItem])
+                            }}
+                        />
                     </TableCell>
                     <Accordion type="multiple">
                         <AccordionItem value={`item-${index}`}>
