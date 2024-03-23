@@ -59,7 +59,7 @@ const defaultNetworkValue: NetworkContextType = {
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
-	const TICKSPEED = 300
+	const TICKSPEED = 600
 
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");
@@ -259,8 +259,8 @@ export const NetworkProvider = ({ children }: any) => {
 
 	const getSpecData = (): EVASpecItems => {
 		return {
-			eva1: eva1SpecItem || null,
-			eva2: eva2SpecItem || null,
+			eva1: eva1SpecItem || defaultSpecValue.eva1,
+			eva2: eva2SpecItem || defaultSpecValue.eva2,
 		}
 	}
 

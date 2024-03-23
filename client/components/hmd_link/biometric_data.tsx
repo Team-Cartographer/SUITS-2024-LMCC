@@ -3,7 +3,6 @@
  * @function EvaTelemetry
  */
 import { useNetwork } from "@/hooks/context/network-context";
-import { checkNominalBiometrics } from "../general/telemetry_range_manager";
 
 const BPM_LOWER_THRESH = 50;
 const BPM_UPPER_THRESH = 160;
@@ -29,8 +28,6 @@ function BiometricTelemetry({
 }: TelemetryArgs) {
     const { getTelemetryData } = useNetwork();
     const biometricDataEva = getTelemetryData(evaNumber)
-
-    //checkNominalBiometrics(biometricDataEva.telemetry.eva, evaNumber);
 
     bpm = biometricDataEva.telemetry.eva.heart_rate;
     temp = biometricDataEva.telemetry.eva.temperature;

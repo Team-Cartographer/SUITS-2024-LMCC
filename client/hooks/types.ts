@@ -107,6 +107,31 @@ interface Biometrics {
     }
 }
 
+const biometricIDMap = { 
+    batt_time_left: '1',
+    co2_production: '2',
+    coolant_gas_pressure: '3',
+    coolant_liquid_pressure: '4',
+    coolant_ml: '5',
+    fan_pri_rpm: '6',
+    fan_sec_rpm: '7',
+    heart_rate: '8',
+    helmet_pressure_co2: '9',
+    oxy_consumption: '10',
+    oxy_pri_pressure: '11',
+    oxy_pri_storage: '12',
+    oxy_sec_pressure: '13',
+    oxy_sec_storage: '14',
+    oxy_time_left: '15',
+    scrubber_a_co2_storage: '16',
+    scrubber_b_co2_storage: '17',
+    suit_pressure_co2: '18',
+    suit_pressure_other: '19',
+    suit_pressure_oxy: '20',
+    suit_pressure_total: '21',
+    temperature: '22',
+}
+
 ///// ROVER /////////////////////////////////////////////////////////////
 
 interface RoverData {
@@ -133,3 +158,5 @@ export type {
     BiometricData,
     RoverData,
 }
+
+export { biometricIDMap }

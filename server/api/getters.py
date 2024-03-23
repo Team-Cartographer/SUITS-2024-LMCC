@@ -134,4 +134,4 @@ def send_notification(_type: str) -> dict:
             with open(WARNING_PATH, 'r') as f:
                 return json.load(f)
         except json.JSONDecodeError: 
-            return send_notification()
+            return send_notification(_type)
