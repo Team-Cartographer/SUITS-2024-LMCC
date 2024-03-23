@@ -3,6 +3,7 @@ import { useNetwork } from "@/hooks/context/network-context";
 import { Button } from "../ui/button";
 import { BiometricData, Biometrics } from "@/hooks/types";
 import dynamic from "next/dynamic";
+import { checkNominal } from "./nominal_checker";
 
 const NoSSR_GeoSampler = dynamic(() => import('@/components/hmd_link/geo_sampling'), { ssr: false })
 
@@ -12,17 +13,27 @@ interface WindowNames {
 
 
 const EVADataMap = (evaData: Biometrics) => { 
+    const evaTelemetry = evaData.telemetry.eva
     return(
         <div>
-            {evaData.telemetry.eva.batt_time_left}
+            <ul>
+                <li>{evaTelemetry.batt_time_left}</li>
+                <li>{evaTelemetry.oxy_pri_storage}</li>
+                <li>{evaTelemetry.oxy_sec_storage}</li>
+                <li>{evaTelemetry.oxy_pri_storage}</li>
+                <li>{evaTelemetry.oxy_pri_storage}</li>
+                <li>{evaTelemetry.oxy_pri_storage}</li>
+                <li>{evaTelemetry.oxy_pri_storage}</li>
+                <li>{evaTelemetry.oxy_pri_storage}</li>
+            </ul>
         </div>
     )
 
 }
 
 const windows = {
-    "eva1": "EVA 1 ",
-    "eva2": "EVA 2",
+    "eva1": "EVA 1 Telemetry",
+    "eva2": "EVA 2 Telemetry",
 }
 
 const ScreenTwoContentManager = () => {
@@ -31,6 +42,9 @@ const ScreenTwoContentManager = () => {
 
     const EVA1Data = getTelemetryData(1);
     const EVA2Data = getTelemetryData(2);
+
+    //checkNominal(EVA1Data.telemetry.eva)
+    //checkNominal(EVA2Data.telemetry.eva)
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data),
