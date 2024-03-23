@@ -26,8 +26,8 @@ function BiometricTelemetry({
     temp,
     oxy,
 }: TelemetryArgs) {
-    const { getBiometricData } = useNetwork();
-    const biometricDataEva = getBiometricData(evaNumber)
+    const { getTelemetryData } = useNetwork();
+    const biometricDataEva = getTelemetryData(evaNumber)
     bpm = biometricDataEva.telemetry.eva.heart_rate;
     temp = biometricDataEva.telemetry.eva.temperature;
     oxy = biometricDataEva.telemetry.eva.oxy_consumption;

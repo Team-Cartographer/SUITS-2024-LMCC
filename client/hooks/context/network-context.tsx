@@ -38,7 +38,7 @@ interface NetworkContextType {
 	getNotifData: () => PanicData;
 	getGeoJSONData: () => GeoJSON;
 	getSpecData: () => EVASpecItems;
-	getBiometricData: (evaNumber: number) => Biometrics;
+	getTelemetryData: (evaNumber: number) => Biometrics;
 	getRoverData: () => RoverData;
 }
 
@@ -47,7 +47,7 @@ const defaultNetworkValue: NetworkContextType = {
 	getNotifData: () => defaultPanicValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
 	getSpecData: () => defaultSpecValue,
-	getBiometricData: (evaNumber: number) => defaultBiometricValue,
+	getTelemetryData: (evaNumber: number) => defaultBiometricValue,
 	getRoverData: () => defaultRoverValue,
 };
 
@@ -258,7 +258,7 @@ export const NetworkProvider = ({ children }: any) => {
 		return roverData || defaultRoverValue
 	}
 
-	const getBiometricData = (evaNumber: number): Biometrics => {
+	const getTelemetryData = (evaNumber: number): Biometrics => {
 		let biometricData;
 		if (evaNumber === 1) {
 			biometricData = biometricDataEva1;
@@ -303,10 +303,10 @@ export const NetworkProvider = ({ children }: any) => {
 			getNotifData,
 			getGeoJSONData,
 			getSpecData,
-			getBiometricData,
+			getTelemetryData,
 			getRoverData,
 		}}>
-		{children}
+			{children}
 		</NetworkContext.Provider>
 	);
 };

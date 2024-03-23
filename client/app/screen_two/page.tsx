@@ -1,6 +1,6 @@
 "use client";
 
-import ContentManager from "@/components/general/content-manager";
+
 /**
  * @author @abhi-arya1 @ivanvuong @areich128 @hrishikesh-srihari
  * @function TelemetryPage
@@ -9,6 +9,7 @@ import ContentManager from "@/components/general/content-manager";
 
 
 import PanicButton from "@/components/hmd_link/panic_button";
+import ScreenTwoContentManager from "@/components/general/sc_two_content_manager";
 import { RoverTelemetry } from "@/components/rover/rover_telemetry";
 import dynamic from "next/dynamic";
 
@@ -29,7 +30,7 @@ function TelemetryPage() {
       </div>
       <RoverTelemetry />
     </div>
-    <ContentManager /> {/* temporarily here to check scaling */}
+    <ScreenTwoContentManager />
     </div>
     )
   }

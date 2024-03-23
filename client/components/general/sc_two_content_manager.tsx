@@ -1,29 +1,41 @@
-import { useState } from "react";
-import Map from "../nav/map";
+import { useEffect, useState } from "react";
+import { useNetwork } from "@/hooks/context/network-context";
 import { Button } from "../ui/button";
-import ProcedureLists from "../hmd_link/procedure-lists";
+import { BiometricData, Biometrics } from "@/hooks/types";
 import dynamic from "next/dynamic";
 
 const NoSSR_GeoSampler = dynamic(() => import('@/components/hmd_link/geo_sampling'), { ssr: false })
 
 interface WindowNames {
     [key: string]: JSX.Element;
-  }
+}
 
-const windowNames: WindowNames = {
-    "map": <Map />,
-    "lists": <ProcedureLists />,
-    "geo": <NoSSR_GeoSampler />
+
+const EVADataMap = (evaData: Biometrics) => { 
+    return(
+        <div>
+            {evaData.telemetry.eva.batt_time_left}
+        </div>
+    )
+
 }
 
 const windows = {
-    "map": "Map",
-    "lists": "Procedure Lists",
-    "geo": "Geological Sampling"
+    "eva1": "EVA 1 ",
+    "eva2": "EVA 2",
 }
 
-const ContentManager = () => {
-    const [visibleWindow, setVisibleWindow] = useState("map");
+const ScreenTwoContentManager = () => {
+    const [visibleWindow, setVisibleWindow] = useState("eva1");
+    const { getTelemetryData } = useNetwork()
+
+    const EVA1Data = getTelemetryData(1);
+    const EVA2Data = getTelemetryData(2);
+
+    const windowNames: WindowNames = {
+        "eva1": EVADataMap(EVA1Data),
+        "eva2": EVADataMap(EVA2Data),
+    }
 
     const renderWindow = () => {
         let pane = windowNames[visibleWindow]
@@ -52,4 +64,4 @@ const ContentManager = () => {
      );
 }
  
-export default ContentManager;
+export default ScreenTwoContentManager;
