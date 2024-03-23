@@ -6,7 +6,7 @@ import { TodoAreaForm } from "./forms/todo-list-form";
 import * as z from "zod"
 import { X } from "lucide-react";
 import { useNetwork } from "@/hooks/context/network-context";
-import { PanicData } from "@/hooks/types";
+import { TodoItems } from "@/hooks/types";
 
 type Task = [string, string]
 
@@ -16,15 +16,9 @@ const FormSchema = z.object({
   })
 
 const TodoLister = () => {
-    const [notifData, setNotifData] = useState<PanicData>();
+    
     const networkProvider = useNetwork();
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            setNotifData(networkProvider.getNotifData())
-        }, 100); 
-        return () => clearInterval(intervalId);
-      });
+    const todoData = networkProvider.getTodoData();
 
     
     const onFormSubmit = async (formData: z.infer<typeof FormSchema>) => {
@@ -32,16 +26,16 @@ const TodoLister = () => {
     }
 
     const sendTodoItem = async (new_item: string) => {
-        const current_list = notifData?.todoItems
+        const current_list = todoData.todoItems;
         await fetchWithParams('api/v0',
         {
-            notif: "update",
+            notif: "update_todo",
             todoItems: [...(current_list || []), [new_item, "False"]]
         })
     }
 
     const toggleTaskStatus = async (index: number) => {
-        const updatedTasks = notifData?.todoItems.map((task, i) => {
+        const updatedTasks = todoData?.todoItems.map((task, i) => {
             if (i === index) {
               const currentStatus = task[1] === "True"; // true if "true", false otherwise
               const toggledStatus = !currentStatus; // Toggle the boolean value
@@ -51,16 +45,16 @@ const TodoLister = () => {
           });
         await fetchWithParams('api/v0',
             {
-                notif: "update",
+                notif: "update_todo",
                 todoItems: updatedTasks
         })
       };
 
     const deleteTask = async (index: number) => {
-        const updatedTasks = notifData?.todoItems.filter((_, i) => i !== index);
+        const updatedTasks = todoData?.todoItems.filter((_, i) => i !== index);
         await fetchWithParams('api/v0',
         {
-                notif: "update",
+                notif: "update_todo",
                 todoItems: updatedTasks
         })
       };
@@ -71,7 +65,7 @@ const TodoLister = () => {
                 HMD Todo List
             </div>
             <div className="pb-4 self-start">
-                {notifData?.todoItems && notifData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (
+                {todoData?.todoItems && todoData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (
                     <div key={index} style={{ textDecoration: taskStatus !== "False" ? 'line-through' : 'none' }} className="flex flex-row pl-3">
                         <input
                         type="checkbox"
@@ -87,7 +81,7 @@ const TodoLister = () => {
                     </div>
                     ))
                 }
-                {(notifData?.todoItems || []).length === 0 && (
+                {(todoData?.todoItems || []).length === 0 && (
                     <div className="text-muted-foreground">
                         All Tasks Are Currently Complete...Good Work!
                     </div>

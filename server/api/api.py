@@ -125,8 +125,10 @@ def handle_GET_args(args: dict) -> dict:
         return gh.send_map_info()       # Return map information
     elif get_arg('get', args) == 'astar':
         return gh.a_star()              # Execute the A* algorithm
-    elif get_arg('get', args) == 'notif':
-        return gh.send_notification()   # Return notification data
+    elif get_arg('get', args) == 'warning':
+        return gh.send_notification('WARNING')   # Return notification data
+    elif get_arg('get', args) == 'todo':
+        return gh.send_notification('TODO')
     elif get_arg('get', args) == "biodata":
         eva = get_arg('eva', args)
         if eva == "one" or eva == "two":    # Return biological data based on 'eva' key value ('1' or '2')
@@ -162,8 +164,10 @@ def handle_POST_args(args: dict):
         return ph.update_geojson(args)              # Call function to add data to the geojson map
     elif get_arg('map', args) == 'rm':
         return ph.update_geojson(args, add=False)   # Call function to remove data from the geojson map
-    elif get_arg('notif', args) == 'update':
-        return ph.update_notification(args)         # Call function to update notification data
+    elif get_arg('notif', args) == 'update_warning':
+        return ph.update_notification(args, 'WARNING')
+    elif get_arg('notif', args) == 'update_todo': 
+        return ph.update_notification(args, 'TODO')         
     else:
         return jsonify({
             'error': 'args were invalid'            # Return an error message for invalid arguments

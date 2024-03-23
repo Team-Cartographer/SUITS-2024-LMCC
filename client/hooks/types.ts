@@ -20,11 +20,15 @@ interface GeoJSON {
 
 // NOTIFICATION/PANIC //////////////////////////////////////////////////
 
-interface PanicData {
+interface WarningData {
     infoWarning: string, 
-    todoItems: [string, string][], 
-    isWarning: boolean,
 }
+
+interface TodoItems { 
+    todoItems: [string, string][]
+}
+
+
 
 // TIMERS /////////////////////////////////////////////////////////////
 
@@ -77,7 +81,7 @@ interface BiometricData {
     co2_production: number;
     coolant_gas_pressure: number;
     coolant_liquid_pressure: number;
-    coolant_m1: number;
+    coolant_ml: number;
     fan_pri_rpm: number;
     fan_sec_rpm: number;
     heart_rate: number;
@@ -118,7 +122,8 @@ interface RoverData {
 export type { 
     GeoJSON, 
     GeoJSONFeature, 
-    PanicData, 
+    WarningData,
+    TodoItems,
     TimerType,
     Spec,
     SpecData,

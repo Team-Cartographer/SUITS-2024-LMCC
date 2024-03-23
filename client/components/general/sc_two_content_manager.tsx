@@ -15,17 +15,14 @@ interface WindowNames {
 const EVADataMap = (evaData: Biometrics) => { 
     const evaTelemetry = evaData.telemetry.eva
     return(
-        <div>
-            <ul>
-                <li>{evaTelemetry.batt_time_left}</li>
-                <li>{evaTelemetry.oxy_pri_storage}</li>
-                <li>{evaTelemetry.oxy_sec_storage}</li>
-                <li>{evaTelemetry.oxy_pri_storage}</li>
-                <li>{evaTelemetry.oxy_pri_storage}</li>
-                <li>{evaTelemetry.oxy_pri_storage}</li>
-                <li>{evaTelemetry.oxy_pri_storage}</li>
-                <li>{evaTelemetry.oxy_pri_storage}</li>
-            </ul>
+        <div className="flex flex-col gap-y-3">
+            <li>Batt. Time Left:  {evaTelemetry.batt_time_left} sec</li>
+            <li>Oxy. Sec. Stor.:  {evaTelemetry.oxy_pri_storage} %</li>
+            <li>Oxy. Sec. Stor.: {evaTelemetry.oxy_sec_storage} %</li>
+            <li>Oxy. Pri. Pressure: {evaTelemetry.oxy_pri_pressure} psi</li>
+            <li>Oxy. Sec. Pressure: {evaTelemetry.oxy_sec_pressure} psi</li>
+            <li>Oxy. Time Left {evaTelemetry.oxy_time_left} sec</li>
+            <li>Coolant Stor.: {evaTelemetry.coolant_ml} %</li>
         </div>
     )
 

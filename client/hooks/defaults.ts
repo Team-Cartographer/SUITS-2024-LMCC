@@ -1,20 +1,23 @@
 import { 
-	GeoJSON, 
-	PanicData,
+	GeoJSON,
+	TodoItems,
 	TimerType,
 	SpecData,
 	SpecItem,
 	EVASpecItems,
 	Biometrics,
 	RoverData,
+	WarningData,
 } from "./types";
 
 ///////////////////////////////////////
 
-const defaultPanicValue: PanicData = {
+const defaultWarningValue: WarningData = {
     infoWarning: "", 
-    todoItems: [], 
-    isWarning: false,
+}
+
+const defaultTodoValue: TodoItems = {
+	todoItems: []
 }
 
 const defaultTimerValue: TimerType = {
@@ -51,7 +54,7 @@ const defaultBiometricValue: Biometrics = {
 			co2_production: 0.0,
 			coolant_gas_pressure: 0.0,
 			coolant_liquid_pressure: 0.0,
-			coolant_m1: 0.0,
+			coolant_ml: 0.0,
 			fan_pri_rpm: 0.0,
 			fan_sec_rpm: 0.0,
 			heart_rate: 0.0,
@@ -76,7 +79,8 @@ const defaultBiometricValue: Biometrics = {
 ///////////////////////////////////////////
 
 export { 
-    defaultPanicValue,
+    defaultWarningValue,
+	defaultTodoValue,
     defaultRoverValue,
     defaultGEOJSONValue,
     defaultSpecValue, 

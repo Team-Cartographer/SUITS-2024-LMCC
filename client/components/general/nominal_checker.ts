@@ -1,5 +1,5 @@
 import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer"
-import { Biometrics, PanicData } from "@/hooks/types"
+import { Biometrics, WarningData } from "@/hooks/types"
 
 const higher = (value: number, upper: number) => { return (value < upper) }
 const lower = (value : number, lower: number) => { return (value > lower) }
@@ -7,22 +7,16 @@ const lower = (value : number, lower: number) => { return (value > lower) }
 
 const raiseAlert = async (message: string) => {
     try {
-        let curr_data = await fetchWithoutParams<PanicData>('api/v0?get=notif')
-        let curr_todo = curr_data?.todoItems
-  
-        await fetchWithParams<PanicData>(
+        await fetchWithParams<WarningData>(
           `api/v0`,
           {
-            notif: 'update',
+            notif: 'update_warning',
             infoWarning: message,
-            isWarning: true,
-            todoItems: curr_todo
           });
       } catch (err) {
         const error = err as Error;
-        console.error("Error updating image:", error);
+        console.error("Error updating Panic:", error) 
       }
-      console.log("Panic Pressed");
 }
 
 const checkNominal = (evaTelemetry: Biometrics["telemetry"]["eva"]) => { 

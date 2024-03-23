@@ -10,7 +10,8 @@ from io import BytesIO
 
 SERVER_DIR = Path(__file__).parent.parent 
 DATA_DIR = SERVER_DIR / 'data'
-NOTIF_PATH = DATA_DIR / 'notification.json'
+TODO_PATH = DATA_DIR / 'todo.json'
+WARNING_PATH = DATA_DIR / 'warning.json'
 
 
 
@@ -124,10 +125,13 @@ def send_biom_data(eva: str) -> dict:
 
 
 
-def send_notification() -> dict:
-    # Open the 'notifications.json' file and load its contents
-    try: 
-        with open(NOTIF_PATH, 'r') as f:
-            return json.load(f)
-    except json.JSONDecodeError: 
-        return send_notification()
+def send_notification(_type: str) -> dict:
+    if _type == 'TODO':
+        with open(TODO_PATH, 'r') as f: 
+            return json.load(f) 
+    elif _type == 'WARNING':
+        try: 
+            with open(WARNING_PATH, 'r') as f:
+                return json.load(f)
+        except json.JSONDecodeError: 
+            return send_notification()

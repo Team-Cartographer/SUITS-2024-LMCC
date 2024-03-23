@@ -6,7 +6,8 @@ from .utils import get_lat_lon_from_tif
 
 # Path to the `./server` Directory
 SERVER_DIR: Path = Path(__file__).parent.parent 
-NOTIF_PATH = SERVER_DIR / 'data' / 'notification.json'
+WARNING_PATH = SERVER_DIR / 'data' / 'warning.json'
+TODO_PATH = SERVER_DIR / 'data' / 'todo.json'
 
 
 def update_geojson(args: dict[str, list[str] | list[int]], add: bool = True) -> dict[str, str]:
@@ -105,22 +106,17 @@ def update_geojson(args: dict[str, list[str] | list[int]], add: bool = True) -> 
 
 
 
-def update_notification(args: dict[str, list[str] | str | bool]) -> dict[str, str | list[str] | bool]:
-    # Extract todoItems, infoWarning, and isWarning from the provided arguments
-    info_todo: list[str] | str = args.get('todoItems', [])
-    info_warning: str = args.get('infoWarning', '')
-    is_warning: bool = args.get('isWarning', False)
-
-    # Create a dictionary with the extracted data
-    data: dict[str, str | list[str] | bool] = {
-        "infoWarning": info_warning, 
-        "todoItems": info_todo, 
-        "isWarning": is_warning,
-    }
-    
-    # Write the data to the notification file
-    with open(NOTIF_PATH, 'w') as jf:
-        json.dump(data, jf, indent=4)
+def update_notification(args: dict[str, list[str] | str | bool], _type: str) -> dict[str, str | list[str] | bool]:
+    if _type == 'WARNING': 
+        info_warning: str = args.get('infoWarning', '')
+        data = { "infoWarning": info_warning }
+        with open(WARNING_PATH, 'w') as jf:
+            json.dump(data, jf, indent=4)
+    elif _type == "TODO": 
+        todo_items = args.get("todoItems", [])
+        data = { "todoItems": todo_items }
+        with open(TODO_PATH, 'w') as jf:
+            json.dump(data, jf, indent=4)
     
     return jsonify(data)
 

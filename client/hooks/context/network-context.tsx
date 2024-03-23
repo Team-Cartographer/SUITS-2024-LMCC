@@ -4,7 +4,8 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { fetchWithoutParams } from "@/api/fetchServer";
 import { 
 	GeoJSON, 
-	PanicData,
+	TodoItems,
+	WarningData,
 	TimerType,
 	SpecData,
 	SpecItem,
@@ -13,7 +14,8 @@ import {
 	RoverData,
 } from "../types";
 import { 
-    defaultPanicValue,
+    defaultTodoValue,
+	defaultWarningValue,
     defaultRoverValue,
     defaultGEOJSONValue,
     defaultSpecValue, 
@@ -35,7 +37,8 @@ const formatTime = (seconds: number) => {  //build formatted timer
 
 interface NetworkContextType {
 	getMissionTimes: () => TimerType;
-	getNotifData: () => PanicData;
+	getTodoData: () => TodoItems;
+	getWarningData: () => WarningData;
 	getGeoJSONData: () => GeoJSON;
 	getSpecData: () => EVASpecItems;
 	getTelemetryData: (evaNumber: number) => Biometrics;
@@ -44,7 +47,8 @@ interface NetworkContextType {
 
 const defaultNetworkValue: NetworkContextType = {
 	getMissionTimes: () => defaultTimerValue,
-	getNotifData: () => defaultPanicValue,
+	getTodoData: () => defaultTodoValue,
+	getWarningData: () => defaultWarningValue,
 	getGeoJSONData: () => defaultGEOJSONValue,
 	getSpecData: () => defaultSpecValue,
 	getTelemetryData: (evaNumber: number) => defaultBiometricValue,
@@ -62,7 +66,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [uiaTime, setUiaTime] = useState("00:00:00");
 	const [roverTime, setRoverTime] = useState("00:00:00");
 	const [dcuTime, setDcuTime] = useState("00:00:00");
-	const [notificationData, setNotifData] = useState<PanicData>()
+	const [warningData, setWarningData] = useState<WarningData>(defaultWarningValue);
+	const [todoItems, setTodoItems] = useState<TodoItems>(defaultTodoValue);
 	const [mapGeoJSON, setMapGeoJSON] = useState<GeoJSON>();
 	const [eva1SpecItem, setEVA1SpecItem] = useState<SpecItem>();
 	const [eva2SpecItem, setEVA2SpecItem] = useState<SpecItem>();
@@ -108,10 +113,15 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('DCU data is undefined')
 				}
 
-				const notificationData = await fetchWithoutParams<PanicData>(`api/v0?get=notif`)
-				if (notificationData) { 
-					setNotifData(notificationData);
+				const warningData = await fetchWithoutParams<WarningData>(`api/v0?get=warning`)
+				if (warningData) { 
+					setWarningData(warningData);
 				} 
+
+				const todoData = await fetchWithoutParams<TodoItems>(`api/v0?get=todo`)
+				if (todoData) { 
+					setTodoItems(todoData);
+				}
 
 				const mapData = await fetchWithoutParams<GeoJSON>('api/v0?get=map_info');
 				if (mapData) {
@@ -130,7 +140,7 @@ export const NetworkProvider = ({ children }: any) => {
 									co2_production: biometricData.telemetry.eva1.co2_production,
 									coolant_gas_pressure: biometricData.telemetry.eva1.coolant_gas_pressure,
 									coolant_liquid_pressure: biometricData.telemetry.eva1.coolant_liquid_pressure,
-									coolant_m1: biometricData.telemetry.eva1.coolant_m1,
+									coolant_ml: biometricData.telemetry.eva1.coolant_ml,
 									fan_pri_rpm: biometricData.telemetry.eva1.fan_pri_rpm,
 									fan_sec_rpm: biometricData.telemetry.eva1.fan_sec_rpm,
 									heart_rate: biometricData.telemetry.eva1.heart_rate,
@@ -166,7 +176,7 @@ export const NetworkProvider = ({ children }: any) => {
 									co2_production: biometricData.telemetry.eva2.co2_production,
 									coolant_gas_pressure: biometricData.telemetry.eva2.coolant_gas_pressure,
 									coolant_liquid_pressure: biometricData.telemetry.eva2.coolant_liquid_pressure,
-									coolant_m1: biometricData.telemetry.eva2.coolant_m1,
+									coolant_ml: biometricData.telemetry.eva2.coolant_ml,
 									fan_pri_rpm: biometricData.telemetry.eva2.fan_pri_rpm,
 									fan_sec_rpm: biometricData.telemetry.eva2.fan_sec_rpm,
 									heart_rate: biometricData.telemetry.eva2.heart_rate,
@@ -235,12 +245,12 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	};
 
-	const getNotifData = (): PanicData => {
-		return {
-			infoWarning: notificationData?.infoWarning || "",
-			todoItems: notificationData?.todoItems || [],
-			isWarning: notificationData?.isWarning || false
-		}
+	const getWarningData = (): WarningData => {
+		return warningData || defaultWarningValue
+	}
+
+	const getTodoData = (): TodoItems => { 
+		return todoItems || defaultTodoValue
 	}
 
 	const getGeoJSONData = (): GeoJSON => {
@@ -274,7 +284,7 @@ export const NetworkProvider = ({ children }: any) => {
 						co2_production: biometricData.telemetry.eva.co2_production,
 						coolant_gas_pressure: biometricData.telemetry.eva.coolant_gas_pressure,
 						coolant_liquid_pressure: biometricData.telemetry.eva.coolant_liquid_pressure,
-						coolant_m1: biometricData.telemetry.eva.coolant_m1,
+						coolant_ml: biometricData.telemetry.eva.coolant_ml,
 						fan_pri_rpm: biometricData.telemetry.eva.fan_pri_rpm,
 						fan_sec_rpm: biometricData.telemetry.eva.fan_sec_rpm,
 						heart_rate: biometricData.telemetry.eva.heart_rate,
@@ -300,7 +310,8 @@ export const NetworkProvider = ({ children }: any) => {
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
-			getNotifData,
+			getWarningData,
+			getTodoData,
 			getGeoJSONData,
 			getSpecData,
 			getTelemetryData,
