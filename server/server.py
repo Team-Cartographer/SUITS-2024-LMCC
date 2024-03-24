@@ -70,7 +70,7 @@ def page_not_found(_):
 # run app at http://localhost:3001/
 if __name__ == "__main__":
     # set to "False" and restart server to see all HTTP requests 
-    log.disabled = True 
+    log.disabled = False 
 
     app.run(
         debug=False, 
