@@ -58,7 +58,6 @@ const Map = () => {
                 const newUrl = URL.createObjectURL(imageBlob);
                 setMapImage(newUrl);
                 MAP_URLS = [...MAP_URLS, newUrl]
-                console.log(MAP_URLS);
             } else {
                 throw new Error('Image blob is undefined');
             }

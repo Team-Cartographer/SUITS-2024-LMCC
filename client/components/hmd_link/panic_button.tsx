@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
-import { PanicData } from "@/hooks/types";
+import { WarningData } from "@/hooks/types";
 
 const PanicButton = () => {
   const [inputValue, setInputValue] = useState("");
@@ -31,16 +31,13 @@ const PanicButton = () => {
   const onPanic = async () => {
     try {
       console.log(inputValue);
-      let curr_data = await fetchWithoutParams<PanicData>('api/v0?get=notif')
-      let curr_todo = curr_data?.todoItems
+      let curr_data = await fetchWithoutParams<WarningData>('api/v0?get=warning')
 
-      await fetchWithParams<PanicData>(
+      await fetchWithParams<WarningData>(
         `api/v0`,
         {
-          notif: 'update',
+          notif: 'update_warning',
           infoWarning: inputValue,
-          isWarning: true,
-          todoItems: curr_todo
         });
     } catch (err) {
       const error = err as Error;

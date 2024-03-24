@@ -5,7 +5,6 @@
  * @function Timers
  */
 
-import React, { useEffect, useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
 import Clock from 'react-live-clock'
 
@@ -20,27 +19,8 @@ const MissionClock = () => {
 };
 
 const Timers = () => {
-	const [missionTime, setMissionTime] = useState("00:00:00");
-	const [specTime, setSpecTime] = useState("00:00:00");
-	const [uiaTime, setUiaTime] = useState("00:00:00");
-	const [roverTime, setRoverTime] = useState("00:00:00");
-	const [dcuTime, setDcuTime] = useState("00:00:00");
-
 	const networkProvider = useNetwork();
-
-	useEffect(() => {
-		const interval = setInterval(async () => {
-				const timers = networkProvider.getMissionTimes()
-				setMissionTime(timers.mission);
-				setSpecTime(timers.spec);
-				setUiaTime(timers.uia);
-				setRoverTime(timers.rover);
-				setDcuTime(timers.dcu);
-			}, 100);
-  
-		return () => clearInterval(interval);
-	  });
-
+	const missionTimes = networkProvider.getMissionTimes();
 
 	return (                                             
 		<div className="flex flex-col pt-2 pl-2 gap-y-3 pr-3">
@@ -55,7 +35,7 @@ const Timers = () => {
 					<p className="font-bold text-md">Mission Elapsed Time</p>
 					<div className="flex flex-row">
 						<div className="text-4xl font-semibold mb-4 absolute pt-0">
-							{missionTime}
+							{missionTimes.mission}
 						</div>
 					</div>
 				</div>
@@ -66,7 +46,7 @@ const Timers = () => {
 					<p className="font-bold text-md pr-3">UIA Time</p>
 				<div className="flex flex-row">
 					<div className="text-2xl font-semibold mb-4 absolute pt-0">
-						{uiaTime}
+						{missionTimes.uia}
 					</div>
 				</div>
 				</div>
@@ -74,7 +54,7 @@ const Timers = () => {
 			<p className="font-bold text-md">Spec Time</p>
 				<div className="flex flex-row">
 				<div className="text-2xl font-semibold mb-4 absolute pt-0">
-					{specTime}
+					{missionTimes.spec}
 				</div>
 				</div>
 			</div>
@@ -82,7 +62,7 @@ const Timers = () => {
 			<p className="font-bold text-md">Rover Time</p>
 				<div className="flex flex-row">
 				<div className="text-2xl font-semibold mb-4 absolute pt-0">
-					{roverTime}
+					{missionTimes.rover}
 				</div>
 				</div>
 			</div>
@@ -90,7 +70,7 @@ const Timers = () => {
 			<p className="font-bold text-md">DCU Time</p>
 				<div className="flex flex-row">
 				<div className="text-2xl font-semibold mb-4 absolute pt-0">
-					{dcuTime}
+					{missionTimes.dcu}
 				</div>
 				</div>
 			</div>

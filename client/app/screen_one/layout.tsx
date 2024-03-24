@@ -1,4 +1,4 @@
-import Notifier from "@/components/ui/notifier";
+import Notifier from "@/components/ui/warning";
 import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "LMCC (Screen 1)",

@@ -5,27 +5,23 @@ import { fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { Button } from "./button";
 import { useNetwork } from "@/hooks/context/network-context";
-import { PanicData } from "@/hooks/types"
-
-const defaultValue: PanicData = {
-    infoWarning: "",
-    todoItems: [],
-    isWarning: false,
-  };
+import { WarningData } from "@/hooks/types"
+import { defaultWarningValue } from "@/hooks/defaults";
+import { EyeOff, Trash } from "lucide-react";
 
 const Notifier = () => {
     const { displayVignette, hideVignette, isVignetteVisible } = useVignette();
-    const [panicData, setPanicData] = useState<PanicData>(defaultValue);
+    const [warningData, setWarningData] = useState<WarningData>(defaultWarningValue);
     const networkProvider = useNetwork();
 
     useEffect(() => {
         const intervalId = setInterval(async () => {
-          const notification = networkProvider.getNotifData();
-          setPanicData(notification);
+          const warningData = networkProvider.getWarningData();
+          setWarningData(warningData);
 
-          if (notification.isWarning === true) {
+          if (warningData.infoWarning !== '') {
             displayVignette();
-          } else if (notification.isWarning === false) {
+          } else if (warningData.infoWarning === '') {
             hideVignette();
           }
 
@@ -36,10 +32,8 @@ const Notifier = () => {
     const clearAlerts = async () => {
         await fetchWithParams(`api/v0`,
         {
-          notif: 'update',
+          notif: 'update_warning',
           infoWarning: '',
-          isWarning: false,
-          todoItems: [...(panicData.todoItems || [])]
         })
     }
 
@@ -48,17 +42,16 @@ const Notifier = () => {
           {isVignetteVisible && 
             <div className="vignette-overlay fixed inset-0 z-50 pointer-events-none" />
           }
-          {panicData && (panicData.infoWarning !== "") && (
-            <div className="fixed bottom-5 left-5 bg-background pl-4 pr-4 pt-4 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
-              {panicData.infoWarning !== "" && panicData.infoWarning !== null && (
+          {warningData && (warningData.infoWarning !== "") && (
+            <div className="fixed top-5 right-5 bg-background flex flex-row pl-4 pr-4 pt-4 pb-3 rounded-lg shadow-lg z-50 max-w-xs outline-2 outline-slate-200 outline">
+              {warningData.infoWarning !== "" && warningData.infoWarning !== null && (
                 <p className={`text-sm text-white font-semibold pb-2`}>
-                    <span className="underline">Warning Info:</span> {panicData.infoWarning}
+                    <span className="underline">Warning:</span> {warningData.infoWarning}
                 </p>
               )}
-              <Button onClick={clearAlerts}>
-                Clear Alerts
-              </Button>
-              <div className="pb-4" /> 
+              <div role="button" className="text-white hover:text-gray-500 h-4 w-4 pr-5 pb-8 pl-3 self-end" onClick={clearAlerts}>
+                <EyeOff />
+              </div>
             </div>
           )}
         </>

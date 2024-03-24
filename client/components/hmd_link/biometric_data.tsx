@@ -26,8 +26,9 @@ function BiometricTelemetry({
     temp,
     oxy,
 }: TelemetryArgs) {
-    const { getBiometricData } = useNetwork();
-    const biometricDataEva = getBiometricData(evaNumber)
+    const { getTelemetryData } = useNetwork();
+    const biometricDataEva = getTelemetryData(evaNumber)
+
     bpm = biometricDataEva.telemetry.eva.heart_rate;
     temp = biometricDataEva.telemetry.eva.temperature;
     oxy = biometricDataEva.telemetry.eva.oxy_consumption;
@@ -35,6 +36,8 @@ function BiometricTelemetry({
     let bpmCritical: boolean = bpm > BPM_UPPER_THRESH || bpm < BPM_LOWER_THRESH;
     let tempCritical: boolean = temp > TEMP_UPPER_THRESH || temp < TEMP_LOWER_THRESH;
     let oxyCritical: boolean = oxy > BR_UPPER_THRESH || oxy < BR_LOWER_THRESH;
+
+    
 
     return (
         <div className={className}>
@@ -51,14 +54,14 @@ function BiometricTelemetry({
                         bpmCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {bpm} <span className="text-red-500">BPM</span>
+                    {bpm.toFixed(2)} <span className="text-red-500">BPM</span>
                 </p>
                 <p
                     className={`${
                         tempCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {temp}
+                    {temp.toFixed(2)}
                     <span className="text-yellow-600">°F</span>
                 </p>
                 <p
@@ -66,7 +69,7 @@ function BiometricTelemetry({
                         oxyCritical ? 'underline italic font-bold' : ''
                     }`}
                 >
-                    {oxy}
+                    {oxy.toFixed(2)}
                     <span className="text-blue-400"> PSI/MIN</span>
                 </p>
             </div>

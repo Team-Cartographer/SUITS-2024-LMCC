@@ -20,7 +20,8 @@ LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
 TIFF_PATH = SERVER_PATH / 'images' / 'rockyard_map_geo.tif'
 TIFF_DATA_PATH = DATA_PATH / 'geodata.npy'
 ROCKYARD_PATH = DATA_PATH / 'rockyard.geojson'
-NOTIF_PATH = DATA_PATH / 'notification.json'
+TODO_PATH = DATA_PATH / 'todo.json'
+WARNING_PATH = DATA_PATH / 'warning.json'
 
 
 
@@ -164,13 +165,16 @@ def create_data_endpoints():
 
             np.save(TIFF_DATA_PATH, coordinates)
 
-    # Create 'notification.json' if it doesn't exist
-    with open(NOTIF_PATH, 'w') as notif: 
+    with open(TODO_PATH, 'w') as todo:
         dump({
-            "infoWarning": '', 
-            "infoTodo": '', 
-            "isWarning": False,
-        }, notif, indent=4)
+            "todoItems": [], 
+        }, todo, indent=4)
+
+    with open(WARNING_PATH, 'w') as warn:
+        dump({
+            'infoWarning': ''
+        }, warn, indent=4)
+
 
 
 
