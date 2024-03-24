@@ -137,6 +137,8 @@ def handle_GET_args(args: dict) -> dict:
             return gh.send_biom_data(eva)   
         else: 
             return jsonify({'error': 'invalid eva'})
+    elif get_arg('get', args) == 'chat': 
+        return gh.send_chat()
     else:   # If 'get' key is not recognized, return an error message
         return jsonify({
             'error': 'args were invalid'

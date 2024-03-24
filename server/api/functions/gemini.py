@@ -5,15 +5,16 @@ from os import getenv
 from json import load, dump 
 from pathlib import Path 
 
-CONFIG_PATH = Path(__file__).parent / 'chat.json'
+CHAT_PATH = Path(__file__).parent.parent.parent / 'data' / 'chat.json'
 
 load_dotenv() 
 genai.configure(api_key=getenv('GEMINI_API_KEY'))
 model = genai.GenerativeModel('gemini-pro')
 
-with open(CONFIG_PATH, 'r') as jf: 
+with open(CHAT_PATH, 'r') as jf: 
     data = load(jf)
     history = data["history"]
+
 
 chat = model.start_chat(history=history)
 
@@ -29,7 +30,7 @@ def add_to_history(message, response):
             "role": "model",
             "parts": [response.text]
         })
-    with open(CONFIG_PATH, 'w') as jf: 
+    with open(CHAT_PATH, 'w') as jf: 
         data["history"] = history
         dump(data, jf, indent=4)
 

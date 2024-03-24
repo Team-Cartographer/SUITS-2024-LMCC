@@ -22,6 +22,7 @@ TIFF_DATA_PATH = DATA_PATH / 'geodata.npy'
 ROCKYARD_PATH = DATA_PATH / 'rockyard.geojson'
 TODO_PATH = DATA_PATH / 'todo.json'
 WARNING_PATH = DATA_PATH / 'warning.json'
+CHAT_PATH = DATA_PATH / 'chat.json'
 
 
 
@@ -105,7 +106,6 @@ def get_tss_url() -> None:
     """
     pattern = r'^http://(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}):14141/?$'
     check_failed = False
-    has_existing_url = True
 
     while True:
         url = None
@@ -147,9 +147,11 @@ def create_data_endpoints():
     if not DATA_PATH.exists():
         mkdir(DATA_PATH)
     
+
     # Create 'rockyard.geojson' if it doesn't exist    
     with open(ROCKYARD_PATH, 'w') as rockyard:
         dump({"type": "FeatureCollection", "features": []}, rockyard, indent=4)
+
 
     # Create 'geodata.npy' if it doesn't exist
     if not TIFF_DATA_PATH.exists():
@@ -165,15 +167,38 @@ def create_data_endpoints():
 
             np.save(TIFF_DATA_PATH, coordinates)
 
+
     with open(TODO_PATH, 'w') as todo:
         dump({
             "todoItems": [], 
         }, todo, indent=4)
 
+
     with open(WARNING_PATH, 'w') as warn:
         dump({
             'infoWarning': ''
         }, warn, indent=4)
+
+
+    with open(CHAT_PATH, 'w') as chat: 
+        dump({
+            "history": [
+                {
+                    "role": "user",
+                    "parts": ["""
+                        Hello, you are an AI model trained specifically to help with the NASA SUITS Testing.
+                        For now, you have not been trained, so please act as normal. But, the first time I talk to you, 
+                        prefix every word with "NASA".
+                        """]
+                },
+                {
+                    "role": "model",
+                    "parts": [""" 
+                              Ok, I will await your response
+                        """]
+                }
+            ]
+        }, chat, indent=4)
 
 
 

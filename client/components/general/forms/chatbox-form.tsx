@@ -38,7 +38,7 @@ export function ChatboxForm({ onFormSubmit }: TodoProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row self-start space-x-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row space-x-2">
         <FormField
           control={form.control}
           name="chatItem"
@@ -46,6 +46,11 @@ export function ChatboxForm({ onFormSubmit }: TodoProps) {
             <FormItem>
               <FormControl>
                 <Textarea
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      form.handleSubmit(onSubmit)(); 
+                    }}}
                   className="min-w-[400px] resize-y"
                   placeholder="Message Gemini..."
                   {...field}
