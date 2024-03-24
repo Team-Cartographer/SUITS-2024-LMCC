@@ -3,6 +3,7 @@ from flask import jsonify
 from pathlib import Path
 import json
 from .utils import get_lat_lon_from_tif
+from .functions.gemini import send_message
 
 # Path to the `./server` Directory
 SERVER_DIR: Path = Path(__file__).parent.parent 
@@ -122,4 +123,9 @@ def update_notification(args: dict[str, list[str] | str | bool], _type: str) -> 
 
 
 
+
+def update_chat(args: dict[str, str]) -> dict[str, str]:
+    message = args.get('message', 'Please say "You did not provide a proper message, try again" verbatim.')
+    output = send_message(message)
+    return output 
 

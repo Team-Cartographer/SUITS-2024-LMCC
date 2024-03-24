@@ -169,7 +169,9 @@ def handle_POST_args(args: dict):
     elif get_arg('notif', args) == 'update_warning':
         return ph.update_notification(args, 'WARNING')
     elif get_arg('notif', args) == 'update_todo': 
-        return ph.update_notification(args, 'TODO')         
+        return ph.update_notification(args, 'TODO')     
+    elif get_arg('chat', args) == 'update': 
+        return ph.update_chat(args)    
     else:
         return jsonify({
             'error': 'args were invalid'            # Return an error message for invalid arguments

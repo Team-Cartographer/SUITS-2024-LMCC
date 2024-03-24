@@ -29,6 +29,16 @@ interface TodoItems {
 }
 
 
+// CHAT /////////////////////////////////////////////////////////////
+
+interface ChatHistoryType { 
+    history: ChatItemType[]
+}
+
+interface ChatItemType { 
+    role: string 
+    parts: string[]
+}
 
 // TIMERS /////////////////////////////////////////////////////////////
 
@@ -146,6 +156,8 @@ interface RoverData {
 
 export type { 
     GeoJSON, 
+    ChatHistoryType,
+    ChatItemType,
     GeoJSONFeature, 
     WarningData,
     TodoItems,
