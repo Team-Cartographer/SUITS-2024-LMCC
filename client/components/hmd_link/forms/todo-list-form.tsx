@@ -45,6 +45,12 @@ export function TodoAreaForm({ onFormSubmit }: TodoProps) {
             <FormItem>
               <FormControl>
                 <Textarea
+                  className="text-sm min-w-[400px]"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      form.handleSubmit(onSubmit)(); 
+                    }}}
                   placeholder="Items Here..."
                   {...field}
                 />

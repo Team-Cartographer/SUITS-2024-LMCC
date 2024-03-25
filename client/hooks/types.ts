@@ -33,6 +33,7 @@ interface TodoItems {
 
 interface ChatHistoryType { 
     history: ChatItemType[]
+    todoItem: string
 }
 
 interface ChatItemType { 

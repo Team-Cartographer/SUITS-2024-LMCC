@@ -30,7 +30,6 @@ const PanicButton = () => {
 
   const onPanic = async () => {
     try {
-      console.log(inputValue);
       let curr_data = await fetchWithoutParams<WarningData>('api/v0?get=warning')
 
       await fetchWithParams<WarningData>(
@@ -43,7 +42,6 @@ const PanicButton = () => {
       const error = err as Error;
       console.error("Error updating image:", error);
     }
-    console.log("Panic Pressed");
     setInputValue("");
   };
 

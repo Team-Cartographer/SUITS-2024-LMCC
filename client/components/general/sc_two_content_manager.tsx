@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
 import { Button } from "../ui/button";
-import { ChatHistoryType, biometricIDMap as IDs } from "@/hooks/types";
+import { ChatItemType, biometricIDMap as IDs } from "@/hooks/types";
 import { checkNominalValues, EVADataMap } from "./telemetry_range_manager";
 import GeminiChat from "./chatbox";
 
@@ -28,13 +28,19 @@ const ScreenTwoContentManager = () => {
     const [criticalIDs1, criticalIDs2] = [[], []] // Remove to add back nominal checks, or use these for temp testing
 
 
-    const [chatHistory, setChatHistory] = useState<ChatHistoryType>({ history: [] });
+    const [chatHistory, setChatHistory] = useState<ChatItemType[]>([]);
+    const [newTodoItem, setNewTodoItem] = useState<[string, string]>(["", ""]);
 
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data, 1, criticalIDs1),
         "eva2": EVADataMap(EVA2Data, 2, criticalIDs2),
-        "chat": <GeminiChat chatHistory={chatHistory} setChatHistory={setChatHistory} />
+        "chat": <GeminiChat 
+                    chatHistory={chatHistory} 
+                    setChatHistory={setChatHistory} 
+                    newTodoItem={newTodoItem}
+                    setNewTodoItem={setNewTodoItem}
+                />
     }
 
     const renderWindow = () => {

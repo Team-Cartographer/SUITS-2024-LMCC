@@ -1,0 +1,28 @@
+XRF Scan (both EVs)
+1. Relay arrival at worksite
+2. Wait for instructions and go from LMCC
+3. Begin scanning rocks in designated search area (see XRF user guide below)
+4. Flag any rocks that have a geo composition outside of normal ranges
+a. This is a good opportunity to use pin dropping
+5. Continue scanning until abnormal sample is collected or given instruction to stop
+XRF Scan (MCC)
+1. Wait for arrival confirmation from EV
+2. Relay search area to EV
+a. This will be a portion of the task where pin dropping could be useful, however, you will have a map of the designated search areas included
+3. Give EV go to proceed
+Sampling Procedure
+1. Grab XRF Scanners (looking for rocks outside of expected composition ranges)
+2. EVA1 Procedure Collection Procedures
+a. Navigate to Station A
+b. Collect Samples at Station A
+c. Navigate to Station B
+d. Collect Samples at Station B
+e. Navigate to Station C
+f. Collect Samples at Station C
+3. EVA2 Procedures Collection Procedures
+a. Navigate to Station D
+b. Collect Samples at Station D
+c. Navigate to Station E
+d. Collect Samples at Station E
+e. Navigate to Station F
+f. Collect Samples at Station F

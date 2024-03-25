@@ -126,6 +126,9 @@ def update_notification(args: dict[str, list[str] | str | bool], _type: str) -> 
 
 def update_chat(args: dict[str, str]) -> dict[str, str]:
     message = args.get('message', 'Please say "You did not provide a proper message, try again" verbatim.')
-    output = send_message(message)
-    return output 
+    history, todoItem  = send_message(message)
+    return jsonify({
+        "history": history, 
+        "todoItem": todoItem
+    })
 
