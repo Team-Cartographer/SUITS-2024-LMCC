@@ -1,6 +1,5 @@
 from os import mkdir
 from re import match
-from tabnanny import check
 from urllib.parse import urlparse
 from json import dump, load
 from pathlib import Path
