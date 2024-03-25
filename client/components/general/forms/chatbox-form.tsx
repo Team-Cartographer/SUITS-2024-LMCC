@@ -13,9 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
+import { ArrowUp } from "lucide-react"
 
 const FormSchema = z.object({
-  todoitem: z
+  chatItem: z
     .string()
 })
 
@@ -23,7 +24,7 @@ interface TodoProps {
     onFormSubmit: (data: z.infer<typeof FormSchema>) => void
 }
 
-export function TodoAreaForm({ onFormSubmit }: TodoProps) {
+export function ChatboxForm({ onFormSubmit }: TodoProps) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
@@ -31,27 +32,27 @@ export function TodoAreaForm({ onFormSubmit }: TodoProps) {
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
     onFormSubmit(data);
     form.reset({
-      todoitem: '', 
+      chatItem: '', 
     });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row self-start space-x-2">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-row space-x-2">
         <FormField
           control={form.control}
-          name="todoitem"
+          name="chatItem"
           render={({ field }) => (
             <FormItem>
               <FormControl>
                 <Textarea
-                  className="text-sm min-w-[400px]"
                   onKeyDown={(e) => {
                     if (e.key === 'Enter' && !e.shiftKey) {
                       e.preventDefault();
                       form.handleSubmit(onSubmit)(); 
                     }}}
-                  placeholder="Items Here..."
+                  className="min-w-[400px] resize-y"
+                  placeholder="Message Gemini..."
                   {...field}
                 />
               </FormControl>
@@ -59,7 +60,9 @@ export function TodoAreaForm({ onFormSubmit }: TodoProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">Send</Button>
+        <Button type="submit" className="p-2">
+            <ArrowUp />
+        </Button>
       </form>
     </Form>
   )

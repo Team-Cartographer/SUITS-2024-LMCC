@@ -176,3 +176,11 @@ def send_rover_url() -> str:
     return jsonify({
         "rover_url": rover_url
     })
+
+
+
+
+
+def send_chat():
+    with open(DATA_DIR / 'chat.json', 'r') as jf: 
+        return json.load(jf)

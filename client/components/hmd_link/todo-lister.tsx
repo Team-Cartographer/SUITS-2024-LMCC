@@ -1,12 +1,10 @@
 "use client";
 
-import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
-import { useEffect, useState } from "react";
+import { fetchWithParams } from "@/api/fetchServer";
 import { TodoAreaForm } from "./forms/todo-list-form";
 import * as z from "zod"
 import { X } from "lucide-react";
 import { useNetwork } from "@/hooks/context/network-context";
-import { TodoItems } from "@/hooks/types";
 
 type Task = [string, string]
 
@@ -64,7 +62,7 @@ const TodoLister = () => {
             <div className="text-lg font-bold pb-2 underline self-start">
                 Todo List
             </div>
-            <div className="pb-4 self-start">
+            <div className="pb-4 self-start text-base">
                 {todoData?.todoItems && todoData?.todoItems.map(([taskItem, taskStatus]: Task, index: number) => (
                     <div key={index} style={{ textDecoration: taskStatus !== "False" ? 'line-through' : 'none' }} className="flex flex-row pl-3">
                         <input

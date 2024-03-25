@@ -137,6 +137,8 @@ def handle_GET_args(args: dict) -> dict:
             return gh.send_biom_data(eva)   
         else: 
             return jsonify({'error': 'invalid eva'})
+    elif get_arg('get', args) == 'chat': 
+        return gh.send_chat()
     else:   # If 'get' key is not recognized, return an error message
         return jsonify({
             'error': 'args were invalid'
@@ -169,7 +171,9 @@ def handle_POST_args(args: dict):
     elif get_arg('notif', args) == 'update_warning':
         return ph.update_notification(args, 'WARNING')
     elif get_arg('notif', args) == 'update_todo': 
-        return ph.update_notification(args, 'TODO')         
+        return ph.update_notification(args, 'TODO')     
+    elif get_arg('chat', args) == 'update': 
+        return ph.update_chat(args)    
     else:
         return jsonify({
             'error': 'args were invalid'            # Return an error message for invalid arguments

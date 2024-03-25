@@ -1,0 +1,48 @@
+Complete for Each EVA
+1. Connect UIA to DCU
+a. PLUG: Connect UIA and DCU via the cable
+b. SWITCH: UIA EMU POWER to ON (activates the Umbilical on the UIA side)
+c. SWITCH: DCU BATT to Umbilical (activated the Umbilical on the DCU side)
+2. Begin Depress of Suit (one switch does both suits)
+a. SWITCH: UIA Depress to ON (This will take a few minutes)
+3. Vent O2 Tanks (one switch does both suits)
+a. SWITCH: UIA OXY VENT to ON (vents the content of the primary tank)
+b. Wait until Both Primary and Secondary OXY Tanks are empty for both EVAs
+c. SWITCH: UIA OXY VENT to OFF (conclude venting the primary tank)
+4. Prepare O2 Tanks
+a. Fill Primary Tank
+i. SWITCH: DCU OXY to Primary (sets the primary tank as the active tank)
+ii. SWITCH: UIA OXY SUPPLY to ON (fills the primary tank with oxygen)
+iii. Wait until Primary OXY Tank is at 3000 psi
+iv. SWITCH: UIA OXY SUPPLY to OFF (concludes filling the primary tank)
+b. Fill Secondary Tank
+i. SWITCH: DCU OXY to Secondary (sets the secondary tank as the active tank)
+ii. SWITCH: UIA OXY SUPPLY to ON (fills the secondary tank with oxygen)
+iii. Wait until Secondary OXY Tank is at 3000 psi
+iv. SWITCH: UIA OXY SUPPLY to OFF (concludes filling the secondary tank)
+c. SWITCH: DCU OXY to Primary (sets the primary tank as the active tank)
+5. Prepare Water Coolant
+a. SWITCH: DCU PUMP to OPEN (Allows coolant to flow between suits and UIA)
+b. Flush Water Coolant
+i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out of suit)
+ii. Wait until Water Coolant Tank is empty
+iii. SWITCH: UIA WATER WASTE to OFF (conclude flushing the water coolant)
+c. Fill Water Coolant
+i. SWITCH: UIA WATER SUPPLY to ON (supplies the water coolant to suit)
+ii. Wait until Water Coolant Tank is full
+iii. SWITCH: UIA WATER SUPPLY to OFF (conclude supplying water coolant)
+d. SWITCH: DCU PUMP to CLOSE (Prevents coolant to flow between suits and UIA)
+6. End Depress of Suit
+a. Wait until Suit Pressure is at 4 psi and is equal to O2 Pressure
+b. SWITCH: UIA Depress to OFF
+7. Double Check DCU Switch States
+a. SWITCH: DCU BATT to LOCAL
+b. SWITCH: DCU OXY to Primary
+c. SWITCH: DCU COM to A
+d. SWITCH: DCU FAN to Primary
+e. SWITCH: DCU PUMP to CLOSED
+f. SWITCH: DCU CO2 to A (CO2 Scrubber, will need to flip every 10-15 minutes)
+8. Disconnect IMU to DCU
+a. SWITCH: UIA EMU POWER to OFF (deactivated the Umbilical on the UIA side)
+b. UNPLUG: Disconnect UIA and DCU via the cable
+9. Begin EVA

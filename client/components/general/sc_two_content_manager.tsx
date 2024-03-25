@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
 import { Button } from "../ui/button";
-import { biometricIDMap as IDs } from "@/hooks/types";
+import { ChatItemType, biometricIDMap as IDs } from "@/hooks/types";
 import { checkNominalValues, EVADataMap } from "./telemetry_range_manager";
+import GeminiChat from "./chatbox";
 
 interface WindowNames {
     [key: string]: JSX.Element;
@@ -11,22 +12,35 @@ interface WindowNames {
 const windows = {
     "eva1": "EVA 1 Telemetry",
     "eva2": "EVA 2 Telemetry",
+    "chat": "Chat"
 }
+
 
 const ScreenTwoContentManager = () => {
     const [visibleWindow, setVisibleWindow] = useState("eva1");
     const { getTelemetryData } = useNetwork()
 
+    /////////// NOMINAL VALUE INFO /////////////////////////
     const EVA1Data = getTelemetryData(1);
     const EVA2Data = getTelemetryData(2);
+    //const criticalIDs1 = checkNominalValues(EVA1Data.telemetry.eva, 1)
+    //const criticalIDs2 = checkNominalValues(EVA2Data.telemetry.eva, 2)
+    const [criticalIDs1, criticalIDs2] = [[], []] // Remove to add back nominal checks, or use these for temp testing
 
-    const criticalIDs1 = checkNominalValues(EVA1Data.telemetry.eva, 1)
-    const criticalIDs2 = checkNominalValues(EVA2Data.telemetry.eva, 2)
-    // const [criticalIDs1, criticalIDs2] = [[], []] // Remove to add back nominal checks, or use these for temp testing
+
+    const [chatHistory, setChatHistory] = useState<ChatItemType[]>([]);
+    const [newTodoItem, setNewTodoItem] = useState<[string, string]>(["", ""]);
+
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data, 1, criticalIDs1),
         "eva2": EVADataMap(EVA2Data, 2, criticalIDs2),
+        "chat": <GeminiChat 
+                    chatHistory={chatHistory} 
+                    setChatHistory={setChatHistory} 
+                    newTodoItem={newTodoItem}
+                    setNewTodoItem={setNewTodoItem}
+                />
     }
 
     const renderWindow = () => {
