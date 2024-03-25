@@ -38,6 +38,7 @@ const GeminiChat = (
 
     const onFormSubmit = async (formData: z.infer<typeof FormSchema>) => {
         setResponseLoading(true);
+        setChatHistory([...chatHistory, { role: "user", parts: [formData.chatItem] }]);
         const response = await fetchWithParams<ChatHistoryType>('api/v0', {
             chat: "update", 
             message: formData.chatItem
