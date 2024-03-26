@@ -2,6 +2,8 @@
 
 user_ip=$(ifconfig en0 | grep 'inet ' | awk '{print $2}')
 
+ulimit -Sn 50000
+
 # CHECK SCRIPT ARGUMENTS AND DEFINE THEM FOR LATER
 open_provided=false
 locally_hosted=true
