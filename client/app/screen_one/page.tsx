@@ -22,9 +22,9 @@ const HomePage = () => {
       <div className="flex flex-col items-left pl-3 justify-start max-w-[600px]">
         <NoSSR_Timers />
         <BiometricTelemetry evaNumber={1} bpm={0.0} temp={0.0} oxy={0.0} className="pt-[4.2rem]" />
-        <CameraFeed />
+        <CameraFeed ip={'192.168.0.19'} />
         <BiometricTelemetry evaNumber={2} bpm={0.0} temp={0.0} oxy={0.0} />
-        <CameraFeed />
+        <CameraFeed ip={'192.168.0.19'} />
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />
