@@ -36,8 +36,8 @@ def save_lmcc_to_json() -> None:
     """
     Saves the URL of the LMCC Server into `LMCC_PATH` to be used by the Client
     """
-    import socket
-    ip = socket.gethostbyname(socket.gethostname())
+    # import socket
+    ip = '127.0.0.1' #socket.gethostbyname(socket.gethostname())
     data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100, "scale_factor": 5 }
     with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)

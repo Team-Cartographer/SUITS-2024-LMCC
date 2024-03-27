@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
+import lmcc_config from "@/lmcc_config.json";
 import { fetchWithoutParams } from "@/api/fetchServer";
 import { 
 	GeoJSON, 
@@ -74,6 +75,36 @@ export const NetworkProvider = ({ children }: any) => {
 	const [biometricDataEva1, setBiometricDataEva1] = useState<Biometrics>(defaultBiometricValue);
 	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometrics>(defaultBiometricValue);
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
+
+	// const ipPattern: RegExp = /(\d+\.\d+\.\d+\.\d+)/;
+	// const match = lmcc_config.lmcc_url.match(ipPattern);
+	// const ipAddress = match ? match[0] : "IP address not found";
+	
+		useEffect(() => {
+			const ws = new WebSocket("ws://localhost:3001/echo");
+		
+			ws.onopen = () => {
+				console.log('WebSocket connection established');
+				ws.send('Hello Server!');
+			};
+		
+			ws.onmessage = (event) => {
+				console.log('Message from server:', event.data);
+			};
+		
+			ws.onclose = () => {
+				console.log('WebSocket disconnected');
+			};
+		
+			ws.onerror = (error) => {
+				console.error('WebSocket error:', error);
+			};
+		
+			return () => {
+				ws.close();
+				console.log('WebSocket connection closed');
+			};
+		}, []);
 
 	useEffect(() => {
 		const interval = setInterval(async () => {

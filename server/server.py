@@ -26,8 +26,12 @@ The application is intended to be run from the command line, where it listens on
 """
 
 # FLASK IMPORTS 
+from flask_sockets import Sockets
 from flask import Flask, render_template
 from flask_cors import CORS
+from gevent import monkey
+monkey.patch_all()
+
 
 # ROUTING IMPORTS
 from routes.tss import tss
@@ -41,6 +45,8 @@ import logging
 # server app instance
 app = Flask(__name__)
 log = logging.getLogger('werkzeug')
+
+sockets = Sockets(app)
 
 # allows inter-process communications 
 # (do this for all Blueprint Pages)
@@ -67,13 +73,21 @@ def page_not_found(_):
     return render_template('404.html'), 404
 
 
+@sockets.route('/echo', websocket=True)
+def echo_socket(ws):
+    while not ws.closed:
+        message = ws.receive()
+        if message:
+            print(message)
+            ws.send(message)
+
+
 # run app at http://localhost:3001/
 if __name__ == "__main__":
-    # set to "False" and restart server to see all HTTP requests 
-    log.disabled = False
+    # set to "False" and restart server to see all HTTP requests
+    log.disabled = True
 
-    app.run(
-        debug=False, 
-        host='0.0.0.0', 
-        port=3001
-    )
+    from gevent import pywsgi
+    from geventwebsocket.handler import WebSocketHandler
+    server = pywsgi.WSGIServer(('0.0.0.0', 3001), app, handler_class=WebSocketHandler)
+    server.serve_forever()
