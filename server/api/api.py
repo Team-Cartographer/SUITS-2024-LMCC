@@ -2,12 +2,10 @@ from flask import Blueprint, jsonify, request
 from flask_cors import CORS
 from . import getters as gh
 from . import posters as ph
+from pathlib import Path 
 
 api = Blueprint('api', __name__)
 CORS(api)
-
-
-
 
 class LMCCAPIError(Exception):
     """
@@ -61,6 +59,13 @@ def test():
             })
         
 
+
+@api.route('/hololens/photo', methods=["GET"])
+def take_hololens_photo():
+    status = gh.take_holo_pic()
+    return jsonify({
+        'status': status
+    })
 
     
 

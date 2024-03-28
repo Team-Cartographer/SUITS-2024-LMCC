@@ -1,6 +1,6 @@
 # all GET request helpers go in here
 from PIL import Image, ImageDraw
-from requests import get
+from requests import get, post
 from .utils import get_lat_lon_from_tif
 from .functions import astar
 from flask import send_file
@@ -9,12 +9,18 @@ from pathlib import Path
 import json
 import random
 from io import BytesIO
+import urllib3
+from requests.auth import HTTPBasicAuth
+from base64 import b64encode
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 SERVER_DIR = Path(__file__).parent.parent 
 TSS_DATA_PATH = SERVER_DIR / 'config' / 'tss_data.json'
 DATA_DIR = SERVER_DIR / 'data'
 TODO_PATH = DATA_DIR / 'todo.json'
 WARNING_PATH = DATA_DIR / 'warning.json'
+PHOTO_PATH = DATA_DIR / 'photos'
 
 with open("config/tss_data.json", "r") as f:
     tss_data = json.load(f)
@@ -184,3 +190,28 @@ def send_rover_url() -> str:
 def send_chat():
     with open(DATA_DIR / 'chat.json', 'r') as jf: 
         return json.load(jf)
+    
+
+
+
+
+def take_holo_pic(): 
+    user, password = 'auto-abhi_mbp', 'password'
+
+    takephoto_response = post("https://192.168.4.62/api/holographic/mrc/photo?holo=true&pv=true", 
+                             verify=False, 
+                             auth=HTTPBasicAuth(user, password))
+    filename = json.loads(takephoto_response.text)["PhotoFileName"]
+    encoded = b64encode(filename.encode('utf')).decode('utf-8')
+
+    response = get(f"https://192.168.4.62/api/holographic/mrc/file?filename={encoded}", 
+                            verify=False, 
+                            auth=HTTPBasicAuth(user, password))
+    
+    if response.ok:
+        with open(PHOTO_PATH / filename, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192): 
+                f.write(chunk)
+        return "200"
+    else:
+        return "404"

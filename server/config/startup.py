@@ -13,6 +13,7 @@ import rasterio
 
 SERVER_PATH = Path(__file__).parent.parent
 DATA_PATH = SERVER_PATH / 'data'
+PHOTO_PATH = DATA_PATH / 'photos'
 
 TSS_PATH = SERVER_PATH / 'config' / 'tss_data.json'
 LMCC_PATH = SERVER_PATH.parent / 'client' / 'lmcc_config.json'
@@ -58,7 +59,8 @@ def save_tss_to_json(url: str) -> None:
     url_data = {
         "TSS_URL": url,
         "TSS_HOST": host,
-        "TSS_PORT": port
+        "TSS_PORT": port,
+        "HOLOLENS_IP": '192.168.4.62'
     }
 
     with open(TSS_PATH, "w") as file:
@@ -150,6 +152,9 @@ def create_data_endpoints():
     # Create 'data' directory if it doesn't exist
     if not DATA_PATH.exists():
         mkdir(DATA_PATH)
+
+    if not PHOTO_PATH.exists():
+        mkdir(PHOTO_PATH)
     
 
     # Create 'rockyard.geojson' if it doesn't exist    
