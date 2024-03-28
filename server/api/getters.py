@@ -196,15 +196,18 @@ def send_chat():
 
 
 def take_holo_pic(): 
+    with open(TSS_DATA_PATH, 'r') as jf: 
+        holo_ip = json.load(jf)["HOLOLENS_IP"]
+
     user, password = 'auto-abhi_mbp', 'password'
 
-    takephoto_response = post("https://192.168.4.62/api/holographic/mrc/photo?holo=true&pv=true", 
+    takephoto_response = post(f"https://{holo_ip}/api/holographic/mrc/photo?holo=true&pv=true", 
                              verify=False, 
                              auth=HTTPBasicAuth(user, password))
     filename = json.loads(takephoto_response.text)["PhotoFileName"]
     encoded = b64encode(filename.encode('utf')).decode('utf-8')
 
-    response = get(f"https://192.168.4.62/api/holographic/mrc/file?filename={encoded}", 
+    response = get(f"https://{holo_ip}/api/holographic/mrc/file?filename={encoded}", 
                             verify=False, 
                             auth=HTTPBasicAuth(user, password))
     

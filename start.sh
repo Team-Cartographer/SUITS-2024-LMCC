@@ -83,7 +83,7 @@ cd ..
 
 echo "python config complete."
 
-python config/startup.py
+python config/startup.py $user_ip
 status=$?
 
 if [ $status -eq 1 ]; then

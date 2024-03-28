@@ -10,11 +10,9 @@ import dynamic from 'next/dynamic'
 import PanicButton from "@/components/hmd_link/panic_button";
 import ConnectionStrength from "@/components/hmd_link/conn_strength";
 import { CameraFeed } from "@/components/hmd_link/camera_feed";
-import TodoLister from "@/components/hmd_link/todo-lister";
 import ScreenOneContentManager from "@/components/general/sc_one_content_manager";
 import BiometricTelemetry from "@/components/hmd_link/biometric_data";
-import { Button } from '@/components/ui/button';
-import { Camera } from 'lucide-react';
+import lmcc_config from "@/lmcc_config.json"
 import PhotoCapture from '@/components/hmd_link/photocap';
  
 const NoSSR_Timers = dynamic(() => import('@/components/ui/timing'), { ssr: false })
@@ -25,9 +23,9 @@ const HomePage = () => {
       <div className="flex flex-col items-left pl-3 justify-start max-w-[600px]">
         <NoSSR_Timers />
         <BiometricTelemetry evaNumber={1} bpm={0.0} temp={0.0} oxy={0.0} className="pt-[4.2rem]" />
-        <CameraFeed ip={'192.168.0.19'} />
+        <CameraFeed ip={lmcc_config.eva1_ip} />
         <BiometricTelemetry evaNumber={2} bpm={0.0} temp={0.0} oxy={0.0} />
-        <CameraFeed ip={'192.168.0.19'} />
+        <CameraFeed ip={'1.2.3.4'} />
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />

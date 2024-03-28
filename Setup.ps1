@@ -45,7 +45,7 @@ Set-Location ..
 
 Write-Host "`nrunning server startup config"
 
-python config/startup.py
+python config/startup.py $mainAdapter.IPAddress
 $exitCode = $LASTEXITCODE
 
 deactivate

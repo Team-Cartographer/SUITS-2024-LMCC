@@ -7,6 +7,7 @@ from requests import get, ConnectionError, Timeout
 from time import sleep
 import numpy as np
 import rasterio 
+import sys
 
 
 
@@ -33,13 +34,12 @@ REPAIRS = PROCEDURES_PATH / 'repairs.txt'
 
 
 
-def save_lmcc_to_json() -> None:
+def save_lmcc_to_json(holo_ip) -> None:
     """
     Saves the URL of the LMCC Server into `LMCC_PATH` to be used by the Client
     """
-    import socket
-    ip = socket.gethostbyname(socket.gethostname())
-    data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100, "scale_factor": 5 }
+    ip = sys.argv[1]
+    data = { "lmcc_url": f'http://{ip}:3001', "tickspeed": 100, "scale_factor": 5, "eva1_ip": holo_ip }
     with open(LMCC_PATH, "w") as file:
         dump(data, file, indent=4)
 
@@ -47,7 +47,7 @@ def save_lmcc_to_json() -> None:
 
 
 
-def save_tss_to_json(url: str) -> None:
+def save_tss_to_json(url: str, holo_ip: str) -> None:
     """
     Saves the URL, HOST, and PORT of the `TSS` Server to be used by the Server 
     into a file at `TSS_PATH`
@@ -60,19 +60,19 @@ def save_tss_to_json(url: str) -> None:
         "TSS_URL": url,
         "TSS_HOST": host,
         "TSS_PORT": port,
-        "HOLOLENS_IP": '192.168.4.62'
+        "HOLOLENS_IP": holo_ip
     }
 
     with open(TSS_PATH, "w") as file:
         dump(url_data, file, indent=4)
-    print(f"saved tss config to {TSS_PATH}\nif you need to modify this, do so in that file\n")
+    print(f"saved tss/holo config to {TSS_PATH}\nif you need to modify this, do so in that file\n")
     sleep(1)
 
 
 
 
 
-def check_tss_url(url: str) -> bool:
+def check_url(url: str) -> bool:
     """
     Checks the connectivity to the TSS server using the provided URL.
 
@@ -114,28 +114,52 @@ def get_tss_url() -> None:
     check_failed = False
 
     while True:
-        url = None
+        tss_url = None
         if TSS_PATH.exists() and not check_failed:
             with open(TSS_PATH, "r") as json_file:
                 tss_data = load(json_file)
-            url = tss_data.get("TSS_URL")
+            tss_url = tss_data.get("TSS_URL")
 
-        if not url:
-            url = input(f"\nenter tss url: ")
+        if not tss_url:
+            tss_url = input(f"\nenter tss url: ")
 
-        if not match(pattern, url):
+        if not match(pattern, tss_url):
             print(f'error: please enter a tss url in the correct format (ex: http://123.456.78.9:14141)')
             check_failed = True
             continue
 
-        if not check_tss_url(url):
+        if not check_url(tss_url):
             print(f'error: your tss url may have changed, please enter it here (ex: http://123.456.78.9:14141)')
             check_failed = True
             continue
         else:
-            save_tss_to_json(url)
+            break
+
+    
+    pattern = r'^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$'
+    check_failed = False
+
+    while True:
+        holo_ip = None
+        if TSS_PATH.exists() and not check_failed:
+            with open(TSS_PATH, "r") as json_file:
+                tss_data = load(json_file)
+            holo_ip = tss_data.get("HOLO_URL")
+
+        if not holo_ip:
+            print('\nif not developing with hololens, enter 1.1.1.1')
+            holo_ip = input(f"enter hololens ip: ")
+
+        if not match(pattern, holo_ip):
+            print(f'error: please enter a hololens ip in the correct format (ex: 123.456.78.9)')
+            check_failed = True
+            continue
+        else:
             print('done!')
             break
+
+    save_tss_to_json(tss_url, holo_ip)
+    return tss_url, holo_ip
 
 
 
@@ -297,10 +321,10 @@ def setup():
     code 1. Continues to prompt until a valid response is provided.
     """
     while True: 
-        check_local_tss = input('do you want to run the app (frontend, server, TSS) on your machine? (Y/n): ')
+        check_local_tss = input('do you want to run the app (frontend, server, TSS, HoloLens) on your machine? (Y/n): ')
         if check_local_tss.strip().upper() == 'Y':
-            get_tss_url()
-            save_lmcc_to_json()
+            _, holo_ip = get_tss_url()
+            save_lmcc_to_json(holo_ip)
             create_data_endpoints()
             exit(0)
         elif check_local_tss.strip().upper() == 'N':

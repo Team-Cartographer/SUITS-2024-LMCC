@@ -15,7 +15,6 @@ const PhotoCapture = () => {
                 className="rounded-xl p-5 bg-slate-600 text-white hover:bg-slate-700"  
                 onClick={
                     async () => {
-                        console.log("taking photo");
                         setLoading(true);
                         await fetchWithoutParams("api/hololens/photo")
                         setLoading(false);
