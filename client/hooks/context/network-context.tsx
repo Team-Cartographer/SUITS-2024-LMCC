@@ -1,7 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { fetchWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { 
 	GeoJSON, 
 	TodoItems,
@@ -22,6 +22,7 @@ import {
     defaultTimerValue, 
     defaultBiometricValue
 } from "../defaults"
+import { useVignette } from "./vignette-context";
 
 ////////////////////////////////////////////////
 
@@ -43,6 +44,9 @@ interface NetworkContextType {
 	getSpecData: () => EVASpecItems;
 	getTelemetryData: (evaNumber: number) => Biometrics;
 	getRoverData: () => RoverData;
+	updateTodoItems: (newItem: string) => any; 
+	updateTodoItemsViaList: (newItems: string[][]) => any;
+	updateWarning: (warning: string) => any;
 }
 
 const defaultNetworkValue: NetworkContextType = {
@@ -53,13 +57,18 @@ const defaultNetworkValue: NetworkContextType = {
 	getSpecData: () => defaultSpecValue,
 	getTelemetryData: (evaNumber: number) => defaultBiometricValue,
 	getRoverData: () => defaultRoverValue,
+	updateTodoItems: (newItem: string) => 0,
+	updateTodoItemsViaList: (newItems: string[][]) => 0,
+	updateWarning: (warning: string) => 0,
 };
 
 
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
-	const TICKSPEED = 600
+	const { displayVignette, hideVignette } = useVignette();
+
+	const TICKSPEED = 100
 
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");
@@ -85,42 +94,34 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('EVA Data is undefined')
 				}
 
-				const uia_data = await fetchWithoutParams<{ eva: { uia: {time: number }}}>('tss/eva_info' ); 
-				if (uia_data?.eva?.uia?.time !== undefined) {
-					setUiaTime(formatTime(uia_data.eva.uia.time)); 
+				const timer_data = await fetchWithoutParams<{ 
+						eva: 
+							{ 
+								uia: { time: number }, 
+								spec: { time: number },
+								rover: { time: number },
+								dcu: { time: number }
+							}
+						}>('tss/eva_info' ); 
+				if (timer_data?.eva?.uia?.time !== undefined) {
+					setUiaTime(formatTime(timer_data.eva.uia.time)); 
 				} else {
 					throw new Error('UIA Data is undefined')
 				}
-
-				const spec_data = await fetchWithoutParams<{ eva: { spec: {time: number }}}>('tss/eva_info' ); 
-				if (spec_data?.eva?.spec?.time !== undefined) {
-					setSpecTime(formatTime(spec_data.eva.spec.time));
+				if (timer_data?.eva?.spec?.time !== undefined) {
+					setSpecTime(formatTime(timer_data.eva.spec.time));
 				} else {
 					throw new Error('Spec Data is undefined')
 				}
-
-				const rover_data = await fetchWithoutParams<{ eva: { rover: {time: number }}}>('tss/eva_info' ); 
-				if (rover_data?.eva?.rover?.time !== undefined) {
-					setRoverTime(formatTime(rover_data.eva.rover.time));
+				if (timer_data?.eva?.rover?.time !== undefined) {
+					setRoverTime(formatTime(timer_data.eva.rover.time));
 				} else {
 					throw new Error('Rover data is undefined')
-				}
-
-				const dcu_data = await fetchWithoutParams<{ eva: { dcu: {time: number }}}>('tss/eva_info' ); 
-				if (dcu_data?.eva?.dcu?.time !== undefined) {
-					setDcuTime(formatTime(dcu_data.eva.dcu.time));
+				}; 
+				if (timer_data?.eva?.dcu?.time !== undefined) {
+					setDcuTime(formatTime(timer_data.eva.dcu.time));
 				} else {
 					throw new Error('DCU data is undefined')
-				}
-
-				const warningData = await fetchWithoutParams<WarningData>(`api/v0?get=warning`)
-				if (warningData) { 
-					setWarningData(warningData);
-				} 
-
-				const todoData = await fetchWithoutParams<TodoItems>(`api/v0?get=todo`)
-				if (todoData) { 
-					setTodoItems(todoData);
 				}
 
 				const mapData = await fetchWithoutParams<GeoJSON>('api/v0?get=map_info');
@@ -307,6 +308,39 @@ export const NetworkProvider = ({ children }: any) => {
 			};
 	};
 
+
+	const updateTodoItems = async (newItem: string) => { 
+        const newItems = await fetchWithParams('api/v0',
+        {
+            notif: "update_todo",
+            todoItems: [...(todoItems.todoItems || []), [newItem, "False"]]
+        })
+		setTodoItems(newItems); 
+	}
+
+	const updateTodoItemsViaList = async (newItems: string[][]) => { 
+        const _newItems = await fetchWithParams('api/v0',
+        {
+            notif: "update_todo",
+            todoItems: newItems
+        })
+		setTodoItems(_newItems); 
+	}
+
+	const updateWarning = async (warning: string) => {
+		const warningData = await fetchWithParams(`api/v0`,
+									{
+									notif: 'update_warning',
+									infoWarning: warning,
+									})
+		if (warningData.infoWarning !== '') {
+			displayVignette();
+		} else if (warningData.infoWarning === '') {
+			hideVignette();
+		}
+		setWarningData(warningData);
+	}
+
 	return (
 		<NetworkContext.Provider value={{ 
 			getMissionTimes,
@@ -316,6 +350,9 @@ export const NetworkProvider = ({ children }: any) => {
 			getSpecData,
 			getTelemetryData,
 			getRoverData,
+			updateTodoItems,
+			updateTodoItemsViaList,
+			updateWarning,
 		}}>
 			{children}
 		</NetworkContext.Provider>

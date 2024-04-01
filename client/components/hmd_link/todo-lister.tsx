@@ -15,21 +15,12 @@ const FormSchema = z.object({
 
 const TodoLister = () => {
     
-    const networkProvider = useNetwork();
-    const todoData = networkProvider.getTodoData();
+    const { getTodoData, updateTodoItems, updateTodoItemsViaList } = useNetwork(); 
+    const todoData = getTodoData();
 
     
     const onFormSubmit = async (formData: z.infer<typeof FormSchema>) => {
-        sendTodoItem(formData.todoitem);
-    }
-
-    const sendTodoItem = async (new_item: string) => {
-        const current_list = todoData.todoItems;
-        await fetchWithParams('api/v0',
-        {
-            notif: "update_todo",
-            todoItems: [...(current_list || []), [new_item, "False"]]
-        })
+        updateTodoItems(formData.todoitem);
     }
 
     const toggleTaskStatus = async (index: number) => {
@@ -41,20 +32,12 @@ const TodoLister = () => {
             }
             return task;
           });
-        await fetchWithParams('api/v0',
-            {
-                notif: "update_todo",
-                todoItems: updatedTasks
-        })
+        updateTodoItemsViaList(updatedTasks);
       };
 
     const deleteTask = async (index: number) => {
         const updatedTasks = todoData?.todoItems.filter((_, i) => i !== index);
-        await fetchWithParams('api/v0',
-        {
-                notif: "update_todo",
-                todoItems: updatedTasks
-        })
+        updateTodoItemsViaList(updatedTasks);
       };
 
     return ( 

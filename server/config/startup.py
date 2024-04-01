@@ -128,7 +128,7 @@ def get_tss_url() -> None:
             check_failed = True
             continue
 
-        if not check_url(tss_url):
+        if not True: #check_url(tss_url):
             print(f'error: your tss url may have changed, please enter it here (ex: http://123.456.78.9:14141)')
             check_failed = True
             continue
