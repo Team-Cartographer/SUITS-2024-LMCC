@@ -76,6 +76,14 @@ const defaultBiometricValue: Biometrics = {
 	}
 }
 
+const defaultErrorValue = {
+	error: { 
+        fan_error: false,
+        oxy_error: false,
+        pump_error: false,
+    }
+}
+
 ///////////////////////////////////////////
 
 export { 
@@ -85,5 +93,6 @@ export {
     defaultGEOJSONValue,
     defaultSpecValue, 
     defaultTimerValue, 
-    defaultBiometricValue
+    defaultBiometricValue,
+	defaultErrorValue,
 }
