@@ -153,6 +153,16 @@ interface RoverData {
     }
 }
 
+/// ERROR /////////////////////////////////////////////////////////////
+
+interface ErrorData { 
+    error: { 
+        fan_error: boolean,
+        oxy_error: boolean,
+        pump_error: boolean,
+    }
+}
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -170,6 +180,7 @@ export type {
     Biometrics,
     BiometricData,
     RoverData,
+    ErrorData
 }
 
 export { biometricIDMap }

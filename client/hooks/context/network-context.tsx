@@ -12,6 +12,7 @@ import {
 	EVASpecItems,
 	Biometrics,
 	RoverData,
+	ErrorData,
 } from "../types";
 import { 
     defaultTodoValue,
@@ -20,9 +21,9 @@ import {
     defaultGEOJSONValue,
     defaultSpecValue, 
     defaultTimerValue, 
-    defaultBiometricValue
+    defaultBiometricValue,
+	defaultErrorValue
 } from "../defaults"
-import { useVignette } from "./vignette-context";
 
 ////////////////////////////////////////////////
 
@@ -44,6 +45,7 @@ interface NetworkContextType {
 	getSpecData: () => EVASpecItems;
 	getTelemetryData: (evaNumber: number) => Biometrics;
 	getRoverData: () => RoverData;
+	getErrorData: () => ErrorData; 
 	updateTodoItems: (newItem: string) => any; 
 	updateTodoItemsViaList: (newItems: string[][]) => any;
 	updateWarning: (warning: string) => any;
@@ -57,6 +59,7 @@ const defaultNetworkValue: NetworkContextType = {
 	getSpecData: () => defaultSpecValue,
 	getTelemetryData: (evaNumber: number) => defaultBiometricValue,
 	getRoverData: () => defaultRoverValue,
+	getErrorData: () => defaultErrorValue,
 	updateTodoItems: (newItem: string) => 0,
 	updateTodoItemsViaList: (newItems: string[][]) => 0,
 	updateWarning: (warning: string) => 0,
@@ -66,9 +69,7 @@ const defaultNetworkValue: NetworkContextType = {
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
-	const { displayVignette, hideVignette } = useVignette();
-
-	const TICKSPEED = 100
+	const TICKSPEED = 1000;
 
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");
@@ -83,6 +84,27 @@ export const NetworkProvider = ({ children }: any) => {
 	const [biometricDataEva1, setBiometricDataEva1] = useState<Biometrics>(defaultBiometricValue);
 	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometrics>(defaultBiometricValue);
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
+	const [errorData, setErrorData] = useState<ErrorData>(defaultErrorValue);
+
+	useEffect(() => {
+		const updateItems = async () => {
+			const todoData = await fetchWithoutParams<TodoItems>('api/v0?get=todo');
+			if (todoData) {
+				setTodoItems(todoData);
+			} else {
+				setTodoItems(defaultTodoValue);
+			}
+
+			const warningData = await fetchWithoutParams<WarningData>('api/v0?get=warning');
+			if (warningData) {
+				setWarningData(warningData);
+			} else {
+				setWarningData(defaultWarningValue);
+			}
+		}
+		updateItems();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [])
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -129,6 +151,22 @@ export const NetworkProvider = ({ children }: any) => {
 					setMapGeoJSON(mapData);
 				} else {
 					throw new Error('Map Info is undefined')
+				}
+
+				const errorData = await fetchWithoutParams<ErrorData>('mission/error');
+				if (errorData) {
+					setErrorData(errorData);
+					if (errorData.error.oxy_error) {
+						updateWarning('Oxygen Error Detected! Run appropriate procedure!');
+					}
+					if (errorData.error.pump_error) {
+						updateWarning('Pump Error Detected! Run appropriate procedure!');
+					} 
+					if (errorData.error.fan_error) {
+						updateWarning('Fan Error Detected! Run appropriate procedure!');
+					} 
+				} else {
+					throw new Error('Error Data is Undefined!')
 				}
 
 				const biometricData = await fetchWithoutParams<Biometrics>('tss/telemetry');
@@ -246,12 +284,12 @@ export const NetworkProvider = ({ children }: any) => {
 		}
 	};
 
-	const getWarningData = (): WarningData => {
-		return warningData || defaultWarningValue
-	}
-
 	const getTodoData = (): TodoItems => { 
 		return todoItems || defaultTodoValue
+	}
+
+	const getWarningData = (): WarningData => {
+		return warningData || defaultWarningValue
 	}
 
 	const getGeoJSONData = (): GeoJSON => {
@@ -267,6 +305,10 @@ export const NetworkProvider = ({ children }: any) => {
 
 	const getRoverData = (): RoverData => { 
 		return roverData || defaultRoverValue
+	}
+
+	const getErrorData = (): ErrorData => {
+		return errorData || defaultErrorValue
 	}
 
 	const getTelemetryData = (evaNumber: number): Biometrics => {
@@ -324,7 +366,7 @@ export const NetworkProvider = ({ children }: any) => {
             notif: "update_todo",
             todoItems: newItems
         })
-		setTodoItems(_newItems); 
+		setTodoItems(_newItems);
 	}
 
 	const updateWarning = async (warning: string) => {
@@ -333,11 +375,6 @@ export const NetworkProvider = ({ children }: any) => {
 									notif: 'update_warning',
 									infoWarning: warning,
 									})
-		if (warningData.infoWarning !== '') {
-			displayVignette();
-		} else if (warningData.infoWarning === '') {
-			hideVignette();
-		}
 		setWarningData(warningData);
 	}
 
@@ -350,6 +387,7 @@ export const NetworkProvider = ({ children }: any) => {
 			getSpecData,
 			getTelemetryData,
 			getRoverData,
+			getErrorData,
 			updateTodoItems,
 			updateTodoItemsViaList,
 			updateWarning,

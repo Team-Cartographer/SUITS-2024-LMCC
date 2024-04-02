@@ -20,30 +20,19 @@ import {
 import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
 import { WarningData } from "@/hooks/types";
+import { useNetwork } from "@/hooks/context/network-context";
 
 const PanicButton = () => {
   const [inputValue, setInputValue] = useState("");
+  const { updateWarning } = useNetwork();
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
   };
 
-  const onPanic = async () => {
-    try {
-      let curr_data = await fetchWithoutParams<WarningData>('api/v0?get=warning')
-
-      await fetchWithParams<WarningData>(
-        `api/v0`,
-        {
-          notif: 'update_warning',
-          infoWarning: inputValue,
-        });
-    } catch (err) {
-      const error = err as Error;
-      console.error("Error updating image:", error);
-    }
-    setInputValue("");
-  };
+  const _updateWarning = () => { 
+    updateWarning(inputValue); 
+  }
 
   return (
     <div>
@@ -56,7 +45,7 @@ const PanicButton = () => {
             <AlertDialogTitle className="pb-2">Send a Warning</AlertDialogTitle>
             <AlertDialogDescription>
               <div>
-                <form onSubmit={onPanic}>
+                <form onSubmit={_updateWarning}>
                   <input
                     type="text"
                     value={inputValue}
@@ -66,7 +55,7 @@ const PanicButton = () => {
                   />
                   <div className="fixed bottom-0 right-0 p-3 pb-6 pr-5">
                     <AlertDialogAction
-                      onClick={onPanic}
+                      onClick={_updateWarning}
                       className="bg-red-600 text-white hover:bg-red-700"
                     >
                       Send

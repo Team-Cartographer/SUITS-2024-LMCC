@@ -3,11 +3,23 @@
 import { useNetwork } from "@/hooks/context/network-context";
 import { useVignette } from "@/hooks/context/vignette-context";
 import { EyeOff } from "lucide-react";
+import { useEffect } from "react";
 
 const Notifier = () => {
-    const { isVignetteVisible } = useVignette(); 
+    const { displayVignette, hideVignette, isVignetteVisible } = useVignette(); 
     const { getWarningData, updateWarning } = useNetwork(); 
     const warningData = getWarningData();
+
+    useEffect(() => { 
+      const interval = setInterval(() => {
+        if (warningData.infoWarning !== '') {
+          displayVignette();
+        } else if (warningData.infoWarning === '') {
+          hideVignette();
+        }
+      }, 100); 
+      return () => clearInterval(interval);
+    })
 
       return (
         <>
