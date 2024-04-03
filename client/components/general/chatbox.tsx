@@ -34,7 +34,7 @@ const GeminiChat = (
 
     const [responseLoading, setResponseLoading] = useState(false); 
 
-    const { getTodoData } = useNetwork();
+    const { getTodoData, updateTodoItems } = useNetwork();
 
     const onFormSubmit = async (formData: z.infer<typeof FormSchema>) => {
         setResponseLoading(true);
@@ -73,13 +73,9 @@ const GeminiChat = (
     }, [chatHistory]); 
 
 
-    const sendTodoItem = async () => {
-        const current_list = getTodoData().todoItems;
-        await fetchWithParams('api/v0',
-        {
-            notif: "update_todo",
-            todoItems: [...(current_list || []), [newTodoItem[0], "False"]]
-        })
+
+    const sendTodoItem = () => {
+        updateTodoItems(newTodoItem[0]);
     }
 
 

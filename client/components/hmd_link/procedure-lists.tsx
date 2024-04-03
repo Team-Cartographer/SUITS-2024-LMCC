@@ -19,8 +19,7 @@ const windows = {
 
 const ProcedureLists = () => {
     const [visibleWindow, setVisibleWindow] = useState("uia");
-    const { getTodoData } = useNetwork();
-    const todoData = getTodoData();
+    const { updateTodoItems } = useNetwork();
 
     const sendTodoItem = async (event: React.MouseEvent) => {
         const childNodes = event.currentTarget.childNodes;
@@ -31,13 +30,8 @@ const ProcedureLists = () => {
             return acc;
         }, "");
         const new_item = directTextContent.trim();
-
-        const current_list = todoData.todoItems;
-        await fetchWithParams('api/v0',
-        {
-            notif: "update_todo",
-            todoItems: [...(current_list || []), [new_item, "False"]]
-        })
+        
+        updateTodoItems(new_item); 
     }
     
     const windowNames: WindowNames = {
