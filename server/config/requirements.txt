@@ -17,3 +17,4 @@ numpy
 rasterio
 google-generativeai
 python-dotenv
+pyproj

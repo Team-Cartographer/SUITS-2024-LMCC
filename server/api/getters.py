@@ -1,7 +1,7 @@
 # all GET request helpers go in here
 from PIL import Image, ImageDraw
 from requests import get, post
-from .utils import get_lat_lon_from_tif
+from .utils import get_lat_lon_from_tif, get_x_y
 from .functions import astar
 from flask import send_file
 from flask import jsonify
@@ -12,8 +12,12 @@ from io import BytesIO
 import urllib3
 from requests.auth import HTTPBasicAuth
 from base64 import b64encode
+from pyproj import Proj, transform 
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+utm_proj = Proj(proj='utm', zone=15, ellps='WGS84', datum='WGS84', units='m', north=True)
+lat_lon_proj = Proj(proj='latlong', datum='WGS84')
 
 SERVER_DIR = Path(__file__).parent.parent 
 TSS_DATA_PATH = SERVER_DIR / 'config' / 'tss_data.json'
@@ -63,14 +67,20 @@ def send_map() -> bytes:
     IMU_data = json.loads(req.text)
     ROVER_data = json.loads(req2.text)
 
-    x_ev1, y_ev1 = 200, 300 #int(IMU_data["imu"]["eva1"]["posx"]), int(IMU_data["imu"]["eva1"]["posy"])
-    x_ev2, y_ev2 = 300, 400 #int(IMU_data["imu"]["eva1"]["posx"]), int(IMU_data["imu"]["eva1"]["posy"])
-    x_rov, y_rov = 400, 200 #int(ROVER_data["rover"]["posx"]),     int(ROVER_data["rover"]["posy"])
 
-    # FIXME: Bring these back and save to GeoJSON 
-    #lat_eva1, lon_eva1 = get_lat_lon_from_tif(x_ev1, y_ev1)
-    #lat_eva2, lon_eva2 = get_lat_lon_from_tif(x_ev2, y_ev2)
-    #lat_rover, lon_rover = get_lat_lon_from_tif(x_rov, y_rov)
+    ut_ev1, ut2_ev1 = int(IMU_data["imu"]["eva1"]["posx"]), int(IMU_data["imu"]["eva1"]["posy"])
+    ut_ev2, ut2_ev2 = int(IMU_data["imu"]["eva1"]["posx"]), int(IMU_data["imu"]["eva1"]["posy"])
+    ut_rov, ut2_rov = int(ROVER_data["rover"]["posx"]),     int(ROVER_data["rover"]["posy"])
+
+    round_8 = lambda x: round(x, 8)
+
+    lon_eva_1, lat_eva_1,  = map(round_8, transform(utm_proj, lat_lon_proj, ut_ev1, ut2_ev1))
+    lon_eva_2, lat_eva_2 = map(round_8, transform(utm_proj, lat_lon_proj, ut_ev2, ut2_ev2))
+    lon_rover, lat_rover = map(round_8, transform(utm_proj, lat_lon_proj, ut_rov, ut2_rov))
+
+    x_ev1, y_ev1 = get_x_y(lat_eva_1, lon_eva_1)
+    x_ev2, y_ev2 = get_x_y(lat_eva_2, lon_eva_2)
+    x_rov, y_rov = get_x_y(lat_rover, lon_rover)
     
     # Extract pin coordinates from the geojson data
     pins: list = []
@@ -85,9 +95,9 @@ def send_map() -> bytes:
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
 
     radius = 5
-    draw.ellipse([(x_ev1 - radius, y_ev1 - radius), (x_ev1 + radius, y_ev1 + radius)], fill='lawngreen')
-    draw.ellipse([(x_ev2 - radius, y_ev2 - radius), (x_ev2 + radius, y_ev2 + radius)], fill='deeppink')
-    draw.ellipse([(x_rov - radius, y_rov - radius), (x_rov + radius, y_rov + radius)], fill='aqua')
+    draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen')
+    draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink')
+    draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua')
 
     # Save the modified map image to an in-memory buffer
     img_io = BytesIO()

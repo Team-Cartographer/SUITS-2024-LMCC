@@ -1,5 +1,6 @@
 from pathlib import Path
 import math
+from re import T
 import numpy as np
 
 SERVER_DIR: Path =  Path(__file__).parent.parent
@@ -27,5 +28,19 @@ def is_within_radius(check: str, existing_pins: list[str], radius=5) -> bool:
 
 def get_lat_lon_from_tif(x: int, y: int) -> tuple[float, float]:
     #Retrieve the latitude and longitude from the TIFF dataset
-    lon, lat = TIFF_DATASET[x, y]
+    lon, lat = TIFF_DATASET[y, x]
     return lat, lon
+
+
+def get_x_y(lat: float, lon: float, lat_margin: float=0.00009, lon_margin: float=0.00009) -> tuple[int, int]:
+    lat_diff = np.abs(TIFF_DATASET[..., 1] - lat)
+    lon_diff = np.abs(TIFF_DATASET[..., 0] - lon)
+
+    within_margin = np.where((lat_diff <= lat_margin) & (lon_diff <= lon_margin))
+
+    if within_margin[0].size > 0:
+        y_index, x_index = within_margin[0][0], within_margin[1][0]
+        print(x_index, y_index)
+        return(x_index, y_index)
+    else:
+        return TIFF_DATASET.shape[1]//2, TIFF_DATASET.shape[0]//2
