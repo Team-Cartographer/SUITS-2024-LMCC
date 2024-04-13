@@ -9,7 +9,7 @@ interface WindowNames {
 
 
 const windows = {
-    "uia": "Egress",
+    "egress": "Egress",
     "ingress": "Ingress",
     "geo": "Geological Sampling",
     "rep": "Equipment Diagnosis & Repairs",
@@ -18,7 +18,7 @@ const windows = {
 }
 
 const ProcedureLists = () => {
-    const [visibleWindow, setVisibleWindow] = useState("uia");
+    const [visibleWindow, setVisibleWindow] = useState("egress");
     const { updateTodoItems } = useNetwork();
 
     const sendTodoItem = async (event: React.MouseEvent) => {
@@ -35,112 +35,103 @@ const ProcedureLists = () => {
     }
     
     const windowNames: WindowNames = {
-        "uia": (
+        "egress": (
             <div className="overflow-scroll flex flex-col gap-y-4">
                 <div className="pl-4 font-bold pb-2 pt-3">Complete for Each EVA</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Connect UIA to DCU</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. PLUG: Connect UIA and DCU via the cable</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. SWITCH: UIA EMU POWER to ON (activates the Umbilical on the UIA side)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. SWITCH: DCU BATT to Umbilical (activated the Umbilical on the DCU side)</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>2. Begin Depress of Suit (one switch does both suits)</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Connect UIA to DCU and start Depress</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. EV1 and EV2 connect UIA and DCU umbilical</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1 and EV2 switch EMU PWR -- ON </div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. BATT -- UMB</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. DEPRESS PUMP PWR -- ON</div>
 
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: UIA Depress to ON (This will take a few minutes)</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>3. Vent O2 Tanks (one switch does both suits)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: UIA OXY VENT to ON (vents the content of the primary tank)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Wait until Both Primary and Secondary OXY Tanks are empty for both EVAs</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. SWITCH: UIA OXY VENT to OFF (conclude venting the primary tank)</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>4. Prepare O2 Tanks</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Fill Primary Tank</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>i. SWITCH: DCU OXY to Primary (sets the primary tank as the active tank)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>ii. SWITCH: UIA OXY SUPPLY to ON (fills the primary tank with oxygen)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iii. Wait until Primary OXY Tank is at 3000 psi</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iv. SWITCH: UIA OXY SUPPLY to OFF (concludes filling the primary tank)</div>
-                    
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Fill Secondary Tank</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>i. SWITCH: DCU OXY to Secondary (sets the secondary tank as the active tank)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>ii. SWITCH: UIA OXY SUPPLY to ON (fills the secondary tank with oxygen)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iii. Wait until Secondary OXY Tank is at 3000 psi</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iv. SWITCH: UIA OXY SUPPLY to OFF (concludes filling the secondary tank)</div>
-                    
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. SWITCH: DCU OXY to Primary (sets the primary tank as the active tank)</div>
-                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>5. Prepare Water Coolant</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: DCU PUMP to OPEN (Allows coolant to flow between suits and UIA)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Flush Water Coolant</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out of suit)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>ii. Wait until Water Coolant Tank is empty</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iii. SWITCH: UIA WATER WASTE to OFF (conclude flushing the water coolant)</div>
-                    
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. Fill Water Coolant</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>i. SWITCH: UIA WATER SUPPLY to ON (supplies the water coolant to suit)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>ii. Wait until Water Coolant Tank is full</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iii. SWITCH: UIA WATER SUPPLY to OFF (conclude supplying water coolant)</div>
-                    
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. SWITCH: DCU PUMP to CLOSE (Prevents coolant to flow between suits and UIA)</div>
-                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>6. End Depress of Suit</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Wait until Suit Pressure is at 4 psi and is equal to O2 Pressure</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. SWITCH: UIA Depress to OFF</div>
-                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>7. Double Check DCU Switch States</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: DCU BATT to LOCAL</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. SWITCH: DCU OXY to Primary</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. SWITCH: DCU COM to A</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. SWITCH: DCU FAN to Primary</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>e. SWITCH: DCU PUMP to CLOSED</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>f. SWITCH: DCU CO2 to A (CO2 Scrubber, will need to flip every 10-15 minutes)</div>
-                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>8. Disconnect IMU to DCU</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: UIA EMU POWER to OFF (deactivated the Umbilical on the UIA side)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. UNPLUG: Disconnect UIA and DCU via the cable</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>2. Prep O2 Tanks</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. OXYGEN O2 VENT -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Wait until both Primary and Secondary OXY tanks are below 10 psi</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. OXYGEN O2 VENT -- CLOSE</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. OXY -- PRI</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>e. OXYGEN EMU-1, EMU-2 -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>f. Wait until EV1 and EV2 Primary O2 tanks are greater than 3000 psi</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>g. OXYGEN EMU-1, EMU-2 -- CLOSE</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>h. OXY -- SEC</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>i. OXYGEN EMU-1, EMU-2 -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>j. Wait until EV1, EV2 secondary O2 tanks are greater than 3000 psi</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>k. OXYGEN EMU-1, EMU-2 -- CLOSE</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>l. OXY -- PRI</div>
+
+                <div className="pl-4" role="button" onClick={sendTodoItem}>3. Prep Water Tanks</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. PUMP -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1, EV2 WASTE WATER -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. Wait until water EV1 and EV2 Coolnt tank is less than 5%</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. EV1, EV2 WASTE WATER -- CLOSE</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>e. EV1, EV2 SUPPLY WATER -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>f. Wait until water EV1 and EV2 Coolant tank is greater than 95%</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>g. EV1, EV2 SUPPLY WATER -- CLOSE</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>h. PUMP -- CLOSE</div>
+
+                <div className="pl-4" role="button" onClick={sendTodoItem}>4. END Depress, Check Switches and Disconnect</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Wait until SUIT P, O2 P = 4</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. DEPRESS PUMP PWR -- OFF</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. BATT -- LOCAL</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. EV1, EV2 PWR -- OFF</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Verify OXY -- PRI</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Verify COMMS -- A</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Verify FAN -- PRI</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Verify PUMP -- CLOSE</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Verify CO2 -- A</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. EV1, EV2 disconnect UIA and DCU umbilical</div>
             
                 <div className="pl-4">9. Begin EVA</div>
             </div>
         ),
         "rover": (
             <div className="space-y-2">
-                <div>Rover will be autonomously moving around the base of the mountain. When the Communications Tower repair is complete, the LMCC will begin receiving location data on the rover. At this point, LMCC2 will manually command the rover up the mountain.</div>
                 <ul className="list-disc pl-4">
-                    <li>At the top of the mountain, the rover will “collect samples” (via QR code)</li>
-                    <li>LMCC2 will then pilot the rover to a rendezvous point with EV2 for transfer of the collected samples</li>
+                <div role="button" onClick={sendTodoItem}>After rover loaction obtained, LMCC2 command rover to worksite G</div>
+                    <li role="button" onClick={sendTodoItem}>Once at Worksite G, LMCC2 will collect samples via QR code</li>
+                    <li role="button" onClick={sendTodoItem}>Once samples collected, LMCC2 command rover to a rendezvous point and notify EV2</li>
+                    <li role="button" onClick={sendTodoItem}>Once rover and EV2 at rendezvous site, EV2 collect samples from rover</li>
+
                 </ul>
             </div>
         ),
         "ingress": (
             <div className="overflow-scroll flex flex-col gap-y-4">
-                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Connect UIA to DCU</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. PLUG: Connect UIA and DCU via the cable</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. SWITCH: UIA EMU POWER to ON (activates the Umbilical on the UIA side)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. SWITCH: DCU BATT to Umbilical (activated the Umbilical on the DCU side)</div>
-                
+                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Connect UIA to DCU and start Depress</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. EV1 and EV2 connect UIA and DCU umbilical</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1 and EV2 switch EMU PWR to ON </div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. BATT -- UMB</div>
+
                 <div className="pl-4" role="button" onClick={sendTodoItem}>2. Vent O2 Tanks</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: UIA OXY VENT to ON (vents the content of the primary tank)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Wait until Primary and secondary OXY Tanks are empty</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. SWITCH: UIA OXY VENT to OFF (conclude venting the primary tank)</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. OXYGEN O2 VENT - OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Wait until Primary and secondary OXY Tanks are less than 10 psi</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. OXYGEN O2 VENT -- CLOSE</div>
                 
-                <div className="pl-4" role="button" onClick={sendTodoItem}>3. Flush Water Coolant</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: DCU PUMP to OPEN (Allows coolant to flow between suits and UIA)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Flush Water Coolant</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>i. SWITCH: UIA WATER WASTE to ON/OPEN (flushes the water coolant out of suit)</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>ii. Wait until Water Coolant Tank is empty</div>
-                        <div className="pl-12" role="button" onClick={sendTodoItem}>iii. SWITCH: UIA WATER WASTE to OFF (conclude flushing the water coolant)</div>
-                    
+                <div className="pl-4" role="button" onClick={sendTodoItem}>3. Empty Water Tanks</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. PUMP -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1, EV2 WASTE WATER -- OPEN</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>C. Wait until water EV1 and EV2 coolant tank is less than 5%</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. EV1, EV2 WASTE WATER -- CLOSE</div>
+
                 
-                <div className="pl-4" role="button" onClick={sendTodoItem}>4. Disconnect IMU to DCU</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. SWITCH: UIA EMU POWER to OFF (deactivated the Umbilical on the UIA side)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. UNPLUG: Disconnect UIA and DCU cable</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>4. Disconnect IMU from DCU</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. EV1, EV2 EMU PWR -- OFF</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1, EV2 disconnect umbilical</div>
             </div>
         ),
         "geo": (
             <div className="overflow-scroll flex flex-col gap-y-2">
                 <div className="pl-4 font-bold" role="button" onClick={sendTodoItem}>XRF Scan (both EVs)</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Relay arrival at worksite</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>2. Wait for instructions and go from LMCC</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>3. Begin scanning rocks in designated search area (see XRF user guide below)</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>4. Flag any rocks that have a geo composition outside of normal ranges</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. This is a good opportunity to use pin dropping</div>
-                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>5. Continue scanning until abnormal sample is collected or given instruction to stop</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>1. On go from LMCCx, EVx navigate to Station x</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>2. EVx perform Scan and Sampling procedure at designated Station</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>EV Open Sampling Procedure</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>If available, perform Field Notes on Rock, which can include picture, voice notes, etc.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>Perform XRF Scan</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>Press and HOLD trigger</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>Aim close to sample until beep, then release trigger</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>If Rock Composition outside of normal parameters, collect rock</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>If able, drop and label a pin</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>3. EVx Navigate to Station x</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>3. EVx perform Scan and Sampling procedure at designated station</div>
                 <div style={{ height: '20px' }}></div>
     
                 <div className="pl-4 font-bold pt-4" role="button" onClick={sendTodoItem}>XRF Scan (MCC)</div>
@@ -172,17 +163,13 @@ const ProcedureLists = () => {
         "rep": (
             <div className="overflow-scroll flex flex-col gap-y-3">
                 <div className="pl-4 font-bold pt-1" role="button" onClick={sendTodoItem}>Arrive at Worksite</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Inspect Worksite for Damage</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Relay to MCC arrival and inspection start</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Begin inspection of the worksite</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. Once issue is discovered, relay issue to MCC</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Wait to receive repair procedures from MCC</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>Note:</div>
-                    <div className="pl-12" role="button" onClick={sendTodoItem}>i. This can be the MCC referring the crewmember to one procedure pre-saved to a library in the HMD. Additional procedures will soon be provided in addition to the Cable Repair procedure.</div>
-                    <div className="pl-12" role="button" onClick={sendTodoItem}>ii. Growth: MCC can send new procedures.</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>e. Continue to appropriate procedure.</div>
-                
-                <div className="pl-4 font-bold pb-1 pt-4">Cable Repair</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>1. EVs notify LMCC1 starting inspection procedure</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>2. EV1 scan Comm tower, EV2 scan MMRTG for possible issues</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>3. If issue found, notify LMCC1</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>4. If EVs do not have a procedure for the issue, standy until LMCCx sends new procedure</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>5. Execute appropriate procedure</div>
+    
+                <div className="pl-4 font-bold pb-1 pt-4">Cable Repair [NEEDS WORK]</div>
                 <div className="pl-4" role="button" onClick={sendTodoItem}>2. Shut down comm tower (EV1)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>a. Select power button on screen</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>b. Select shut down option</div>
