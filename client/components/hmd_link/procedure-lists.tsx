@@ -163,17 +163,13 @@ const ProcedureLists = () => {
         "rep": (
             <div className="overflow-scroll flex flex-col gap-y-3">
                 <div className="pl-4 font-bold pt-1" role="button" onClick={sendTodoItem}>Arrive at Worksite</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>1. Inspect Worksite for Damage</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Relay to MCC arrival and inspection start</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Begin inspection of the worksite</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. Once issue is discovered, relay issue to MCC</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. Wait to receive repair procedures from MCC</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>Note:</div>
-                    <div className="pl-12" role="button" onClick={sendTodoItem}>i. This can be the MCC referring the crewmember to one procedure pre-saved to a library in the HMD. Additional procedures will soon be provided in addition to the Cable Repair procedure.</div>
-                    <div className="pl-12" role="button" onClick={sendTodoItem}>ii. Growth: MCC can send new procedures.</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>e. Continue to appropriate procedure.</div>
-                
-                <div className="pl-4 font-bold pb-1 pt-4">Cable Repair</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>1. EVs notify LMCC1 starting inspection procedure</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>2. EV1 scan Comm tower, EV2 scan MMRTG for possible issues</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>3. If issue found, notify LMCC1</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>4. If EVs do not have a procedure for the issue, standy until LMCCx sends new procedure</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>5. Execute appropriate procedure</div>
+    
+                <div className="pl-4 font-bold pb-1 pt-4">Cable Repair [NEEDS WORK]</div>
                 <div className="pl-4" role="button" onClick={sendTodoItem}>2. Shut down comm tower (EV1)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>a. Select power button on screen</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>b. Select shut down option</div>
