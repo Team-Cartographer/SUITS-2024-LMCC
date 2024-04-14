@@ -88,14 +88,14 @@ export const NetworkProvider = ({ children }: any) => {
 
 	useEffect(() => {
 		const updateItems = async () => {
-			const todoData = await fetchWithoutParams<TodoItems>('api/v0?get=todo');
+			const todoData = await fetchWithoutParams<TodoItems>('todo');
 			if (todoData) {
 				setTodoItems(todoData);
 			} else {
 				setTodoItems(defaultTodoValue);
 			}
 
-			const warningData = await fetchWithoutParams<WarningData>('api/v0?get=warning');
+			const warningData = await fetchWithoutParams<WarningData>('warning');
 			if (warningData) {
 				setWarningData(warningData);
 			} else {
@@ -146,7 +146,7 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('DCU data is undefined')
 				}
 
-				const mapData = await fetchWithoutParams<GeoJSON>('api/v0?get=map_info');
+				const mapData = await fetchWithoutParams<GeoJSON>('geojson');
 				if (mapData) {
 					setMapGeoJSON(mapData);
 				} else {
@@ -352,29 +352,26 @@ export const NetworkProvider = ({ children }: any) => {
 
 
 	const updateTodoItems = async (newItem: string) => { 
-        const newItems = await fetchWithParams('api/v0',
+        const newItems = await fetchWithParams('settodo',
         {
-            notif: "update_todo",
             todoItems: [...(todoItems.todoItems || []), [newItem, "False"]]
         })
 		setTodoItems(newItems); 
 	}
 
 	const updateTodoItemsViaList = async (newItems: string[][]) => { 
-        const _newItems = await fetchWithParams('api/v0',
-        {
-            notif: "update_todo",
-            todoItems: newItems
-        })
+        const _newItems = await fetchWithParams('settodo',
+			{
+				todoItems: newItems
+			})
 		setTodoItems(_newItems);
 	}
 
 	const updateWarning = async (warning: string) => {
-		const warningData = await fetchWithParams(`api/v0`,
-									{
-									notif: 'update_warning',
-									infoWarning: warning,
-									})
+		const warningData = await fetchWithParams(`setwarning`,
+			{
+				infoWarning: warning,
+			})
 		setWarningData(warningData);
 	}
 
