@@ -57,9 +57,9 @@ echo -e "ports ready, starting python config now\n"
 
 cd gateway
 
-python3 -m venv venv >/dev/null
+python3 -m venv .venv >/dev/null
 
-source venv/bin/activate >/dev/null
+source .venv/bin/activate >/dev/null
 
 pip install --upgrade pip >/dev/null
 pip install -r requirements.txt >/dev/null

@@ -1,9 +1,10 @@
 # File Imports
-from typing import List
-from pydantic import BaseModel
+from io import BytesIO
 import paths
+from services.utils import request_utm_data, get_x_y_from_lat_lon
 from services.database import JSONDatabase
-from services.schema import GeoJSON, WarningItem, TodoItems, Feature
+from services.schema import GeoJSON, WarningItem, TodoItems, \
+                            GeoJSONFeature, TodoItem
 
 # Standard Imports 
 from json import loads, load
@@ -11,10 +12,11 @@ from base64 import b64encode
 
 # Third-Party Imports
 from fastapi import FastAPI, status
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
 from requests.auth import HTTPBasicAuth
+from PIL import Image, ImageDraw
 
 ####################################################################################
 ################################# CONFIGURATIONS ###################################
@@ -39,14 +41,6 @@ with open(paths.CONFIG_PATH) as f:
     TSS_HOST = data["TSS_IP"]
     HOLO_IP = data["HOLOLENS_IP"]
 
-
-class TodoItem(BaseModel):
-    todoItems: List[List[str]]
-
-class WarningItem(BaseModel): 
-    infoWarning: str
-
-
 ####################################################################################
 ################################ SERVER EVENTS #####################################
 ####################################################################################
@@ -69,6 +63,14 @@ def on_shutdown() -> None:
     todoDb.close()
     warningDb.close()
     geojsonDb.close()
+
+
+@app.get('/')
+def home() -> JSONResponse:
+    return JSONResponse({
+        "greeting": "Welcome to the Team Cartographer Gateway API",
+        "code": "Code can be found at https://github.com/Team-Cartographer/SUITS-2024-LMCC"
+    }, status.HTTP_200_OK)
 
 
 ####################################################################################
@@ -188,6 +190,36 @@ def comp_eva():
 def rockdata():
     req = get(f"http://{TSS_HOST}:14141/json_data/rocks/RockData.json")
     return loads(req.text)
+
+@app.get('/map')
+def getmap(): 
+    image: Image.Image = Image.open(paths.PNG_PATH)
+    draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
+
+    ll1, ll2, ll3 = request_utm_data(TSS_HOST)
+    x_ev1, y_ev1 = get_x_y_from_lat_lon(ll1.lat, ll1.lon)
+    x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
+    x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
+
+    pins: list = []
+    for feature in geojsonDb["features"]:
+        pins.append(feature["properties"]["description"])
+
+    for pin in pins:
+        x, y = map(int, pin.split('x'))
+        x, y = x/5, y/5
+        radius = 3
+        draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+
+    radius = 5
+    draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen')
+    draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink')
+    draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua')
+
+    img_io = BytesIO()
+    image.save(img_io, 'PNG')
+    img_io.seek(0)
+    return StreamingResponse(content=iter([img_io.read()]))
     
 
 ####################################################################################
@@ -208,12 +240,12 @@ def update_warning(warningData: WarningItem) -> JSONResponse:
 
 
 @app.post('/addfeature')
-def update_features(feature: Feature) -> JSONResponse:
-    geojsonDb["features"].append(feature)
+def update_features(feature: GeoJSONFeature) -> JSONResponse:
+    geojsonDb["features"].append(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_200_OK)
 
 
 @app.post('/removefeature')
-def remove_feature(feature: Feature) -> JSONResponse:
-    geojsonDb["features"].remove(feature)
+def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
+    geojsonDb["features"].remove(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_200_OK)

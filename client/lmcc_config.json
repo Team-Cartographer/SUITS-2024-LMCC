@@ -1,0 +1,6 @@
+{
+    "lmcc_url": "http://localhost:3001",
+    "tickspeed": 100,
+    "scale_factor": 5,
+    "eva1_ip": "1.1.1.1"
+}
