@@ -5,6 +5,24 @@ from typing import Dict, List, Tuple, Union
 from collections import defaultdict
 
 
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+    
+    def empty(self):
+        return not self.elements
+    
+    def put(self, item, priority):
+        heapq.heappush(self.elements, (priority, item))
+    
+    def get(self):
+        return heapq.heappop(self.elements)[1]
+
+    def contains(self, item):
+        return any(element[1] == item for element in self.elements)
+
+
+
 class Node:
     def __init__(self, x: float, y: float, z: float, graph: Dict[Tuple[float, float, float], List[Tuple[float, float, float]]], goal_coords: Tuple[float, float, float]):
         self.position = (x, y, z)
@@ -25,18 +43,19 @@ class Node:
         # Get the neighbors of the node from the graph
         return [Node(*neighbor, self.graph, self.goal_coords) for neighbor in self.graph[self.position]]
     
+    def __lt__(self, other):
+        return self.f < other.f
+    
     
 
 
 def astar(start_node: Node, goal_coords: Tuple[float, float, float], graph: Dict[Tuple[float, float, float], List[Tuple[float, float, float]]]) -> Union[List[Tuple[float, float, float]], None]:
-    """
-    A* algorithm.
-    """
-    open_list = [start_node]
-    closed_list = []
+    open_list = PriorityQueue()
+    open_list.put(start_node, start_node.f)
+    closed_list = set()
 
-    while open_list:
-        current_node = min(open_list, key=lambda node: node.f)
+    while not open_list.empty():
+        current_node = open_list.get()
 
         if current_node.position == goal_coords:
             path = []
@@ -45,23 +64,18 @@ def astar(start_node: Node, goal_coords: Tuple[float, float, float], graph: Dict
                 current_node = current_node.parent
             return path[::-1]
 
-        open_list.remove(current_node)
-        closed_list.append(current_node)
+        closed_list.add(current_node)
 
         for neighbor in current_node.get_neighbors():
-            if neighbor in closed_list:
+            if neighbor in closed_list or open_list.contains(neighbor):
                 continue
 
-            if neighbor not in open_list:
-                open_list.append(neighbor)
-            else:
-                if current_node.g + 1 < neighbor.g:
-                    neighbor.g = current_node.g + 1
-                    neighbor.f = neighbor.g + neighbor.h
-                    neighbor.parent = current_node
+            neighbor.g = current_node.g + 1
+            neighbor.f = neighbor.g + neighbor.h
+            neighbor.parent = current_node
+            open_list.put(neighbor, neighbor.f)
 
     return None
-
 
 
 def convert_to_graph(data: Dict[str, List[List[float]]]) -> Dict[Tuple[float, float, float], List[Tuple[float, float, float]]]:
@@ -174,7 +188,7 @@ def get_pathfinding_endpoints(vertices: List[List[float]]) -> Tuple[Tuple[float,
     """
     Helper function to get the start and end points for pathfinding.
     """
-
+    
     min_vertex = min(vertices, key=lambda v: (v[0], v[1], v[2]))
     max_vertex = max(vertices, key=lambda v: (v[0], v[1], v[2]))
 
