@@ -6,9 +6,9 @@
  * The minimap component for the LMCC console. 
  */
 
+import lmcc_config from "@/lmcc_config.json"
 import { fetchWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
-import lmcc_config from "@/lmcc_config.json"
 import { useNetwork } from "@/hooks/context/network-context";
 import { GeoJSONFeature } from "@/hooks/types";
 
@@ -50,7 +50,7 @@ const Map = () => {
     // Fetches the current map image and sets them to the URL state, checking for errors
     const fetchImage = async () => {
         try {
-            const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
+            const imageBlob = await fetchImageWithoutParams('map');
             if (imageBlob) {
                 for (let mapUrl of MAP_URLS) {
                     URL.revokeObjectURL(mapUrl);
@@ -90,32 +90,59 @@ const Map = () => {
         let dims = [rect.width / SCALING_FACTOR, rect.height / SCALING_FACTOR]
 
         if (nearPoint) {
-            await updateImageWithPins("rm", [nearPoint.properties.description], dims);
+            await removePin(nearPoint.properties.description);
         } else {
-            await updateImageWithPins("add", [`${x}x${y}`], dims);
+            await addPin(`${x}x${y}`);
         }
     };
 
 
     // Updates the Image every time it is clicked
-    const updateImageWithPins = async (action: string, pins: string[], dims: number[]) => {
+    const addPin = async (xystring: string) => {
         try {
-            await fetchWithParams('api/v0?get=map_img', {
-                map: action,
-                pins: pins,
-                dimensions: dims
+            const feature = { 
+                type: "Feature",
+                properties: {
+                    name: "placedWaypoint",
+                    description: xystring
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [xystring.split('x').map(Number)]
+                }
+            }
+            await fetchWithParams('addfeature', {
+                feature: feature
             });
         } catch (err) {
             const error = err as Error;
             setErr(error.message);
             console.error('Error updating image:', error);
         }
-        if (action === "add"){
-            console.log(`updated Map image by adding pins at ${pins}`) 
-        } else {
-            console.log(`updated Map image by removing pins at ${pins}`) 
-        }
     };
+
+    const removePin = async (xystring: string) => {
+        try {
+            const feature = { 
+                type: "Feature",
+                properties: {
+                    name: "placedWaypoint",
+                    description: xystring
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [xystring.split('x').map(Number)]
+                }
+            }
+            await fetchWithParams('removefeature', {
+                feature: feature
+            });
+        } catch (err) {
+            const error = err as Error;
+            setErr(error.message);
+            console.error('Error updating image:', error);
+        }
+    }
 
 
     // Renders Error if there was an Error
@@ -129,7 +156,6 @@ const Map = () => {
     }
 
     // Renders the Map Image if it exists. 
-    // Please DO NOT use <Image /> from `next/image`, as only the HTML5 <img /> tag works here!
     return ( 
         <div className="">
             {/* eslint-disable-next-line @next/next/no-img-element */}
