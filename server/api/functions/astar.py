@@ -24,46 +24,41 @@ class Node:
     def get_neighbors(self):
         # Get the neighbors of the node from the graph
         return [Node(*neighbor, self.graph, self.goal_coords) for neighbor in self.graph[self.position]]
+    
+    
 
 
-class BreakIt(Exception):
-    pass
-
-
-def astar(start_node: Node, goal_coords: Tuple[int, int], GRID: List[List[List[float]]]) -> Union[List[Tuple[int, int, int]], None]:
+def astar(start_node: Node, goal_coords: Tuple[float, float, float], graph: Dict[Tuple[float, float, float], List[Tuple[float, float, float]]]) -> Union[List[Tuple[float, float, float]], None]:
     """
-    A* search algorithm to find the optimal path from start node to goal node in a grid.
+    A* algorithm.
     """
+    open_list = [start_node]
+    closed_list = []
 
-    nodes: List[Node] = []  # Priority queue for nodes
-    heapq.heappush(nodes, start_node)  # Add start node to the priority queue
-    visited = set()  # Set to store visited nodes
+    while open_list:
+        current_node = min(open_list, key=lambda node: node.f)
 
-    while nodes:
-        current = heapq.heappop(nodes)  # Pop node with the lowest f value from the priority queue
-
-        if (current.x, current.y) in visited:
-            continue
-        visited.add((current.x, current.y))
-
-        if current.x == goal_coords[0] and current.y == goal_coords[1] and current.height == GRID[goal_coords[0]][goal_coords[1]][8]:
-            # If goal node is reached, construct and return the path
+        if current_node.position == goal_coords:
             path = []
-            while current.parent:
-                path.append((current.x, current.y, current.height))
-                current = current.parent
-            path.append((start_node.x, start_node.y, start_node.height))
-            path.reverse()
-            return path
+            while current_node is not None:
+                path.append(current_node.position)
+                current_node = current_node.parent
+            return path[::-1]
 
+        open_list.remove(current_node)
+        closed_list.append(current_node)
 
-        # Expand current node's neighbors
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-            x2 = current.x + dx
-            y2 = current.y + dy
-            if 0 <= x2 < len(GRID) and 0 <= y2 < len(GRID[0]):
-                new_node = Node(x2, y2, GRID, goal_coords, current)
-                heapq.heappush(nodes, new_node)
+        for neighbor in current_node.get_neighbors():
+            if neighbor in closed_list:
+                continue
+
+            if neighbor not in open_list:
+                open_list.append(neighbor)
+            else:
+                if current_node.g + 1 < neighbor.g:
+                    neighbor.g = current_node.g + 1
+                    neighbor.f = neighbor.g + neighbor.h
+                    neighbor.parent = current_node
 
     return None
 
