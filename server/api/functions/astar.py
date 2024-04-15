@@ -6,58 +6,24 @@ from collections import defaultdict
 
 
 class Node:
-    def __init__(self, x: int, y: int, GRID: List[List[List[float]]], goal_coords: Tuple[int, int], parent = None) -> None:
-        """
-        Initialize a node with coordinates, parent, height, slope, g, h, and f values.
-        """
+    def __init__(self, x: float, y: float, z: float, graph: Dict[Tuple[float, float, float], List[Tuple[float, float, float]]], goal_coords: Tuple[float, float, float]):
+        self.position = (x, y, z)
+        self.graph = graph
+        self.goal_coords = goal_coords
 
-        self.x = x
-        self.y = y
-        self.parent = parent
-        self.height = GRID[x][y][8]  # Get the height of the node from the grid
-        self.slope = GRID[x][y][3]  # Get the slope of the node from the grid
-        self.g: float = 0  # Cost from start node to current node
-        self.h: float = 0  # Heuristic cost from current node to goal node
-        self.f: float = 0  # Total cost f = g + h
+        self.g = 0  # Cost from start to current node
+        self.h = self.heuristic()  # Heuristic cost from current node to goal
+        self.f = self.g + self.h  # Total cost
 
-        if parent is not None:
-            self.g = parent.new_g(self)  # Calculate g value
-            self.h = self.heuristic(goal_coords, GRID)  # Calculate h value dynamically
-            self.f = self.g + self.h  # Calculate f value
+        self.parent = None  # Parent node
 
-    def __lt__(self, other: "Node") -> bool:
-        """
-        Comparison method to compare nodes based on f value.
-        """
+    def heuristic(self):
+        # Use Euclidean distance as heuristic
+        return ((self.position[0] - self.goal_coords[0]) ** 2 + (self.position[1] - self.goal_coords[1]) ** 2 + (self.position[2] - self.goal_coords[2]) ** 2) ** 0.5
 
-        return self.f < other.f
-
-    def heuristic(self, goal_coords: Tuple[int, int], GRID: List[List[List[float]]]) -> float:
-        """
-        Calculate the heuristic value (distance) between current node and goal node.
-        """
-
-        goal_x, goal_y = goal_coords
-        return sqrt((self.x - goal_x) ** 2 + (self.y - goal_y) ** 2 + (self.height - GRID[goal_x][goal_y][8]) ** 2)
-
-    def new_g(self, other: "Node") -> float:
-        """
-        Calculate the new g value for the current node based on the parent node and other parameters.
-        """
-
-        k_dist: float = 1  # Distance constant
-        k_slope: float = 0.25  # Slope constant
-        slope_penalty: float = 0  # Slope penalty
-
-        if other.slope >= 15:
-            slope_penalty = 100
-        elif other.slope >= 8:
-            slope_penalty = 5
-
-        dist: float = sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2)  # Distance between nodes
-        slope: float = abs(self.slope - other.slope)  # Absolute difference in slope
-        eqn: float = k_dist * dist + k_slope * slope + slope_penalty  # Equation to calculate g value
-        return eqn
+    def get_neighbors(self):
+        # Get the neighbors of the node from the graph
+        return [Node(*neighbor, self.graph, self.goal_coords) for neighbor in self.graph[self.position]]
 
 
 class BreakIt(Exception):
@@ -102,11 +68,40 @@ def astar(start_node: Node, goal_coords: Tuple[int, int], GRID: List[List[List[f
     return None
 
 
+
+def convert_to_graph(data: Dict[str, List[List[float]]]) -> Dict[Tuple[float, float, float], List[Tuple[float, float, float]]]:
+    """
+    Convert the parsed .obj file data into a graph.
+
+    Parameters:
+    - data: The parsed .obj file data.
+
+    Returns:
+    - A graph where each vertex is a node and each face is an edge connecting the vertices.
+    """
+    graph = defaultdict(list)
+
+    for face in data['faces']:
+        for i in range(len(face)):
+            v1 = tuple(data['vertices'][face[i-1] - 1])
+            v2 = tuple(data['vertices'][face[i] - 1])
+            graph[v1].append(v2)
+            graph[v2].append(v1)
+
+    return graph
+
+
+
 def parse_obj_file(file_path: str) -> Tuple[Dict[str, List[List[float]]], Tuple[float, float, float]]:
     """
-    Parse a .obj file and convert it into a 3D grid for the A* algorithm. 
-    Returns a tuple containing: a dictionary containing vertices, faces, and normal vectors, 
-                                and the size of the grid as a tuple (x_range, y_range, z_range).
+    Parse a .obj file and convert it into a 3D grid for the A* algorithm.
+
+    Parameters:
+    - file_path: The path to the .obj file.
+
+    Returns:
+    - A dictionary containing vertices, faces, and normal vectors.
+    - The size of the grid as a tuple (x_range, y_range, z_range).
     """
     data = defaultdict(list)
     min_coords = [float('inf')] * 3
@@ -119,25 +114,33 @@ def parse_obj_file(file_path: str) -> Tuple[Dict[str, List[List[float]]], Tuple[
             if not parts:
                 continue
 
-            if parts[0] == 'v':  # Vertex data
-                vertex = list(map(float, parts[1:]))
-                data['vertices'].append(vertex)
+            try:
+                if parts[0] == 'v':  # Vertex data
+                    vertex = list(map(float, parts[1:]))
+                    data['vertices'].append(vertex)
 
-                # Update min and max coordinates
-                for i in range(3):
-                    min_coords[i] = min(min_coords[i], vertex[i])
-                    max_coords[i] = max(max_coords[i], vertex[i])
+                    # Update min and max coordinates
+                    for i in range(3):
+                        min_coords[i] = min(min_coords[i], vertex[i])
+                        max_coords[i] = max(max_coords[i], vertex[i])
 
-            elif parts[0] == 'f':  # Face data
-                data['faces'].append(list(map(int, parts[1:])))
-            elif parts[0] == 'vn':  # Normal vector data
-                data['normals'].append(list(map(float, parts[1:])))
+                elif parts[0] == 'f':  # Face data
+                    # Split on slashes and only keep the vertex index
+                    face = [int(part.split('/')[0]) for part in parts[1:]]
+                    data['faces'].append(face)
 
+                elif parts[0] == 'vn':  # Normal vector data
+                    data['normals'].append(list(map(float, parts[1:])))
+            except ValueError as e:
+                print(f"Error parsing line '{line.strip()}': {e}")
+                continue
 
-    size = tuple(max_coord - min_coord for min_coord, max_coord in zip(min_coords, max_coords)) # Grid size
+    if not data['vertices'] or not data['faces']:
+        raise ValueError("Missing vertices or faces in .obj file")
+
+    size = tuple(max_coord - min_coord for min_coord, max_coord in zip(min_coords, max_coords))
 
     return data, size
-
 
 
 def run_astar(file_path: str, goal_coords: Tuple[int, int]) -> None:
@@ -146,17 +149,29 @@ def run_astar(file_path: str, goal_coords: Tuple[int, int]) -> None:
     """
 
     print("Parsing .obj file")
-    data, size = parse_obj_file(file_path)
-    
+    try:
+        data, size = parse_obj_file(file_path)
+    except ValueError as e:
+        print(f"Error parsing .obj file: {e}")
+        return
+
+    print("Converting to graph")
+    graph = convert_to_graph(data)
+
     print("Finding a suitable lunar path")
-    start_coords, end_coords = get_pathfinding_endpoints(data['vertices'])
-    start_node = Node(*start_coords, data, end_coords)
-    final_path = astar(start_node, end_coords, data)
+    try:
+        start_coords, end_coords = get_pathfinding_endpoints(data['vertices'])
+    except ValueError as e:
+        print(f"Error finding pathfinding endpoints: {e}")
+        return
+
+    start_node = Node(*start_coords, graph, end_coords)
+    final_path = astar(start_node, end_coords, graph)
 
     print("Initial path generated")
 
     if final_path:
-        generate_image(final_path, size)
+        generate_image(final_path, size)  # Pass size to generate_image
 
 
 
@@ -183,4 +198,4 @@ def generate_image(final_path: List[Tuple[int, int, int]], SIZE: Tuple[int, int]
 
 
 if __name__ == "__main__":
-    pass
+    run_astar("spatial_mapping.obj", (0, 0))  # Run the A* algorithm
