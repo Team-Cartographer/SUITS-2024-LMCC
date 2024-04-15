@@ -1,7 +1,8 @@
 from PIL import Image, ImageDraw
 import heapq
 from numpy import sqrt, load
-from typing import List, Tuple, Union
+from typing import Dict, List, Tuple, Union
+from collections import defaultdict
 
 
 class Node:
@@ -100,30 +101,74 @@ def astar(start_node: Node, goal_coords: Tuple[int, int], GRID: List[List[List[f
 
     return None
 
-def run_astar(sv, goal_coords: Tuple[int, int], GRID: List[List[List[float]]]) -> None:
+
+def parse_obj_file(file_path: str) -> Tuple[Dict[str, List[List[float]]], Tuple[float, float, float]]:
+    """
+    Parse a .obj file and convert it into a 3D grid for the A* algorithm. 
+    Returns a tuple containing: a dictionary containing vertices, faces, and normal vectors, 
+                                and the size of the grid as a tuple (x_range, y_range, z_range).
+    """
+    data = defaultdict(list)
+    min_coords = [float('inf')] * 3
+    max_coords = [float('-inf')] * 3
+
+    with open(file_path, 'r') as file:
+        for line in file:
+            parts = line.split()
+
+            if not parts:
+                continue
+
+            if parts[0] == 'v':  # Vertex data
+                vertex = list(map(float, parts[1:]))
+                data['vertices'].append(vertex)
+
+                # Update min and max coordinates
+                for i in range(3):
+                    min_coords[i] = min(min_coords[i], vertex[i])
+                    max_coords[i] = max(max_coords[i], vertex[i])
+
+            elif parts[0] == 'f':  # Face data
+                data['faces'].append(list(map(int, parts[1:])))
+            elif parts[0] == 'vn':  # Normal vector data
+                data['normals'].append(list(map(float, parts[1:])))
+
+
+    size = tuple(max_coord - min_coord for min_coord, max_coord in zip(min_coords, max_coords)) # Grid size
+
+    return data, size
+
+
+
+def run_astar(file_path: str, goal_coords: Tuple[int, int]) -> None:
     """
     Main function to run the A* algorithm.
     """
 
+    print("Parsing .obj file")
+    data, size = parse_obj_file(file_path)
+    
     print("Finding a suitable lunar path")
-    SIZE = sv.size
-    (x, y) = get_pathfinding_endpoints()
-    start_node = Node(x, y, GRID, goal_coords)
-    final_path = astar(start_node, goal_coords, GRID)
+    start_coords, end_coords = get_pathfinding_endpoints(data['vertices'])
+    start_node = Node(*start_coords, data, end_coords)
+    final_path = astar(start_node, end_coords, data)
 
     print("Initial path generated")
 
     if final_path:
-        generate_image(final_path, SIZE)  # Pass SIZE to generate_image
+        generate_image(final_path, size)
 
-def get_pathfinding_endpoints() -> Tuple[int, int]:
+
+
+def get_pathfinding_endpoints(vertices: List[List[float]]) -> Tuple[Tuple[float, float, float], Tuple[float, float, float]]:
     """
     Helper function to get the start and end points for pathfinding.
     """
 
-    x = int(input("Enter x coordinate: "))
-    y = int(input("Enter y coordinate: "))
-    return (x, y)
+    min_vertex = min(vertices, key=lambda v: (v[0], v[1], v[2]))
+    max_vertex = max(vertices, key=lambda v: (v[0], v[1], v[2]))
+
+    return (min_vertex[0], min_vertex[1], min_vertex[2]), (max_vertex[0], max_vertex[1], max_vertex[2])
 
 def generate_image(final_path: List[Tuple[int, int, int]], SIZE: Tuple[int, int]) -> None:
     """
