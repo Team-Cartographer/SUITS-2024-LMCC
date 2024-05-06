@@ -1,20 +1,20 @@
 from PIL import Image, ImageDraw
 import heapq
-from numpy import sqrt, load
-from typing import Dict, List, Tuple, Union
-from collections import defaultdict
+import numpy as np
+from typing import Tuple
+from scipy.sparse import lil_matrix
 
 
 class PriorityQueue:
     def __init__(self):
         self.elements = []
-    
+
     def empty(self):
         return not self.elements
-    
+
     def put(self, item, priority):
         heapq.heappush(self.elements, (priority, item))
-    
+
     def get(self):
         return heapq.heappop(self.elements)[1]
 
@@ -22,34 +22,37 @@ class PriorityQueue:
         return any(element[1] == item for element in self.elements)
 
 
-
 class Node:
-    def __init__(self, x: float, y: float, z: float, graph: Dict[Tuple[float, float, float], List[Tuple[float, float, float]]], goal_coords: Tuple[float, float, float]):
-        self.position = (x, y, z)
-        self.graph = graph
+    def __init__(self, x: float, y: float, z: float, adjacency_matrix: np.ndarray, vertices: np.ndarray, goal_coords: np.ndarray):
+        self.position = np.array([x, y, z])
+        self.adjacency_matrix = adjacency_matrix
+        self.vertices = vertices
         self.goal_coords = goal_coords
 
-        self.g = 0  # Cost from start to current node
-        self.h = self.heuristic()  # Heuristic cost from current node to goal
-        self.f = self.g + self.h  # Total cost
+        self.g = 0  
+        self.h = self.heuristic()  
+        self.f = self.g + self.h  
 
-        self.parent = None  # Parent node
+        self.parent = None  
 
     def heuristic(self):
-        # Use Euclidean distance as heuristic
-        return ((self.position[0] - self.goal_coords[0]) ** 2 + (self.position[1] - self.goal_coords[1]) ** 2 + (self.position[2] - self.goal_coords[2]) ** 2) ** 0.5
+        return np.linalg.norm(self.position - self.goal_coords)
 
     def get_neighbors(self):
-        # Get the neighbors of the node from the graph
-        return [Node(*neighbor, self.graph, self.goal_coords) for neighbor in self.graph[self.position]]
-    
+        position_indices = np.where((self.vertices == self.position).all(axis=1))
+        if position_indices[0].size == 0:
+            return []
+
+        position_index = position_indices[0][0]
+
+        neighbors = np.argwhere(self.adjacency_matrix[position_index, :]).flatten()
+        return [Node(*self.vertices[neighbor], self.adjacency_matrix, self.vertices, self.goal_coords) for neighbor in neighbors]
+
     def __lt__(self, other):
         return self.f < other.f
-    
-    
 
 
-def astar(start_node: Node, goal_coords: Tuple[float, float, float], graph: Dict[Tuple[float, float, float], List[Tuple[float, float, float]]]) -> Union[List[Tuple[float, float, float]], None]:
+def astar(start_node: Node, goal_coords: np.ndarray, adjacency_matrix: np.ndarray, vertices: np.ndarray) -> np.ndarray:
     open_list = PriorityQueue()
     open_list.put(start_node, start_node.f)
     closed_list = set()
@@ -57,12 +60,12 @@ def astar(start_node: Node, goal_coords: Tuple[float, float, float], graph: Dict
     while not open_list.empty():
         current_node = open_list.get()
 
-        if current_node.position == goal_coords:
+        if np.array_equal(current_node.position, goal_coords):
             path = []
             while current_node is not None:
                 path.append(current_node.position)
                 current_node = current_node.parent
-            return path[::-1]
+            return np.array(path[::-1])
 
         closed_list.add(current_node)
 
@@ -75,46 +78,46 @@ def astar(start_node: Node, goal_coords: Tuple[float, float, float], graph: Dict
             neighbor.parent = current_node
             open_list.put(neighbor, neighbor.f)
 
-    return None
+    return np.array([])
 
 
-def convert_to_graph(data: Dict[str, List[List[float]]]) -> Dict[Tuple[float, float, float], List[Tuple[float, float, float]]]:
+def convert_to_adjacency_matrix(data: dict) -> Tuple[np.ndarray, np.ndarray]:
     """
-    Convert the parsed .obj file data into a graph.
+    Convert the parsed .obj file data into an adjacency matrix.
 
     Parameters:
     - data: The parsed .obj file data.
 
     Returns:
-    - A graph where each vertex is a node and each face is an edge connecting the vertices.
+    - An adjacency matrix representing the graph.
+    - An array of vertex coordinates.
     """
-    graph = defaultdict(list)
+    vertices = np.array(data['vertices'])
+    num_vertices = len(vertices)
+    adjacency_matrix = lil_matrix((num_vertices, num_vertices), dtype=bool)
 
     for face in data['faces']:
         for i in range(len(face)):
-            v1 = tuple(data['vertices'][face[i-1] - 1])
-            v2 = tuple(data['vertices'][face[i] - 1])
-            graph[v1].append(v2)
-            graph[v2].append(v1)
+            v1 = face[i-1] - 1
+            v2 = face[i] - 1
+            adjacency_matrix[v1, v2] = True
+            adjacency_matrix[v2, v1] = True
 
-    return graph
+    print(adjacency_matrix)
+    return adjacency_matrix.tocsr(), vertices
 
 
-
-def parse_obj_file(file_path: str) -> Tuple[Dict[str, List[List[float]]], Tuple[float, float, float]]:
+def parse_obj_file(file_path: str) -> dict:
     """
-    Parse a .obj file and convert it into a 3D grid for the A* algorithm.
+    Parse a .obj file and convert it into a dictionary containing vertices, faces, and normal vectors.
 
     Parameters:
     - file_path: The path to the .obj file.
 
     Returns:
     - A dictionary containing vertices, faces, and normal vectors.
-    - The size of the grid as a tuple (x_range, y_range, z_range).
     """
-    data = defaultdict(list)
-    min_coords = [float('inf')] * 3
-    max_coords = [float('-inf')] * 3
+    data = {'vertices': [], 'faces': [], 'normals': []}
 
     with open(file_path, 'r') as file:
         for line in file:
@@ -125,86 +128,66 @@ def parse_obj_file(file_path: str) -> Tuple[Dict[str, List[List[float]]], Tuple[
 
             try:
                 if parts[0] == 'v':  # Vertex data
-                    vertex = list(map(float, parts[1:]))
-                    data['vertices'].append(vertex)
-
-                    # Update min and max coordinates
-                    for i in range(3):
-                        min_coords[i] = min(min_coords[i], vertex[i])
-                        max_coords[i] = max(max_coords[i], vertex[i])
+                    data['vertices'].append(list(map(float, parts[1:])))
 
                 elif parts[0] == 'f':  # Face data
-                    # Split on slashes and only keep the vertex index
                     face = [int(part.split('/')[0]) for part in parts[1:]]
                     data['faces'].append(face)
 
                 elif parts[0] == 'vn':  # Normal vector data
                     data['normals'].append(list(map(float, parts[1:])))
-            except ValueError as e:
-                print(f"Error parsing line '{line.strip()}': {e}")
+            except ValueError:
                 continue
 
     if not data['vertices'] or not data['faces']:
         raise ValueError("Missing vertices or faces in .obj file")
 
-    size = tuple(max_coord - min_coord for min_coord, max_coord in zip(min_coords, max_coords))
-
-    return data, size
+    return data
 
 
-def run_astar(file_path: str, goal_coords: Tuple[int, int]) -> None:
+def run_astar(file_path: str) -> None:
     """
     Main function to run the A* algorithm.
     """
-
     print("Parsing .obj file")
-    try:
-        data, size = parse_obj_file(file_path)
-    except ValueError as e:
-        print(f"Error parsing .obj file: {e}")
-        return
+    data = parse_obj_file(file_path)
+    # print(data)
 
-    print("Converting to graph")
-    graph = convert_to_graph(data)
+    print("Converting to adjacency matrix")
+    adjacency_matrix, vertices = convert_to_adjacency_matrix(data)
+    print(adjacency_matrix)
+    print("vertices", vertices)
 
     print("Finding a suitable lunar path")
-    try:
-        start_coords, end_coords = get_pathfinding_endpoints(data['vertices'])
-    except ValueError as e:
-        print(f"Error finding pathfinding endpoints: {e}")
-        return
+    start_coords = np.min(vertices, axis=0)
+    end_coords = np.max(vertices, axis=0)
 
-    start_node = Node(*start_coords, graph, end_coords)
-    final_path = astar(start_node, end_coords, graph)
+    start_node = Node(*start_coords, adjacency_matrix, vertices, end_coords)
+    # print(start_node.position)
+    final_path = astar(start_node, end_coords, adjacency_matrix, vertices)
 
     print("Initial path generated")
 
-    if final_path:
-        generate_image(final_path, size)  # Pass size to generate_image
+    if final_path.size > 0:
+        generate_image(final_path, vertices)
+    else:
+        print("No path found.")
 
 
-
-def get_pathfinding_endpoints(vertices: List[List[float]]) -> Tuple[Tuple[float, float, float], Tuple[float, float, float]]:
-    """
-    Helper function to get the start and end points for pathfinding.
-    """
-    
-    min_vertex = min(vertices, key=lambda v: (v[0], v[1], v[2]))
-    max_vertex = max(vertices, key=lambda v: (v[0], v[1], v[2]))
-
-    return (min_vertex[0], min_vertex[1], min_vertex[2]), (max_vertex[0], max_vertex[1], max_vertex[2])
-
-def generate_image(final_path: List[Tuple[int, int, int]], SIZE: Tuple[int, int]) -> None:
+def generate_image(final_path: np.ndarray, vertices: np.ndarray) -> None:
     """
     Generate an image of the optimal path using Pillow library.
     """
+    min_coords = np.min(vertices, axis=0)
+    max_coords = np.max(vertices, axis=0)
+    SIZE = (int(max_coords[0] - min_coords[0]), int(max_coords[1] - min_coords[1]))
 
-    img = Image.new("RGB", (SIZE[0], SIZE[1]), color="white")  # Create a new image
-    draw = ImageDraw.Draw(img)  # Create a drawing context
+    img = Image.new("RGB", SIZE, color="white")  
+    draw = ImageDraw.Draw(img)  
     for node in final_path:
-        draw.point((node[0], node[1]), fill="blue")  # Draw blue points for the path nodes
-    img.show()  # Display the image
+        draw.point((int(node[0] - min_coords[0]), int(node[1] - min_coords[1])), fill="blue")
+    img.show()
 
 
 if __name__ == "__main__":
-    run_astar("spatial_mapping.obj", (0, 0))  # Run the A* algorithm
+    run_astar("sample.obj")  
