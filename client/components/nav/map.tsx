@@ -20,7 +20,7 @@ const MAP_WIDTH = 3720;
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-  
+
 
 let MAP_URLS: string[] = []
 
@@ -46,6 +46,22 @@ const Map = () => {
     const [descContent, setDescContent] = useState(''); // Description content for the pin
     
     const networkProvider = useNetwork();
+
+    const NameModal = ({ onClick }: any) => { 
+        if (!modalOpen) return null;
+        
+        return (
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }}>
+                <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                    <div className="flex flex-col">
+                        <h2 className="font-bold text-xl">Enter Pin Description</h2>
+                        {/* <input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black" /> */}
+                        <Input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black"/>
+                    </div>
+                    <button onClick={onClick}>Close</button>
+                </div>
+            </div>
+        );};
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
