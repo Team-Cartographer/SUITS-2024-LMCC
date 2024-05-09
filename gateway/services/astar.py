@@ -20,6 +20,14 @@ class PriorityQueue:
 
     def contains(self, item):
         return any(element[1] == item for element in self.elements)
+    
+    def __eq__(self, other):
+        if isinstance(other, Node):
+            return np.array_equal(self.position, other.position)
+        return False
+
+    def __hash__(self):
+        return hash(tuple(self.position))
 
 
 class Node:
