@@ -6,9 +6,9 @@
  * The minimap component for the LMCC console. 
  */
 
+import lmcc_config from "@/lmcc_config.json"
 import { fetchWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
-import lmcc_config from "@/lmcc_config.json"
 import { useNetwork } from "@/hooks/context/network-context";
 import { GeoJSONFeature } from "@/hooks/types";
 
@@ -18,6 +18,20 @@ const SCALING_FACTOR = 1/(lmcc_config.scale_factor);
 const MAP_HEIGHT = 3543;
 const MAP_WIDTH = 3720;
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+  } from "@/components/ui/alert-dialog"
+import { Input } from "../ui/input";
+  
+
 let MAP_URLS: string[] = []
 
 /* 
@@ -26,13 +40,37 @@ let MAP_URLS: string[] = []
     and multiply the rect height, width, and x, y in const handleImageClick(); 
 */
 
+interface ModalProps { 
+    isOpen: boolean; 
+    onClose: () => void;
+    children: React.ReactNode;
+}
 
 // Map Component
 const Map = () => {
     const [mapImage, setMapImage] = useState(''); // URL to Map Image
     const [err, setErr] = useState(''); // Potential Error in getting Map
     const [points, setPoints] = useState<GeoJSONFeature[]>([]) // Set of points to have from the map
+    const [shiftPressed, setShiftPressed] = useState(false); // Whether the shift key is pressed or not
+    const [modalOpen, setModalOpen] = useState(false); // Whether the modal is open or not
+    const [descContent, setDescContent] = useState(''); // Description content for the pin
     const networkProvider = useNetwork();
+
+    const NameModal = ({ onClick }: any) => { 
+        if (!modalOpen) return null;
+        
+        return (
+            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }}>
+                <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                    <div className="flex flex-col">
+                        <h2 className="font-bold text-xl">Enter Pin Description</h2>
+                        {/* <input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black" /> */}
+                        <Input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black"/>
+                    </div>
+                    <button onClick={onClick}>Close</button>
+                </div>
+            </div>
+        );};
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
@@ -46,11 +84,32 @@ const Map = () => {
         };
     });
 
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if(event.key === 'Shift') {
+                console.log("remove enabled");
+                setShiftPressed(true);
+            }
+        };
+        const handleKeyUp = (event: KeyboardEvent) => {
+            if(event.key === 'Shift') {
+                console.log("remove disabled");
+                setShiftPressed(false);
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp)
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('keyup', handleKeyUp);
+        };
+    }, []);
+
 
     // Fetches the current map image and sets them to the URL state, checking for errors
     const fetchImage = async () => {
         try {
-            const imageBlob = await fetchImageWithoutParams('api/v0?get=map_img');
+            const imageBlob = await fetchImageWithoutParams('map');
             if (imageBlob) {
                 for (let mapUrl of MAP_URLS) {
                     URL.revokeObjectURL(mapUrl);
@@ -87,35 +146,64 @@ const Map = () => {
             return isNearPoint;
         });
 
-        let dims = [rect.width / SCALING_FACTOR, rect.height / SCALING_FACTOR]
-
         if (nearPoint) {
-            await updateImageWithPins("rm", [nearPoint.properties.description], dims);
+           if(shiftPressed) {
+                await removePin(nearPoint.properties.description);
+           } else { 
+                setModalOpen(true);
+           }
         } else {
-            await updateImageWithPins("add", [`${x}x${y}`], dims);
+            await addPin(`${x}x${y}`);
         }
     };
 
 
     // Updates the Image every time it is clicked
-    const updateImageWithPins = async (action: string, pins: string[], dims: number[]) => {
+    const addPin = async (xystring: string) => {
         try {
-            await fetchWithParams('api/v0?get=map_img', {
-                map: action,
-                pins: pins,
-                dimensions: dims
+            const feature = { 
+                type: "Feature",
+                properties: {
+                    name: "placedWaypoint",
+                    description: xystring
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [xystring.split('x').map(Number)]
+                }
+            }
+            await fetchWithParams('addfeature', {
+                feature: feature
             });
         } catch (err) {
             const error = err as Error;
             setErr(error.message);
             console.error('Error updating image:', error);
         }
-        if (action === "add"){
-            console.log(`updated Map image by adding pins at ${pins}`) 
-        } else {
-            console.log(`updated Map image by removing pins at ${pins}`) 
-        }
     };
+
+    const removePin = async (xystring: string) => {
+        try {
+            const feature = { 
+                type: "Feature",
+                properties: {
+                    name: "placedWaypoint",
+                    description: xystring
+                },
+                geometry: {
+                    type: "Point",
+                    coordinates: [xystring.split('x').map(Number)]
+                }
+            }
+            await fetchWithParams('removefeature', {
+                feature: feature
+            });
+        } catch (err) {
+            const error = err as Error;
+            setErr(error.message);
+            console.error('Error updating image:', error);
+        }
+    }
 
 
     // Renders Error if there was an Error
@@ -129,10 +217,9 @@ const Map = () => {
     }
 
     // Renders the Map Image if it exists. 
-    // Please DO NOT use <Image /> from `next/image`, as only the HTML5 <img /> tag works here!
     return ( 
         <div className="">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {<NameModal onClick={() => {setModalOpen(false);}} />}
             {mapImage && <img className="rounded-3xl" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
         </div>
     );

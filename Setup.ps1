@@ -27,9 +27,7 @@ Write-Host "all dependencies are installed!`n"
 
 Write-Host "`ports ready, starting config now`n"
 
-$FILE_PATH = "./config/tss_data.json"
-
-Set-Location server
+Set-Location gateway
 
 python -m venv venv > $null
 
@@ -37,32 +35,13 @@ python -m venv venv > $null
 
 python.exe -m pip install --upgrade pip > $null
 
-Set-Location config 
-
 pip install -r requirements.txt
-
-Set-Location ..
-
-Write-Host "`nrunning server startup config"
-
-python config/startup.py $mainAdapter.IPAddress
-$exitCode = $LASTEXITCODE
 
 deactivate
 
 Set-Location ..
 
-if ($exitCode -eq 1) {
-    Write-Host "setup complete. open the external urls"
-    Write-Host "`ngoodbye, world."
-    exit 1
-} elseif ($exitCode -eq 2) {
-    Write-Host "please run the tss server and try again"
-    Write-Host "`ngoodbye, world."
-    exit 1
-}
-
-Write-Host "`nlmcc server setup complete`n"
+Write-Host "`ngateway setup complete`n"
 
 Write-Host "setting up lmcc client"
 

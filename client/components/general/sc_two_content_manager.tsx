@@ -12,7 +12,7 @@ interface WindowNames {
 const windows = {
     "eva1": "EVA 1 Telemetry",
     "eva2": "EVA 2 Telemetry",
-    "chat": "Chat"
+    // "chat": "Chat"
 }
 
 
@@ -28,19 +28,19 @@ const ScreenTwoContentManager = () => {
     const [criticalIDs1, criticalIDs2] = [[], []] // Remove to add back nominal checks, or use these for temp testing
 
 
-    const [chatHistory, setChatHistory] = useState<ChatItemType[]>([]);
-    const [newTodoItem, setNewTodoItem] = useState<[string, string]>(["", ""]);
+    // const [chatHistory, setChatHistory] = useState<ChatItemType[]>([]);
+    // const [newTodoItem, setNewTodoItem] = useState<[string, string]>(["", ""]);
 
 
     const windowNames: WindowNames = {
         "eva1": EVADataMap(EVA1Data, 1, criticalIDs1),
         "eva2": EVADataMap(EVA2Data, 2, criticalIDs2),
-        "chat": <GeminiChat 
-                    chatHistory={chatHistory} 
-                    setChatHistory={setChatHistory} 
-                    newTodoItem={newTodoItem}
-                    setNewTodoItem={setNewTodoItem}
-                />
+        // "chat": <GeminiChat 
+        //             chatHistory={chatHistory} 
+        //             setChatHistory={setChatHistory} 
+        //             newTodoItem={newTodoItem}
+        //             setNewTodoItem={setNewTodoItem}
+        //         />
     }
 
     const renderWindow = () => {
