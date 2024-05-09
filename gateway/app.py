@@ -191,25 +191,30 @@ def rockdata():
     req = get(f"http://{TSS_HOST}:14141/json_data/rocks/RockData.json")
     return loads(req.text)
 
+
+
 @app.get('/map')
-def getmap(): 
-    image: Image.Image = Image.open(paths.PNG_PATH)
-    draw: ImageDraw.ImageDraw = ImageDraw.Draw(image)
+def getmap():
+    image = Image.open(paths.PNG_PATH)
+    draw = ImageDraw.Draw(image)
 
     ll1, ll2, ll3 = request_utm_data(TSS_HOST)
     x_ev1, y_ev1 = get_x_y_from_lat_lon(ll1.lat, ll1.lon)
     x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
     x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
 
-    pins: list = []
+    pins = []
     for feature in geojsonDb["features"]:
-        pins.append(feature["properties"]["description"])
+        pins.append((feature["properties"]["description"], feature["properties"]["name"]))
 
-    for pin in pins:
+    for pin, name in pins:
         x, y = map(int, pin.split('x'))
         x, y = x/5, y/5
         radius = 3
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+        text_offset_x = 10 
+        text_offset_y = -5  
+        draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
 
     radius = 5
     draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen')
@@ -219,7 +224,8 @@ def getmap():
     img_io = BytesIO()
     image.save(img_io, 'PNG')
     img_io.seek(0)
-    return StreamingResponse(content=iter([img_io.read()]))
+    return StreamingResponse(content=iter([img_io.read()]), media_type="image/png")
+
     
 
 ####################################################################################
