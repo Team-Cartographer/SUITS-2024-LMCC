@@ -29,6 +29,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert-dialog"
+import { Input } from "../ui/input";
   
 
 let MAP_URLS: string[] = []
@@ -63,7 +64,8 @@ const Map = () => {
                 <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
                     <div className="flex flex-col">
                         <h2 className="font-bold text-xl">Enter Pin Description</h2>
-                        <input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black" />
+                        {/* <input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black" /> */}
+                        <Input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black"/>
                     </div>
                     <button onClick={onClick}>Close</button>
                 </div>
