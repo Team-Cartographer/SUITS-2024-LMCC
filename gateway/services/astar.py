@@ -3,6 +3,13 @@ import heapq
 import numpy as np
 from typing import Tuple
 from scipy.sparse import lil_matrix
+import obj_graph_visualizer
+
+# ... your existing code ...
+
+# Assuming `vertices` is a list of 3D coordinates and `edges` is a dictionary where
+# the keys are indices into the `vertices` list and the values are lists of indices
+# representing the vertices connected to the key vertex.
 
 
 class PriorityQueue:
@@ -163,6 +170,7 @@ def run_astar(file_path: str) -> None:
 
     print("Converting to adjacency matrix")
     adjacency_matrix, vertices = convert_to_adjacency_matrix(data)
+    obj_graph_visualizer.visualize_graph(vertices, adjacency_matrix)
     print(adjacency_matrix)
     print("vertices", vertices)
 
