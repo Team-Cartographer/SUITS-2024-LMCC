@@ -2,7 +2,7 @@
 from io import BytesIO
 import paths
 from services.utils import request_utm_data, get_x_y_from_lat_lon
-from services.database import JSONDatabase
+from services.database import JSONDatabase, ListCache
 from services.schema import GeoJSON, WarningItem, TodoItems, \
                             GeoJSONFeature, TodoItem
 
@@ -35,6 +35,10 @@ app.add_middleware(
 todoDb: JSONDatabase[list[TodoItems]] = JSONDatabase(paths.TODO_PATH)
 warningDb: JSONDatabase[WarningItem] = JSONDatabase(paths.WARNING_PATH)
 geojsonDb: JSONDatabase[GeoJSON] = JSONDatabase(paths.GEOJSON_PATH)
+
+eva1_poscache = ListCache(5000)
+eva2_poscache = ListCache(5000)
+rover_poscache = ListCache(5000)
 
 with open(paths.CONFIG_PATH) as f:
     data = load(f)
@@ -203,6 +207,10 @@ def getmap():
     x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
     x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
 
+    eva1_poscache.append((x_ev1, y_ev1))
+    eva2_poscache.append((x_ev2, y_ev2))
+    rover_poscache.append((x_rov, y_rov))
+
     pins = []
     for feature in geojsonDb["features"]:
         pins.append((feature["properties"]["description"], feature["properties"]["name"]))
@@ -215,6 +223,20 @@ def getmap():
         text_offset_x = 10
         text_offset_y = -5  
         draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
+
+    for i in range(1, len(eva1_poscache)):
+        x1, y1 = eva1_poscache[i-1]
+        x2, y2 = eva1_poscache[i]
+        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='lawngreen', width=2)
+        
+        x1, y1 = eva2_poscache[i-1]
+        x2, y2 = eva2_poscache[i]
+        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='deeppink', width=2)
+        
+        x1, y1 = rover_poscache[i-1]
+        x2, y2 = rover_poscache[i]
+        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='aqua', width=2)
+    
 
     radius = 5
     draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen')

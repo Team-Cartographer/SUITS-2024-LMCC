@@ -29,3 +29,15 @@ class JSONDatabase(dict):
         log.info("Saving database to file")
         with open(self._path, "w") as file:
             json.dump(self, file, indent="\t")
+
+
+
+class ListCache(list):
+    def __init__(self, max_size: int=20):
+        super().__init__()
+        self.max_size = max_size
+
+    def append(self, item):
+        super().append(item)
+        if len(self) > self.max_size:
+            del self[0]

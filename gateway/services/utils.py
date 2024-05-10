@@ -3,6 +3,8 @@ from trimesh import load as meshload
 from pyproj import Proj, transform
 from collections import namedtuple
 import numpy as np 
+from requests import get
+from json import loads 
 
 
 GEODATA_PATH = Path(__file__).parent / 'geodata.npy'
@@ -18,14 +20,14 @@ TIFF_DATASET = np.load(GEODATA_PATH)
 
 
 def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]: 
-    #req = get(f"http://{tss_host}:14141/json_data/IMU.json")
-    #req2 = get(f"http://{tss_host}:14141/json_data/ROVER.json")
-    #imu_data = loads(req.text)
-    #rover_data = loads(req2.text)
+    req = get(f"http://{tss_host}:14141/json_data/IMU.json")
+    req2 = get(f"http://{tss_host}:14141/json_data/ROVER.json")
+    imu_data = loads(req.text)
+    rover_data = loads(req2.text)
 
-    east_eva1, north_eva1 = 298354.07, 3272377.20 #int(imu_data["imu"]["eva1"]["posx"]), int(imu_data["imu"]["eva1"]["posy"])
-    east_eva2, north_eva2 = 0, 0 #int(imu_data["imu"]["eva1"]["posx"]), int(imu_data["imu"]["eva1"]["posy"])
-    east_rover, north_rover = 0, 0 #int(rover_data["rover"]["posx"]), int(rover_data["rover"]["posy"])
+    east_eva1, north_eva1 = int(imu_data["imu"]["eva1"]["posx"]), int(imu_data["imu"]["eva1"]["posy"])
+    east_eva2, north_eva2 = int(imu_data["imu"]["eva2"]["posx"]), int(imu_data["imu"]["eva2"]["posy"])
+    east_rover, north_rover = int(rover_data["rover"]["posx"]), int(rover_data["rover"]["posy"])
 
     lon_eva_1, lat_eva_1 = map(round_8, transform(utm_proj, lat_lon_proj, east_eva1, north_eva1))
     lon_eva_2, lat_eva_2 = map(round_8, transform(utm_proj, lat_lon_proj, east_eva2, north_eva2))
