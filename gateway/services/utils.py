@@ -1,12 +1,12 @@
 from pathlib import Path 
-from requests import get
-from json import loads
+from trimesh import load as meshload
 from pyproj import Proj, transform
 from collections import namedtuple
 import numpy as np 
 
 
 GEODATA_PATH = Path(__file__).parent / 'geodata.npy'
+SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
 BREADCRUMBS_PATH = Path(__file__).parent / 'breadcrumbs.npy'
 
 utm_proj = Proj(proj='utm', zone=15, ellps='WGS84', datum='WGS84', units='m', north=True)
@@ -49,3 +49,48 @@ def get_x_y_from_lat_lon(lat: float, lon: float):
         return(x_index, y_index)
     else:
         return TIFF_DATASET.shape[1]//2, TIFF_DATASET.shape[0]//2
+
+
+
+def load_mesh(resolution=1500): 
+    mesh = meshload('SpatialMapping-3.obj', force='mesh')
+
+    vertices = mesh.vertices
+    vertices = vertices[:, [0, 2, 1]]  
+
+    vertices[:, 0] += abs(vertices[:, 0].min())
+    vertices[:, 1] += abs(vertices[:, 1].min())
+    vertices[:, 2] += abs(vertices[:, 2].min())
+
+    resolution = (resolution, resolution)
+    grid = np.zeros(resolution)
+
+    min_coords = vertices.min(axis=0)
+    max_coords = vertices.max(axis=0)
+
+    scale_x = resolution[0] / (max_coords[0] - min_coords[0])
+    scale_y = resolution[1] / (max_coords[1] - min_coords[1])
+
+    for vertex in vertices:
+        x, y, z = vertex
+        grid_x = int((x - min_coords[0]) * scale_x)
+        grid_y = int((y - min_coords[1]) * scale_y)
+        grid[grid_x-1, grid_y-1] = z
+
+    np.save(SPATIAL_HEIGHTMAP_PATH, grid)
+    return grid 
+
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt 
+
+    data = load_mesh(760)
+
+    plt.figure(figsize=(10, 8))
+    plt.imshow(data, cmap='hot', interpolation='nearest')
+    plt.colorbar(label='Height')
+    plt.title('Heatmap of 3D Mesh')
+    plt.xlabel('X index')
+    plt.ylabel('Y index')
+    plt.show()
