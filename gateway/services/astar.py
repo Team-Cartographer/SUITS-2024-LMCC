@@ -1,7 +1,7 @@
-from PIL import Image, ImageDraw
 import heapq
 from numpy import sqrt, load, exp
 from pathlib import Path
+from utils import load_mesh
 
 
 SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
@@ -102,6 +102,8 @@ def visualize_path(points):
 
 def run_astar() -> None:
     print("Finding Optimized Path")
+
+    load_mesh() #FIXME: Remove Loader Script later, this is for tests
 
     global GRID
     GRID = load(SPATIAL_HEIGHTMAP_PATH)
