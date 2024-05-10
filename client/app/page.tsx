@@ -51,7 +51,7 @@ const StartPage = () => {
     <div className="h-full flex flex-col bg-slate-950 text-white items-center justify-center">
       <div className="flex flex-row pb-2 text-3xl font-bold items-center">
         <Image src={icon} alt="logo" width={65} height={65} className="pr-5" />
-        Team Cartographer SUITS 2024 LMCC Console
+        Polaris LMCC Console
       </div>
 
       <div className="pt-2">
@@ -73,6 +73,9 @@ const StartPage = () => {
         </Button>
       </div>
       <div className="fixed bottom-0 pb-5">
+        <div className="flex flex-col items-center justify-center">
+        <span className="text-sm text-muted-foreground p-4">Made by Team Cartographer for NASA SUITS 2024</span>
+        <div>
         <Button
           className="dark flex items-center justify-center align-middle gap-x-2 text-sm"
           onClick={() => {
@@ -81,6 +84,8 @@ const StartPage = () => {
         >
           <GitHub className="h-5 w-5" /> GitHub
         </Button>
+        </div>
+        </div>
       </div>
     </div>
   );

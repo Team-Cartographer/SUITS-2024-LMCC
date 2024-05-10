@@ -16,7 +16,7 @@ const RoverLiveView = () => {
 	return (
 		<div>
 			<video controls autoPlay={true} loop={true} style={playerStyle}>
-				<source src="https://files.edgestore.dev/72aoubypuk64gbtk/publicFiles/_public/abcc3576-bfef-4f3f-83b5-0d700cf2ed75.mp4"  type="video/mp4" />
+				<source src=""  type="video/mp4" />
             	Your browser does not support the video tag.
         	</video>
 			{/* <ReactPlayer url={`https://mars.nasa.gov/system/resources/detail_files/25904_1-PIA24546-1200.jpg`} playing volume={0.5} style={playerStyle} controls={true} /> */}

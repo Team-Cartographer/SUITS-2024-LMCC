@@ -33,7 +33,7 @@ def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]:
     lon_eva_2, lat_eva_2 = map(round_8, transform(utm_proj, lat_lon_proj, east_eva2, north_eva2))
     lon_rover, lat_rover = map(round_8, transform(utm_proj, lat_lon_proj, east_rover, north_rover))
 
-    return LATLON(lat_eva_1, lon_eva_1), LATLON(lon_eva_2, lat_eva_2), LATLON(lon_rover, lat_rover)
+    return LATLON(lat_eva_1, lon_eva_1), LATLON(lat_eva_2, lon_eva_2), LATLON(lat_rover, lon_rover)
 
 
 
@@ -55,6 +55,9 @@ def get_x_y_from_lat_lon(lat: float, lon: float):
 
 
 def load_mesh(resolution=1500): 
+    if SPATIAL_HEIGHTMAP_PATH.exists():
+        return np.load(SPATIAL_HEIGHTMAP_PATH)
+
     mesh = meshload('SpatialMapping-3.obj', force='mesh')
 
     vertices = mesh.vertices

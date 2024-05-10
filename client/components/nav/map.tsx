@@ -190,7 +190,7 @@ const Map = () => {
     // Renders Error if there was an Error
     if(err) {
         return (
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center text-muted-foreground">
                 <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
                 <p>Make sure Gateway and the TSS Server are running.</p>            
             </div>

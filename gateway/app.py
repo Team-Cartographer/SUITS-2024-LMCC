@@ -40,6 +40,8 @@ eva1_poscache = ListCache(5000)
 eva2_poscache = ListCache(5000)
 rover_poscache = ListCache(5000)
 
+app.curr_telemetry = dict() 
+
 with open(paths.CONFIG_PATH) as f:
     data = load(f)
     TSS_HOST = data["TSS_IP"]
@@ -173,7 +175,8 @@ def tss_info():
 @app.get('/tss/telemetry')
 def telemetry():
     req = get(f"http://{TSS_HOST}:14141/json_data/teams/1/TELEMETRY.json")
-    return loads(req.text)
+    app.curr_telemetry = loads(req.text)
+    return app.curr_telemetry
 
 @app.get('/tss/completed_telemetry')
 def comp_telemetry():
@@ -207,10 +210,6 @@ def getmap():
     x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
     x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
 
-    eva1_poscache.append((x_ev1, y_ev1))
-    eva2_poscache.append((x_ev2, y_ev2))
-    rover_poscache.append((x_rov, y_rov))
-
     pins = []
     for feature in geojsonDb["features"]:
         pins.append((feature["properties"]["description"], feature["properties"]["name"]))
@@ -224,24 +223,29 @@ def getmap():
         text_offset_y = -5  
         draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
 
-    for i in range(1, len(eva1_poscache)):
-        x1, y1 = eva1_poscache[i-1]
-        x2, y2 = eva1_poscache[i]
-        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='lawngreen', width=2)
-        
-        x1, y1 = eva2_poscache[i-1]
-        x2, y2 = eva2_poscache[i]
-        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='deeppink', width=2)
-        
-        x1, y1 = rover_poscache[i-1]
-        x2, y2 = rover_poscache[i]
-        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='aqua', width=2)
+    if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
+        eva1_poscache.append((x_ev1, y_ev1))
+        eva2_poscache.append((x_ev2, y_ev2))
+        rover_poscache.append((x_rov, y_rov))
+
+        for i in range(1, len(eva1_poscache)):
+            x1, y1 = eva1_poscache[i-1]
+            x2, y2 = eva1_poscache[i]
+            draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='lawngreen', width=2)
+            
+            x1, y1 = eva2_poscache[i-1]
+            x2, y2 = eva2_poscache[i]
+            draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='deeppink', width=2)
+            
+            x1, y1 = rover_poscache[i-1]
+            x2, y2 = rover_poscache[i]
+            draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='aqua', width=2)
     
 
     radius = 5
-    draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen')
-    draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink')
-    draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua')
+    draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen', outline="black", width=2)
+    draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink', outline="black", width=2)
+    draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua', outline="black", width=2)
 
     img_io = BytesIO()
     image.save(img_io, 'PNG')

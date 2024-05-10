@@ -94,13 +94,6 @@ export const NetworkProvider = ({ children }: any) => {
 			} else {
 				setTodoItems(defaultTodoValue);
 			}
-
-			const warningData = await fetchWithoutParams<WarningData>('warning');
-			if (warningData) {
-				setWarningData(warningData);
-			} else {
-				setWarningData(defaultWarningValue);
-			}
 		}
 		updateItems();
 	// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -144,6 +137,13 @@ export const NetworkProvider = ({ children }: any) => {
 					setDcuTime(formatTime(timer_data.eva.dcu.time));
 				} else {
 					throw new Error('DCU data is undefined')
+				}
+
+				const warningData = await fetchWithoutParams<WarningData>('warning');
+				if (warningData) {
+					setWarningData(warningData);
+				} else {
+					setWarningData(defaultWarningValue);
 				}
 
 				const mapData = await fetchWithoutParams<GeoJSON>('geojson');
