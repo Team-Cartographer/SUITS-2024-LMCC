@@ -206,4 +206,4 @@ def generate_image(final_path: np.ndarray, vertices: np.ndarray) -> None:
 
 
 if __name__ == "__main__":
-    run_astar("sample.obj")  
+    run_astar("SpatialMapping.obj")  
