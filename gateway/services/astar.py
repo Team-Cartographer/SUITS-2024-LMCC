@@ -184,10 +184,10 @@ def run_astar(file_path: str) -> None:
 
     print("Initial path generated")
 
-    if final_path.size > 0:
-        generate_image(final_path, vertices)
-    else:
-        print("No path found.")
+    # if final_path.size > 0:
+    generate_image(final_path, vertices)
+    # else:
+    #     print("No path found.")
 
 
 def generate_image(final_path: np.ndarray, vertices: np.ndarray) -> None:
