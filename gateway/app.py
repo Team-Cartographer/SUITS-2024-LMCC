@@ -212,7 +212,7 @@ def getmap():
         x, y = x/5, y/5
         radius = 3
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-        text_offset_x = 10 
+        text_offset_x = 10
         text_offset_y = -5  
         draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
 
@@ -236,22 +236,23 @@ def getmap():
 @app.post('/settodo')
 def update_todo(todoData: TodoItem) -> JSONResponse:
     todoDb["todoItems"] = todoData.todoItems
-    return JSONResponse(todoDb, status.HTTP_200_OK)
+    return JSONResponse(todoDb, status.HTTP_201_CREATED)
 
 
 @app.post('/setwarning')
 def update_warning(warningData: WarningItem) -> JSONResponse:
     warningDb["infoWarning"] = warningData.infoWarning
-    return JSONResponse(warningDb, status.HTTP_200_OK)
+    return JSONResponse(warningDb, status.HTTP_201_CREATED)
 
 
 @app.post('/addfeature')
 def update_features(feature: GeoJSONFeature) -> JSONResponse:
     geojsonDb["features"].append(feature.feature)
-    return JSONResponse(geojsonDb, status.HTTP_200_OK)
+    return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
 
 
 @app.post('/removefeature')
 def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
+    print(feature)
     geojsonDb["features"].remove(feature.feature)
-    return JSONResponse(geojsonDb, status.HTTP_200_OK)
+    return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
