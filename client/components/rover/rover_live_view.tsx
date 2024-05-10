@@ -5,34 +5,21 @@
  * @function EVALiveView
  */
 
-import ReactPlayer from "react-player";
-import { fetchWithoutParams } from "@/api/fetchServer";
-import { useEffect, useState } from "react";
-
 const RoverLiveView = () => {
-	const [roverURL, setRoverURL] = useState(''); 
-
 	const playerStyle = {
 		borderBottomLeftRadius: "12px",
 		borderBottomRightRadius: "12px",
+		width: "59.15%",
 		overflow: "hidden",
 	};
 
-	useEffect(() => {
-		const getRoverURL = async () => { 
-			await fetchWithoutParams<{rover_url: string}>('api/v0?get=rover_url').then((item) => {
-			if (item && item.rover_url) {
-				setRoverURL(item.rover_url);
-			}
-		})}
-		
-		getRoverURL();
-	})
-
-
 	return (
 		<div>
-			<ReactPlayer url={roverURL} playing volume={0.5} style={playerStyle} controls={true} />
+			<video controls autoPlay={true} loop={true} style={playerStyle}>
+				<source src="https://files.edgestore.dev/72aoubypuk64gbtk/publicFiles/_public/abcc3576-bfef-4f3f-83b5-0d700cf2ed75.mp4"  type="video/mp4" />
+            	Your browser does not support the video tag.
+        	</video>
+			{/* <ReactPlayer url={`https://mars.nasa.gov/system/resources/detail_files/25904_1-PIA24546-1200.jpg`} playing volume={0.5} style={playerStyle} controls={true} /> */}
 		</div>
 	);
 }
