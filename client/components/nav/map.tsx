@@ -45,7 +45,7 @@ const Map = () => {
     const [shiftPressed, setShiftPressed] = useState(false); // Whether the shift key is pressed or not
     const [modalOpen, setModalOpen] = useState(false); // Whether the modal is open or not
     const [descContent, setDescContent] = useState<string | null>(null); // Description content for the pin
-    const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point
+    const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point         
     
     const networkProvider = useNetwork();
 
@@ -64,13 +64,11 @@ const Map = () => {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if(event.key === 'Shift') {
-                console.log("remove enabled");
                 setShiftPressed(true);
             }
         };
         const handleKeyUp = (event: KeyboardEvent) => {
             if(event.key === 'Shift') {
-                console.log("remove disabled");
                 setShiftPressed(false);
             }
         }
@@ -201,7 +199,7 @@ const Map = () => {
 
     // Renders the Map Image if it exists. 
     return ( 
-        <div className="">
+        <div className="flex flex-col items-center justify-center">
             {modalOpen && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }} className="transition-all">
                 <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -233,7 +231,9 @@ const Map = () => {
                 </div>
             )}
             { /* eslint-disable-next-line @next/next/no-img-element */ }
-            {mapImage && <img className="rounded-3xl" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+            {mapImage && <img className="rounded-3xl pb-2" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+            {shiftPressed && <span className="text-muted-foreground text-sm">Removing: On (Press Shift to Remove)</span>}
+            {!shiftPressed && <span className="text-muted-foreground text-sm">Removing: Off (Press Shift to Remove)</span>}
         </div>
     );
 }
