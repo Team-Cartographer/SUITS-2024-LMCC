@@ -71,7 +71,7 @@ def astar():
             path.reverse()
             return path
 
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]: #TODO: Increase this radius to bound for more values
+        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]: #TODO: Create padding around areas of high heights
             x2 = current.x + dx
             y2 = current.y + dy
 
@@ -79,7 +79,7 @@ def astar():
                 new_node = Node(x2, y2, current)
                 heapq.heappush(nodes, new_node)
 
-    return None
+    return []
 
 
 def visualize_path(points): 
@@ -88,15 +88,11 @@ def visualize_path(points):
 
     plt.figure(figsize=(10, 10))
     plt.imshow(GRID, cmap='hot', interpolation='nearest')
-    plt.colorbar()  # Optional color bar
 
-    # Extract x and y coordinates separately from path points
     x_coords, y_coords = zip(*points)
 
-    # Overlay the path in blue
     plt.plot(y_coords, x_coords, color='blue', linewidth=2)
 
-    # Show the final image with the path drawn
     plt.show()
 
     print("Path Visualized")
