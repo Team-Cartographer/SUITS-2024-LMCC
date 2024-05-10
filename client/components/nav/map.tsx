@@ -18,19 +18,9 @@ const SCALING_FACTOR = 1/(lmcc_config.scale_factor);
 const MAP_HEIGHT = 3543;
 const MAP_WIDTH = 3720;
 
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-  } from "@/components/ui/alert-dialog"
 import { Input } from "../ui/input";
-  
+import { Button } from "../ui/button";
+
 
 let MAP_URLS: string[] = []
 
@@ -40,10 +30,11 @@ let MAP_URLS: string[] = []
     and multiply the rect height, width, and x, y in const handleImageClick(); 
 */
 
-interface ModalProps { 
-    isOpen: boolean; 
-    onClose: () => void;
-    children: React.ReactNode;
+interface NearPoint { 
+    name: string, 
+    description: string, 
+    x: number,
+    y: number
 }
 
 // Map Component
@@ -53,24 +44,10 @@ const Map = () => {
     const [points, setPoints] = useState<GeoJSONFeature[]>([]) // Set of points to have from the map
     const [shiftPressed, setShiftPressed] = useState(false); // Whether the shift key is pressed or not
     const [modalOpen, setModalOpen] = useState(false); // Whether the modal is open or not
-    const [descContent, setDescContent] = useState(''); // Description content for the pin
+    const [descContent, setDescContent] = useState<string | null>(null); // Description content for the pin
+    const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point         
+    
     const networkProvider = useNetwork();
-
-    const NameModal = ({ onClick }: any) => { 
-        if (!modalOpen) return null;
-        
-        return (
-            <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }}>
-                <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
-                    <div className="flex flex-col">
-                        <h2 className="font-bold text-xl">Enter Pin Description</h2>
-                        {/* <input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black" /> */}
-                        <Input type="text" onChange={(e) => {setDescContent(e.target.value)}} className="text-black"/>
-                    </div>
-                    <button onClick={onClick}>Close</button>
-                </div>
-            </div>
-        );};
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
     useEffect(() => {
@@ -87,13 +64,11 @@ const Map = () => {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if(event.key === 'Shift') {
-                console.log("remove enabled");
                 setShiftPressed(true);
             }
         };
         const handleKeyUp = (event: KeyboardEvent) => {
             if(event.key === 'Shift') {
-                console.log("remove disabled");
                 setShiftPressed(false);
             }
         }
@@ -148,23 +123,29 @@ const Map = () => {
 
         if (nearPoint) {
            if(shiftPressed) {
-                await removePin(nearPoint.properties.description);
+                await removePin(nearPoint.properties.description, nearPoint.properties.name);
            } else { 
                 setModalOpen(true);
+                setNearPoint({
+                    name: nearPoint.properties.name,
+                    description: nearPoint.properties.description,
+                    x: x,
+                    y: y
+                });
            }
         } else {
-            await addPin(`${x}x${y}`);
+            await addPin(`${x}x${y}`, "");
         }
     };
 
 
     // Updates the Image every time it is clicked
-    const addPin = async (xystring: string) => {
+    const addPin = async (xystring: string, _descContent: string) => {
         try {
             const feature = { 
                 type: "Feature",
                 properties: {
-                    name: "placedWaypoint",
+                    name: _descContent,
                     description: xystring
                 },
                 geometry: {
@@ -182,12 +163,12 @@ const Map = () => {
         }
     };
 
-    const removePin = async (xystring: string) => {
+    const removePin = async (xystring: string, _descContent: string) => {
         try {
             const feature = { 
                 type: "Feature",
                 properties: {
-                    name: "placedWaypoint",
+                    name: _descContent,
                     description: xystring
                 },
                 geometry: {
@@ -212,15 +193,47 @@ const Map = () => {
             <div className="flex flex-col items-center justify-center">
                 <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
                 <p>Make sure Gateway and the TSS Server are running.</p>            
-                </div>
+            </div>
         )
     }
 
     // Renders the Map Image if it exists. 
     return ( 
-        <div className="">
-            {<NameModal onClick={() => {setModalOpen(false);}} />}
-            {mapImage && <img className="rounded-3xl" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+        <div className="flex flex-col items-center justify-center">
+            {modalOpen && (
+                <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }} className="transition-all">
+                <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
+                    <div className="flex flex-col gap-y-2">
+                        <h2 className="font-bold text-xl">Enter Pin Description</h2>
+                        <Input type="text" onChange={(e) => setDescContent(e.target.value)} onKeyDown={(e) => {
+                            if(e.key === 'Enter') {
+                                setModalOpen(false);
+                                if(nearPoint && descContent) {
+                                    removePin(nearPoint.description, nearPoint.name)
+                                    addPin(`${nearPoint.x}x${nearPoint.y}`, descContent);
+                                }
+                            }
+                        }} className="pb-3"/>
+                        <div className="self-center">  
+                        <Button onClick={() => {
+                            setModalOpen(false)
+                            if(nearPoint && descContent) {
+                                removePin(nearPoint.description, nearPoint.name)
+                                addPin(`${nearPoint.x}x${nearPoint.y}`, descContent);
+                                setDescContent(null);
+                            }
+                        }}>
+                            Close
+                        </Button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            )}
+            { /* eslint-disable-next-line @next/next/no-img-element */ }
+            {mapImage && <img className="rounded-3xl pb-2" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
+            {shiftPressed && <span className="text-muted-foreground text-sm">Removing: On (Press Shift to Remove)</span>}
+            {!shiftPressed && <span className="text-muted-foreground text-sm">Removing: Off (Press Shift to Remove)</span>}
         </div>
     );
 }

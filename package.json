@@ -1,8 +1,10 @@
 {
   "dependencies": {
-    "commitizen": "^4.3.0"
+    "commitizen": "^4.3.0",
+    "react-image-magnifiers": "^1.4.0"
   },
   "devDependencies": {
+    "@types/react-image-magnifiers": "^1.3.5",
     "cz-conventional-changelog": "^3.3.0"
   },
   "config": {
