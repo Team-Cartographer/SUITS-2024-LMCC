@@ -29,9 +29,7 @@ const HomePage = () => {
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />
-        <ConnectionStrength desc="EVA 1" ping={25} />
-        <ConnectionStrength desc="EVA 2" ping={5} />
-        <ConnectionStrength desc="ROVER" ping={10} />
+        <ConnectionStrength />
         <PhotoCapture />
       </div>
       <div className=" bg-slate-600 flex flex-grow items-center justify-center rounded-l-2xl p-2 pl-3">

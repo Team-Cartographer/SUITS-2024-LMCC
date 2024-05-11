@@ -1,5 +1,4 @@
 # File Imports
-from io import BytesIO
 import paths
 from services.utils import request_utm_data, get_x_y_from_lat_lon
 from services.database import JSONDatabase, ListCache
@@ -9,6 +8,8 @@ from services.schema import GeoJSON, WarningItem, TodoItems, \
 # Standard Imports 
 from json import loads, load
 from base64 import b64encode
+from time import time 
+from io import BytesIO
 
 # Third-Party Imports
 from fastapi import FastAPI, status
@@ -43,6 +44,7 @@ rover_poscache = ListCache(5000)
 app.curr_telemetry = dict() 
 app.get_reqs = 0 
 app.post_reqs = 0
+app.start_time = time() 
 
 with open(paths.CONFIG_PATH) as f:
     data = load(f)
@@ -97,11 +99,15 @@ def post_message() -> JSONResponse:
 
 @app.get('/apimonitor')
 def api_monitor() -> JSONResponse: 
+    uptime = round(time() - app.start_time, 3)
+    total_reqs = app.get_reqs + app.post_reqs
     return JSONResponse({
         "message": "Gateway API Monitoring Service",
+        "uptime": uptime,
         "get_requests": app.get_reqs,
         "post_requests": app.post_reqs,
-        "total_requests": app.get_reqs + app.post_reqs
+        "total_requests": total_reqs,
+        "avg_requests_per_min": round(total_reqs / (uptime / 60), 3)
     }, status.HTTP_200_OK)
 
 

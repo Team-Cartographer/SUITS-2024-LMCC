@@ -69,7 +69,7 @@ const defaultNetworkValue: NetworkContextType = {
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
-	const TICKSPEED = 1000;
+	const TICKSPEED = 2000;
 
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");
@@ -117,7 +117,7 @@ export const NetworkProvider = ({ children }: any) => {
 								rover: { time: number },
 								dcu: { time: number }
 							}
-						}>('tss/eva_info' ); 
+						}>('tss/eva_info'); 
 				if (timer_data?.eva?.uia?.time !== undefined) {
 					setUiaTime(formatTime(timer_data.eva.uia.time)); 
 				} else {
@@ -201,12 +201,6 @@ export const NetworkProvider = ({ children }: any) => {
 							}
 						}
 					)
-				}
-				else {
-					throw new Error('Biometric Data (EVA 1) is undefined')
-				}
-
-				if (biometricData) {
 					setBiometricDataEva2(
 						{
 							telemetry: {
@@ -239,8 +233,9 @@ export const NetworkProvider = ({ children }: any) => {
 					) 
 				}
 				else {
-					throw new Error('Biometric Data (EVA 2) is undefined')
+					throw new Error('Biometric Data is undefined')
 				}
+
 
 				const specData = await fetchWithoutParams<SpecData>("mission/spec");
 				if (specData) {
