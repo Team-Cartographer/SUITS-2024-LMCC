@@ -41,6 +41,8 @@ eva2_poscache = ListCache(5000)
 rover_poscache = ListCache(5000)
 
 app.curr_telemetry = dict() 
+app.get_reqs = 0 
+app.post_reqs = 0
 
 with open(paths.CONFIG_PATH) as f:
     data = load(f)
@@ -73,6 +75,7 @@ def on_shutdown() -> None:
 
 @app.get('/')
 def home() -> JSONResponse:
+    app.get_reqs += 1
     return JSONResponse({
         "greeting": "Welcome to the Team Cartographer Gateway API",
         "code": "Code can be found at https://github.com/Team-Cartographer/SUITS-2024-LMCC"
@@ -85,14 +88,26 @@ def home() -> JSONResponse:
 
 @app.get('/test')
 def post_message() -> JSONResponse:
+    app.get_reqs += 1
     "Test the API with a simple GET request"
     return JSONResponse({
         "message": "Hello, world!"
     }, status.HTTP_200_OK)
 
 
+@app.get('/apimonitor')
+def api_monitor() -> JSONResponse: 
+    return JSONResponse({
+        "message": "Gateway API Monitoring Service",
+        "get_requests": app.get_reqs,
+        "post_requests": app.post_reqs,
+        "total_requests": app.get_reqs + app.post_reqs
+    }, status.HTTP_200_OK)
+
+
 @app.get('/takephoto')
 def take_hololens_photo(): 
+    app.get_reqs += 1
     user, password = 'auto-abhi_mbp', 'password'
 
     takephoto_response = post(f"https://{HOLO_IP}/api/holographic/mrc/photo?holo=true&pv=true", 
@@ -117,50 +132,60 @@ def take_hololens_photo():
 
 @app.get('/todo')
 def get_todo() -> JSONResponse:
+    app.get_reqs += 1
     return JSONResponse(todoDb, status.HTTP_200_OK)
 
 @app.get('/warning')
 def get_warning() -> JSONResponse:
+    app.get_reqs += 1
     return JSONResponse(warningDb, status.HTTP_200_OK)
 
 @app.get('/geojson')
 def get_geojson() -> JSONResponse:
+    app.get_reqs += 1
     return JSONResponse(geojsonDb, status.HTTP_200_OK)
 
 ########## MISSION ROUTES ###################################
 
 @app.get('/mission/comm')
 def comm():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/COMM.json")
     return loads(req.text)
 
 @app.get('/mission/dcu')
 def dcu():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/DCU.json")
     return loads(req.text)
 
 @app.get('/mission/error')
 def error_route():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/ERROR.json")
     return loads(req.text)
 
 @app.get('/mission/imu')
 def imu():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/IMU.json")
     return loads(req.text)
 
 @app.get('/mission/rover')
 def rover():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/ROVER.json")
     return loads(req.text)
 
 @app.get('/mission/spec')
 def spec():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/SPEC.json")
     return loads(req.text)
 
 @app.get('/mission/uia')
 def uia():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/UIA.json")
     return loads(req.text)
 
@@ -168,33 +193,39 @@ def uia():
 
 @app.get('/tss/info')
 def tss_info():
+    app.get_reqs += 1
     return {
         "TSS_HOST": TSS_HOST
     }
 
 @app.get('/tss/telemetry')
 def telemetry():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/teams/1/TELEMETRY.json")
     app.curr_telemetry = loads(req.text)
     return app.curr_telemetry
 
 @app.get('/tss/completed_telemetry')
 def comp_telemetry():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/teams/1/Completed_TELEMETRY.json")
     return loads(req.text)
 
 @app.get('/tss/eva_info')
 def eva_info():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/teams/1/EVA.json")
     return loads(req.text)
 
 @app.get('/tss/completed_eva')
 def comp_eva():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/teams/1/Completed_EVA.json")
     return loads(req.text)
 
 @app.get('/tss/rockdata')
 def rockdata():
+    app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/rocks/RockData.json")
     return loads(req.text)
 
@@ -202,6 +233,7 @@ def rockdata():
 
 @app.get('/map')
 def getmap():
+    app.get_reqs += 1
     image = Image.open(paths.PNG_PATH)
     draw = ImageDraw.Draw(image)
 
@@ -261,24 +293,28 @@ def getmap():
 
 @app.post('/settodo')
 def update_todo(todoData: TodoItem) -> JSONResponse:
+    app.post_reqs += 1
     todoDb["todoItems"] = todoData.todoItems
     return JSONResponse(todoDb, status.HTTP_201_CREATED)
 
 
 @app.post('/setwarning')
 def update_warning(warningData: WarningItem) -> JSONResponse:
+    app.post_reqs += 1
     warningDb["infoWarning"] = warningData.infoWarning
     return JSONResponse(warningDb, status.HTTP_201_CREATED)
 
 
 @app.post('/addfeature')
 def update_features(feature: GeoJSONFeature) -> JSONResponse:
+    app.post_reqs += 1
     geojsonDb["features"].append(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
 
 
 @app.post('/removefeature')
 def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
+    app.post_reqs += 1
     print(feature)
     geojsonDb["features"].remove(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
