@@ -1,19 +1,17 @@
 import heapq
-from numpy import sqrt, load, exp
+from numpy import sqrt, load
 from pathlib import Path
-from utils import load_mesh
-
 
 SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
-
+OBSTACLE_CLEARANCE = 1  # Minimum distance from obstacles
 
 class Node:
+    heuristic_cache = {}
+
     def __init__(self, x: int, y: int, parent: "Node" = None) -> None:
         self.x = x
         self.y = y
-
         self.parent = parent
-
         self.height = GRID[x][y]
 
         self.g: float = 0
@@ -21,7 +19,7 @@ class Node:
         self.f: float = 0
 
         if parent is not None:
-            self.g = parent.new_g(self)
+            self.g = parent.g + self.dist_btw(parent)
             self.h = self.heuristic(goal_node)
             self.f = self.g + self.h
 
@@ -29,29 +27,59 @@ class Node:
         return self.f < other.f
 
     def heuristic(self, other: "Node") -> float:
-        return self.dist_btw(other)
+        key = (self.x, self.y, other.x, other.y)
+        if key in Node.heuristic_cache:
+            return Node.heuristic_cache[key]
+
+        dx = self.x - other.x
+        dy = self.y - other.y
+        result = sqrt(dx ** 2 + dy ** 2)
+        Node.heuristic_cache[key] = result
+        return result
 
     def dist_btw(self, other: "Node") -> float:
-        return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.height - other.height) ** 2)
+        dx = self.x - other.x
+        dy = self.y - other.y
+        return sqrt(dx ** 2 + dy ** 2)
 
-    def new_g(self, other: "Node") -> float:
-        k_dist: float = 1
-        k_height: float = 1000  
-        base_height_penalty: float = 50
-        exp_height_penalty: float = 200  
+def is_obstacle(x, y):
+    height = GRID[x][y]
+    if height > 1000:
+        return True
 
-        dist = self.dist_btw(other)
-        diff = abs(self.height - other.height)
-        height_penalty = base_height_penalty + exp_height_penalty * exp(-0.01 * self.height)  
+    for dx in [-1, 0, 1]:
+        for dy in [-1, 0, 1]:
+            if dx == dy == 0:
+                continue
+            x2 = x + dx
+            y2 = y + dy
+            if (
+                0 <= x2 < len(GRID)
+                and 0 <= y2 < len(GRID[0])
+                and GRID[x2][y2] > 1000
+            ):
+                return True
 
-        eqn = k_dist * dist + k_height * diff + height_penalty
-        return eqn
+    return False
 
+def get_neighbors(node):
+    neighbors = []
+    for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+        x2 = node.x + dx
+        y2 = node.y + dy
 
+        if (
+            0 <= x2 < len(GRID)
+            and 0 <= y2 < len(GRID[0])
+            and not is_obstacle(x2, y2)
+            and node.dist_btw(Node(x2, y2)) >= OBSTACLE_CLEARANCE
+        ):
+            neighbors.append(Node(x2, y2, node))
+
+    return neighbors
 
 def astar():
     nodes = []
-
     heapq.heappush(nodes, start_node)
     visited = set()
 
@@ -62,29 +90,28 @@ def astar():
             continue
         visited.add((current.x, current.y))
 
-        if current.x == goal_node.x and current.y == goal_node.y and current.height == goal_node.height:
+        if current.x == goal_node.x and current.y == goal_node.y:
             path = []
             while current.parent:
-                path.append((current.x, current.y, current.height))
+                path.append((current.x, current.y))
                 current = current.parent
-            path.append((start_node.x, start_node.y, start_node.height))
+            path.append((start_node.x, start_node.y))
             path.reverse()
             return path
 
-        for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]: #TODO: Create padding around areas of high heights
-            x2 = current.x + dx
-            y2 = current.y + dy
-
-            if 0 <= x2 < len(GRID) and 0 <= y2 < len(GRID[0]):
-                new_node = Node(x2, y2, current)
-                heapq.heappush(nodes, new_node)
+        neighbors = get_neighbors(current)
+        for neighbor in neighbors:
+            heapq.heappush(nodes, neighbor)
 
     return []
 
-
-def visualize_path(points): 
-    import matplotlib.pyplot as plt 
+def visualize_path(points):
+    import matplotlib.pyplot as plt
     print("Visualizing Path")
+
+    if not points:
+        print("No path found.")
+        return
 
     plt.figure(figsize=(10, 10))
     plt.imshow(GRID, cmap='hot', interpolation='nearest')
@@ -97,31 +124,25 @@ def visualize_path(points):
 
     print("Path Visualized")
 
-    
-
-
-def run_astar() -> None:
+def run_astar():
     print("Finding Optimized Path")
-
-    load_mesh() #FIXME: Remove Loader Script later, this is for tests
 
     global GRID
     GRID = load(SPATIAL_HEIGHTMAP_PATH)
     (start_x, start_y), (goal_x, goal_y) = (GRID.shape[0] - 1, 0), (0, GRID.shape[1] - 1)
-    print(GRID)
-    
+
     global goal_node, start_node
     goal_node = Node(goal_x, goal_y)
-    start_node = Node(start_x, start_y) 
+    start_node = Node(start_x, start_y)
 
     final_path = astar()
-    final_path = list(map(lambda x: (x[0], x[1]), final_path))
-    print(final_path) 
+    if final_path:
+        print(final_path)
+        visualize_path(final_path)
+    else:
+        print("No path found.")
 
-    visualize_path(final_path)
-
-    print("Path Generated") 
-
+    print("Path Generation Complete")
 
 if __name__ == "__main__":
-    run_astar() 
+    run_astar()
