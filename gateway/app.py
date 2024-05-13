@@ -99,6 +99,7 @@ def post_message() -> JSONResponse:
 
 @app.get('/apimonitor')
 def api_monitor() -> JSONResponse: 
+    app.get_reqs += 1
     uptime = round(time() - app.start_time, 3)
     total_reqs = app.get_reqs + app.post_reqs
     return JSONResponse({

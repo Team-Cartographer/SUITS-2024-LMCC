@@ -87,19 +87,6 @@ export const NetworkProvider = ({ children }: any) => {
 	const [errorData, setErrorData] = useState<ErrorData>(defaultErrorValue);
 
 	useEffect(() => {
-		const updateItems = async () => {
-			const todoData = await fetchWithoutParams<TodoItems>('todo');
-			if (todoData) {
-				setTodoItems(todoData);
-			} else {
-				setTodoItems(defaultTodoValue);
-			}
-		}
-		updateItems();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	useEffect(() => {
 		const interval = setInterval(async () => {
 			try {
 				const eva_data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry'); 
@@ -144,6 +131,13 @@ export const NetworkProvider = ({ children }: any) => {
 					setWarningData(warningData);
 				} else {
 					setWarningData(defaultWarningValue);
+				}
+
+				const todoData = await fetchWithoutParams<TodoItems>('todo');
+				if (todoData) {
+					setTodoItems(todoData);
+				} else {
+					setTodoItems(defaultTodoValue);
 				}
 
 				const mapData = await fetchWithoutParams<GeoJSON>('geojson');
