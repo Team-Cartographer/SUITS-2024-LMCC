@@ -51,6 +51,45 @@ def get_x_y_from_lat_lon(lat: float, lon: float):
         return(x_index, y_index)
     else:
         return TIFF_DATASET.shape[1]//2, TIFF_DATASET.shape[0]//2
+    
+
+
+def extend_eva_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov):
+    return [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [lat1, lon1]
+            },
+            "properties": {
+                "name": "EVA 1",
+                "description": f"{x_ev1}x{y_ev1}"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [lat2, lon2]
+            },
+            "properties": {
+                "name": "EVA 2",
+                "description": f"{x_ev2}x{y_ev2}"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [latrov, lonrov]
+            },
+            "properties": {
+                "name": "Rover",
+                "description": f"{x_rov}x{y_rov}"
+            }
+        }
+    ]
 
 
 

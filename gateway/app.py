@@ -1,6 +1,6 @@
 # File Imports
 import paths
-from services.utils import request_utm_data, get_x_y_from_lat_lon
+from services.utils import request_utm_data, get_x_y_from_lat_lon, extend_eva_to_geojson
 from services.database import JSONDatabase, ListCache
 from services.schema import GeoJSON, WarningItem, TodoItems, \
                             GeoJSONFeature, TodoItem
@@ -10,10 +10,12 @@ from json import loads, load
 from base64 import b64encode
 from time import time 
 from io import BytesIO
+from concurrent.futures import ProcessPoolExecutor
+from threading import Thread 
 import asyncio 
 
 # Third-Party Imports
-from fastapi import FastAPI, WebSocket, status, WebSocketDisconnect
+from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
@@ -237,49 +239,64 @@ def rockdata():
     req = get(f"http://{TSS_HOST}:14141/json_data/rocks/RockData.json")
     return loads(req.text)
 
-
-
 @app.get('/map')
 def getmap():
     app.get_reqs += 1
     image = Image.open(paths.PNG_PATH)
     draw = ImageDraw.Draw(image)
-
+     
+    geojsonDb["features"] = [feature for feature in geojsonDb["features"] if feature["properties"]["name"] not in ["EVA 1", "EVA 2", "Rover"]]    
+    print(geojsonDb["features"])
     ll1, ll2, ll3 = request_utm_data(TSS_HOST)
-    x_ev1, y_ev1 = get_x_y_from_lat_lon(ll1.lat, ll1.lon)
-    x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
-    x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
+    with ProcessPoolExecutor() as executor:
+        future1 = executor.submit(get_x_y_from_lat_lon, ll1.lat, ll1.lon)
+        future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
+        future3 = executor.submit(get_x_y_from_lat_lon, ll3.lat, ll3.lon)
+    
+    
+    x_ev1, y_ev1 = future1.result()
+    x_ev2, y_ev2 = future2.result()
+    x_rov, y_rov = future3.result()
 
-    pins = []
+    geojsonDb["features"].extend(extend_eva_to_geojson(x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
+
     for feature in geojsonDb["features"]:
-        pins.append((feature["properties"]["description"], feature["properties"]["name"]))
+        description = feature["properties"]["description"]
+        name = feature["properties"]["name"]
 
-    for pin, name in pins:
-        x, y = map(int, pin.split('x'))
+        x, y = map(int, description.split('x'))
         x, y = x/5, y/5
+
         radius = 3
         draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-        text_offset_x = 10
-        text_offset_y = -5  
-        draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
+        
+        if name != "":
+            text_offset_x = 10
+            text_offset_y = -5
+            draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
+
 
     if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
         eva1_poscache.append((x_ev1, y_ev1))
         eva2_poscache.append((x_ev2, y_ev2))
         rover_poscache.append((x_rov, y_rov))
 
-        for i in range(1, len(eva1_poscache)):
-            x1, y1 = eva1_poscache[i-1]
-            x2, y2 = eva1_poscache[i]
-            draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='lawngreen', width=2)
-            
-            x1, y1 = eva2_poscache[i-1]
-            x2, y2 = eva2_poscache[i]
-            draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='deeppink', width=2)
-            
-            x1, y1 = rover_poscache[i-1]
-            x2, y2 = rover_poscache[i]
-            draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill='aqua', width=2)
+        def draw_lines(cache, color):
+            for i in range(1, len(cache)):
+                x1, y1 = cache[i-1]
+                x2, y2 = cache[i]
+                draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill=color, width=2)
+
+        thread1 = Thread(target=draw_lines, args=(eva1_poscache, 'lawngreen'))
+        thread2 = Thread(target=draw_lines, args=(eva2_poscache, 'deeppink'))
+        thread3 = Thread(target=draw_lines, args=(rover_poscache, 'aqua'))
+
+        thread1.start()
+        thread2.start()
+        thread3.start()
+        thread1.join()
+        thread2.join()
+        thread3.join()
     
 
     radius = 5
@@ -340,47 +357,66 @@ async def map_socket(websocket: WebSocket):
         while True:
             image = Image.open(paths.PNG_PATH)
             draw = ImageDraw.Draw(image)
+            
+            geojsonDb["features"] = [feature for feature in geojsonDb["features"] if feature["properties"]["name"] not in ["EVA 1", "EVA 2", "Rover"]]    
 
             ll1, ll2, ll3 = request_utm_data(TSS_HOST)
-            x_ev1, y_ev1 = get_x_y_from_lat_lon(ll1.lat, ll1.lon)
-            x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
-            x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
+            with ProcessPoolExecutor() as executor:
+                future1 = executor.submit(get_x_y_from_lat_lon, ll1.lat, ll1.lon)
+                future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
+                future3 = executor.submit(get_x_y_from_lat_lon, ll3.lat, ll3.lon)
+            
+            
+            x_ev1, y_ev1 = future1.result()
+            x_ev2, y_ev2 = future2.result()
+            x_rov, y_rov = future3.result()
 
-            pins = []
+            geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
+            print(geojsonDb)
+
             for feature in geojsonDb["features"]:
-                pins.append((feature["properties"]["description"], feature["properties"]["name"]))
+                description = feature["properties"]["description"]
+                name = feature["properties"]["name"]
 
-            for pin, name in pins:
-                x, y = map(int, pin.split('x'))
-                x, y = x / 5, y / 5
+                x, y = map(int, description.split('x'))
+                x, y = x/5, y/5
+
                 radius = 3
                 draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-                text_offset_x = 10
-                text_offset_y = -5  
-                draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
+                
+                if name != "":
+                    text_offset_x = 10
+                    text_offset_y = -5
+                    draw.text((x + text_offset_x, y + text_offset_y), name, fill='white', stroke_fill='black', stroke_width=2)
+
 
             if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
                 eva1_poscache.append((x_ev1, y_ev1))
                 eva2_poscache.append((x_ev2, y_ev2))
                 rover_poscache.append((x_rov, y_rov))
 
-                for i in range(1, len(eva1_poscache)):
-                    x1, y1 = eva1_poscache[i-1]
-                    x2, y2 = eva1_poscache[i]
-                    draw.line([(x1 / 5, y1 / 5), (x2 / 5, y2 / 5)], fill='lawngreen', width=2)
-                    
-                    x1, y1 = eva2_poscache[i-1]
-                    x2, y2 = eva2_poscache[i]
-                    draw.line([(x1 / 5, y1 / 5), (x2 / 5, y2 / 5)], fill='deeppink', width=2)
-                    
-                    x1, y1 = rover_poscache[i-1]
-                    x2, y2 = rover_poscache[i]
-                    draw.line([(x1 / 5, y1 / 5), (x2 / 5, y2 / 5)], fill='aqua', width=2)
+                def draw_lines(cache, color):
+                    for i in range(1, len(cache)):
+                        x1, y1 = cache[i-1]
+                        x2, y2 = cache[i]
+                        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill=color, width=2)
+
+                thread1 = Thread(target=draw_lines, args=(eva1_poscache, 'lawngreen'))
+                thread2 = Thread(target=draw_lines, args=(eva2_poscache, 'deeppink'))
+                thread3 = Thread(target=draw_lines, args=(rover_poscache, 'aqua'))
+
+                thread1.start()
+                thread2.start()
+                thread3.start()
+                thread1.join()
+                thread2.join()
+                thread3.join()
+            
 
             radius = 5
-            draw.ellipse([(x_ev1 / 5 - radius, y_ev1 / 5 - radius), (x_ev1 / 5 + radius, y_ev1 / 5 + radius)], fill='lawngreen', outline="black", width=2)
-            draw.ellipse([(x_ev2 / 5 - radius, y_ev2 / 5 - radius), (x_ev2 / 5 + radius, y_ev2 / 5 + radius)], fill='deeppink', outline="black", width=2)
-            draw.ellipse([(x_rov / 5 - radius, y_rov / 5 - radius), (x_rov / 5 + radius, y_rov / 5 + radius)], fill='aqua', outline="black", width=2)
+            draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen', outline="black", width=2)
+            draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink', outline="black", width=2)
+            draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua', outline="black", width=2)
 
             img_io = BytesIO()
             image.save(img_io, 'PNG')
