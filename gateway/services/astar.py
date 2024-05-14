@@ -22,7 +22,7 @@ class Node:
         self.f: float = 0
 
         if parent is not None:
-            self.g = parent.g + self.dist_btw(parent, self) + self.penalty
+            self.g = parent.g + self.dist_btw(parent) + self.penalty
             self.h = self.heuristic(goal_node)
             self.f = self.g + self.h
 
@@ -40,10 +40,10 @@ class Node:
         Node.heuristic_cache[key] = result
         return result
 
-    def dist_btw(node1: 'Node', node2: 'Node') -> float:
-        dx = node1.x - node2.x
-        dy = node1.y - node2.y
-        height_diff = abs(node1.height - node2.height)
+    def dist_btw(self, node2: 'Node') -> float:
+        dx = node2.x - self.x
+        dy = node2.y - self.y
+        height_diff = abs(node2.height - self.height)
         penalty = height_diff * SLOPE_PENALTY
         return sqrt(dx ** 2 + dy ** 2) + penalty
     
