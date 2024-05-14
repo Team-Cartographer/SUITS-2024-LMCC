@@ -47,7 +47,7 @@ class Node:
         penalty = height_diff * SLOPE_PENALTY
         return sqrt(dx ** 2 + dy ** 2) + penalty
     
-    
+
     
 obstacle_cache = set()
 
