@@ -381,8 +381,12 @@ async def map_socket(websocket: WebSocket):
                 x, y = map(int, description.split('x'))
                 x, y = x/5, y/5
 
-                radius = 3
-                draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+                if name in ["EVA 1", "EVA 2", "Rover"]:
+                    radius = 5
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
+                else: 
+                    radius = 3
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
                 
                 if name != "":
                     text_offset_x = 10
@@ -412,11 +416,6 @@ async def map_socket(websocket: WebSocket):
                 thread2.join()
                 thread3.join()
             
-
-            radius = 5
-            draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen', outline="black", width=2)
-            draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink', outline="black", width=2)
-            draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua', outline="black", width=2)
 
             img_io = BytesIO()
             image.save(img_io, 'PNG')
