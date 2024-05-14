@@ -7,8 +7,8 @@ import { NetworkProvider } from "@/hooks/context/network-context";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Cartographer LMCC",
-  description: "SUITS24 Team Cartographer LMCC App",
+  title: "Polaris LMCC",
+  description: "Team Cartographer LMCC App, NASA SUITS 2024",
 };
 
 export default function RootLayout({

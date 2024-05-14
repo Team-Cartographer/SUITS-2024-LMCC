@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { fetchWithParams } from "@/api/fetchServer";
 import { useNetwork } from "@/hooks/context/network-context";
 
 interface WindowNames {

@@ -3,38 +3,67 @@
  * @function ConnectionStrength
  */
 
-import { SignalHigh, SignalLow, SignalMedium } from "lucide-react";
+import { Router } from "lucide-react";
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@/components/ui/hover-card"
+import { Button } from "../ui/button";
+import { useState } from "react";
+import { fetchWithoutParams } from "@/api/fetchServer";
+import { Spinner } from "../ui/spinner";
 
-interface ConnStrengthProps {
-  desc: string;
-  ping: number;
-  className?: string;
+interface GatewayInfo {
+    message: string;
+    uptime: number; 
+    get_requests: number;
+    post_requests: number;
+    total_requests: number;
+    avg_requests_per_min: number;
 }
 
+const ConnectionStrength = () => {
+  const [gatewayInfo, setGatewayInfo] = useState<GatewayInfo | null>(null);
 
-const ConnectionStrength = ({
-  desc,
-  ping,
-  className = "",
-}: ConnStrengthProps) => {
   return (
-    <div className={`pt-3 min-w-24 ${className}`}>
-      <div
-        className={`text-sm flex flex-row bg-slate-600 rounded-xl p-2 items-center justify-center ${
-          ping > 15 ? "border-2 border-red-500" : ""
-        }`}
-      >
-        {desc}: 
-        { /* FIXME: Change Ping Thresholds */ }
-        {ping <= 10 ? (
-          <SignalHigh className="h-7 w-7 icon-outline pl-1" />
-        ) : ping > 10 && ping <= 20 ? (
-          <SignalMedium className="h-7 w-7 icon-outline pl-1" />
-        ) : (
-          <SignalLow className="h-7 w-7 icon-outline pl-1" />
-        )}
-      </div>
-    </div>
+    <div className="pt-4">
+        <HoverCard>
+        <HoverCardTrigger asChild>
+          <Button variant="link"><div 
+                  className="rounded-xl group:condiv text-sm font-medium flex flex-row items-center px-4 py-[0.6rem] bg-primary text-primary-foreground hover:bg-primary/90 bg-slate-600 text-white hover:bg-slate-700"  
+                  onMouseEnter={
+                      async () => {
+                        const response = await fetchWithoutParams<GatewayInfo>("apimonitor");
+                        if(response) {
+                          setGatewayInfo(response);
+                        }
+                      }
+                  }
+              >
+                <Router className="h-4 w-4" /><span className="pl-2 group:condiv group-hover:underline">GATEWAY</span>
+              </div></Button>
+        </HoverCardTrigger>
+        <HoverCardContent className="w-80">
+          {gatewayInfo ? (
+            <div>
+              <div className="text-lg font-bold pb-2 self-start">
+                Gateway Info
+              </div>
+              <div className="pb-4 self-start text-base">
+                <p>Uptime: {gatewayInfo.uptime}s</p>
+                <p>Get Requests: {gatewayInfo.get_requests}</p>
+                <p>Post Requests: {gatewayInfo.post_requests}</p>
+                <p>Total Requests: {gatewayInfo.total_requests}</p>
+                <p>Avg Requests Per Min: {gatewayInfo.avg_requests_per_min}</p>
+              </div>
+            </div>
+          ) : (
+            <Spinner />
+          )}
+        </HoverCardContent>
+      </HoverCard>
+        </div>
   );
 };
 

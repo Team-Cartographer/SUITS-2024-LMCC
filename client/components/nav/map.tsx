@@ -7,7 +7,7 @@
  */
 
 import lmcc_config from "@/lmcc_config.json"
-import { fetchWithParams, fetchImageWithoutParams } from "@/api/fetchServer";
+import { fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
 import { GeoJSONFeature } from "@/hooks/types";
@@ -45,21 +45,10 @@ const Map = () => {
     const [shiftPressed, setShiftPressed] = useState(false); // Whether the shift key is pressed or not
     const [modalOpen, setModalOpen] = useState(false); // Whether the modal is open or not
     const [descContent, setDescContent] = useState<string | null>(null); // Description content for the pin
-    const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point         
+    const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point  
     
     const networkProvider = useNetwork();
 
-    // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetchImage();
-            const mapData = networkProvider.getGeoJSONData()
-            setPoints(mapData.features);
-        }, 150); 
-        return () => {
-            clearInterval(interval);
-        };
-    });
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -80,41 +69,83 @@ const Map = () => {
         };
     }, []);
 
+    
+    // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            // fetchImage();
+            const mapData = networkProvider.getGeoJSONData()
+            setPoints(mapData.features);
+        }, 500); 
+        return () => {
+            clearInterval(interval);
+        };
+    });
 
-    // Fetches the current map image and sets them to the URL state, checking for errors
-    const fetchImage = async () => {
-        try {
-            const imageBlob = await fetchImageWithoutParams('map');
-            if (imageBlob) {
-                for (let mapUrl of MAP_URLS) {
-                    URL.revokeObjectURL(mapUrl);
-                }
-                const newUrl = URL.createObjectURL(imageBlob);
+
+    // // Fetches the current map image and sets them to the URL state, checking for errors
+    // const fetchImage = async () => {
+    //     try {
+    //         const imageBlob = await fetchImageWithoutParams('map');
+    //         if (imageBlob) {
+    //             for (let mapUrl of MAP_URLS) {
+    //                 URL.revokeObjectURL(mapUrl);
+    //             }
+    //             const newUrl = URL.createObjectURL(imageBlob);
+    //             setMapImage(newUrl);
+    //             MAP_URLS = [...MAP_URLS, newUrl]
+    //         } else {
+    //             throw new Error('Image blob is undefined');
+    //         }
+    //     } catch (err) {
+    //         const error = err as Error;
+    //         setErr(error.message);
+    //         console.error('Error fetching image:', error);
+    //     }
+    // }
+
+    useEffect(() => {
+        const socket = new WebSocket(`ws://${lmcc_config.lmcc_ip}:3001/map`);
+    
+        socket.binaryType = "arraybuffer";
+    
+        socket.onopen = () => {
+          console.log("WebSocket connection established");
+        };
+    
+        socket.onmessage = (event) => {
+            if (event.data instanceof ArrayBuffer) {
+                const arrayBuffer = event.data;
+                const blob = new Blob([arrayBuffer], { type: "image/png" });
+                const newUrl = URL.createObjectURL(blob);
                 setMapImage(newUrl);
-                MAP_URLS = [...MAP_URLS, newUrl]
-            } else {
-                throw new Error('Image blob is undefined');
+                setErr('');
             }
-        } catch (err) {
-            const error = err as Error;
-            setErr(error.message);
-            console.error('Error fetching image:', error);
-        }
-    }
+        };
+    
+        socket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          setErr("WebSocket error occurred: " + error);
+        };
+    
+        socket.onclose = (event) => {
+          console.log("WebSocket connection closed:", event);
+        };
+    
+        return () => {
+          socket.close();
+        };
+      }, []);
 
     // Checks if the image was clicked, and whether that click was/wasn't near an existing point
     const handleImageClick = async (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         const target = event.target as HTMLImageElement;
-        const tolerance = 50
+        const tolerance = 80;
 
         const rect = target.getBoundingClientRect();
-        // Make sure to scale these 
         const x = Math.round(event.clientX - rect.left) / SCALING_FACTOR;
         const y = Math.round(event.clientY - rect.top) / SCALING_FACTOR;
 
-        setPoints(networkProvider.getGeoJSONData().features);
-
-        // This looks whether the click was within a pixel radius of size "tolerance" to another point (defined on line 95). 
         const nearPoint = points.find(point => {
             const [pointX, pointY] = point.properties.description.split('x').map(Number);
             const isNearPoint = (Math.abs(x - pointX) <= tolerance) && (Math.abs(y - pointY) <= tolerance);
@@ -176,6 +207,7 @@ const Map = () => {
                     coordinates: [xystring.split('x').map(Number)]
                 }
             }
+            console.log("Removing: " + JSON.stringify(feature))
             await fetchWithParams('removefeature', {
                 feature: feature
             });
@@ -190,7 +222,7 @@ const Map = () => {
     // Renders Error if there was an Error
     if(err) {
         return (
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center text-muted-foreground">
                 <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
                 <p>Make sure Gateway and the TSS Server are running.</p>            
             </div>

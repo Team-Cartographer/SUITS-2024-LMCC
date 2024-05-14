@@ -87,26 +87,6 @@ export const NetworkProvider = ({ children }: any) => {
 	const [errorData, setErrorData] = useState<ErrorData>(defaultErrorValue);
 
 	useEffect(() => {
-		const updateItems = async () => {
-			const todoData = await fetchWithoutParams<TodoItems>('todo');
-			if (todoData) {
-				setTodoItems(todoData);
-			} else {
-				setTodoItems(defaultTodoValue);
-			}
-
-			const warningData = await fetchWithoutParams<WarningData>('warning');
-			if (warningData) {
-				setWarningData(warningData);
-			} else {
-				setWarningData(defaultWarningValue);
-			}
-		}
-		updateItems();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	useEffect(() => {
 		const interval = setInterval(async () => {
 			try {
 				const eva_data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry'); 
@@ -124,7 +104,7 @@ export const NetworkProvider = ({ children }: any) => {
 								rover: { time: number },
 								dcu: { time: number }
 							}
-						}>('tss/eva_info' ); 
+						}>('tss/eva_info'); 
 				if (timer_data?.eva?.uia?.time !== undefined) {
 					setUiaTime(formatTime(timer_data.eva.uia.time)); 
 				} else {
@@ -144,6 +124,20 @@ export const NetworkProvider = ({ children }: any) => {
 					setDcuTime(formatTime(timer_data.eva.dcu.time));
 				} else {
 					throw new Error('DCU data is undefined')
+				}
+
+				const warningData = await fetchWithoutParams<WarningData>('warning');
+				if (warningData) {
+					setWarningData(warningData);
+				} else {
+					setWarningData(defaultWarningValue);
+				}
+
+				const todoData = await fetchWithoutParams<TodoItems>('todo');
+				if (todoData) {
+					setTodoItems(todoData);
+				} else {
+					setTodoItems(defaultTodoValue);
 				}
 
 				const mapData = await fetchWithoutParams<GeoJSON>('geojson');
@@ -201,12 +195,6 @@ export const NetworkProvider = ({ children }: any) => {
 							}
 						}
 					)
-				}
-				else {
-					throw new Error('Biometric Data (EVA 1) is undefined')
-				}
-
-				if (biometricData) {
 					setBiometricDataEva2(
 						{
 							telemetry: {
@@ -239,8 +227,9 @@ export const NetworkProvider = ({ children }: any) => {
 					) 
 				}
 				else {
-					throw new Error('Biometric Data (EVA 2) is undefined')
+					throw new Error('Biometric Data is undefined')
 				}
+
 
 				const specData = await fetchWithoutParams<SpecData>("mission/spec");
 				if (specData) {

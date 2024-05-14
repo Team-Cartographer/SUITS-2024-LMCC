@@ -2,5 +2,3 @@
 __pycache__
 data/
 geodata.npy
-SpatialMapping.obj
-spatial_mapping.obj

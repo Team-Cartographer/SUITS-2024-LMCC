@@ -1,193 +1,179 @@
-from PIL import Image, ImageDraw
 import heapq
+from numpy import sqrt, load
+from pathlib import Path
 import numpy as np
-from typing import Tuple
-from scipy.sparse import lil_matrix
 
-
-class PriorityQueue:
-    def __init__(self):
-        self.elements = []
-
-    def empty(self):
-        return not self.elements
-
-    def put(self, item, priority):
-        heapq.heappush(self.elements, (priority, item))
-
-    def get(self):
-        return heapq.heappop(self.elements)[1]
-
-    def contains(self, item):
-        return any(element[1] == item for element in self.elements)
-
+SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
+OBSTACLE_CLEARANCE = 1  
+SLOPE_PENALTY = 10
 
 class Node:
-    def __init__(self, x: float, y: float, z: float, adjacency_matrix: np.ndarray, vertices: np.ndarray, goal_coords: np.ndarray):
-        self.position = np.array([x, y, z])
-        self.adjacency_matrix = adjacency_matrix
-        self.vertices = vertices
-        self.goal_coords = goal_coords
+    heuristic_cache = {}
 
-        self.g = 0  
-        self.h = self.heuristic()  
-        self.f = self.g + self.h  
+    def __init__(self, x: int, y: int, parent: "Node" = None, penalty: float = 0) -> None:
+        self.x = x
+        self.y = y
+        self.parent = parent
+        self.height = GRID[x][y]
+        self.penalty = penalty
 
-        self.parent = None  
+        self.g: float = 0
+        self.h: float = 0
+        self.f: float = 0
 
-    def heuristic(self):
-        return np.linalg.norm(self.position - self.goal_coords)
+        if parent is not None:
+            self.g = parent.g + self.dist_btw(parent) + self.penalty
+            self.h = self.heuristic(goal_node)
+            self.f = self.g + self.h
 
-    def get_neighbors(self):
-        position_indices = np.where((self.vertices == self.position).all(axis=1))
-        if position_indices[0].size == 0:
-            return []
-
-        position_index = position_indices[0][0]
-
-        neighbors = np.argwhere(self.adjacency_matrix[position_index, :]).flatten()
-        return [Node(*self.vertices[neighbor], self.adjacency_matrix, self.vertices, self.goal_coords) for neighbor in neighbors]
-
-    def __lt__(self, other):
+    def __lt__(self, other: "Node") -> bool:
         return self.f < other.f
 
+    def heuristic(self, other: "Node") -> float:
+        key = (self.x, self.y, other.x, other.y)
+        if key in Node.heuristic_cache:
+            return Node.heuristic_cache[key]
 
-def astar(start_node: Node, goal_coords: np.ndarray, adjacency_matrix: np.ndarray, vertices: np.ndarray) -> np.ndarray:
-    open_list = PriorityQueue()
-    open_list.put(start_node, start_node.f)
-    closed_list = set()
+        dx = self.x - other.x
+        dy = self.y - other.y
+        result = sqrt(dx ** 2 + dy ** 2)
+        Node.heuristic_cache[key] = result
+        return result
 
-    while not open_list.empty():
-        current_node = open_list.get()
+    def dist_btw(self, node2: 'Node') -> float:
+        dx = node2.x - self.x
+        dy = node2.y - self.y
+        height_diff = abs(node2.height - self.height)
+        penalty = height_diff * SLOPE_PENALTY
+        return sqrt(dx ** 2 + dy ** 2) + penalty
+    
 
-        if np.array_equal(current_node.position, goal_coords):
+    
+obstacle_cache = set()
+
+def is_obstacle(x, y):
+    if (x, y) in obstacle_cache:
+        return True
+
+    height = GRID[x][y]
+    if height > 1000:
+        obstacle_cache.add((x, y))
+        return True
+
+    for dx in [-1, 0, 1]:
+        for dy in [-1, 0, 1]:
+            if dx == dy == 0:
+                continue
+            x2 = x + dx
+            y2 = y + dy
+            if (
+                0 <= x2 < len(GRID)
+                and 0 <= y2 < len(GRID[0])
+                and GRID[x2][y2] > 1000
+            ):
+                obstacle_cache.add((x, y))
+                return True
+
+    return False
+
+neighbor_cache = {}
+
+def precompute_neighbors():
+    neighbor_cache = {}
+    for x in range(len(GRID)):
+        for y in range(len(GRID[0])):
+            neighbors = []
+            node_height = GRID[x][y]
+            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                x2 = x + dx
+                y2 = y + dy
+                if (
+                    0 <= x2 < len(GRID)
+                    and 0 <= y2 < len(GRID[0])
+                    and not is_obstacle(x2, y2)
+                ):
+                    neighbor_height = GRID[x2][y2]
+                    height_diff = abs(neighbor_height - node_height)
+                    penalty = height_diff * SLOPE_PENALTY
+                    neighbors.append(((x2, y2), penalty))
+            neighbor_cache[(x, y)] = neighbors
+
+    return neighbor_cache
+
+def get_neighbors(node):
+    neighbors = []
+    for (x, y), penalty in neighbor_cache[(node.x, node.y)]:
+        neighbors.append(Node(x, y, node, penalty))
+    return neighbors
+
+def astar():
+    nodes = []
+    heapq.heappush(nodes, start_node)
+    visited = set()
+
+    while nodes:
+        current = heapq.heappop(nodes)
+
+        if (current.x, current.y) in visited:
+            continue
+        visited.add((current.x, current.y))
+
+        if current.x == goal_node.x and current.y == goal_node.y:
             path = []
-            while current_node is not None:
-                path.append(current_node.position)
-                current_node = current_node.parent
-            return np.array(path[::-1])
+            while current.parent:
+                path.append((current.x, current.y))
+                current = current.parent
+            path.append((start_node.x, start_node.y))
+            path.reverse()
+            return path
 
-        closed_list.add(current_node)
+        neighbors = get_neighbors(current)
+        for neighbor in neighbors:
+            heapq.heappush(nodes, neighbor)
 
-        for neighbor in current_node.get_neighbors():
-            if neighbor in closed_list or open_list.contains(neighbor):
-                continue
+    return []
 
-            neighbor.g = current_node.g + 1
-            neighbor.f = neighbor.g + neighbor.h
-            neighbor.parent = current_node
-            open_list.put(neighbor, neighbor.f)
+def visualize_path(points):
+    import matplotlib.pyplot as plt
+    print("Visualizing Path")
 
-    return np.array([])
+    if not points:
+        print("No path found.")
+        return
 
+    plt.figure(figsize=(10, 10))
+    plt.imshow(GRID, cmap='hot', interpolation='nearest')
 
-def convert_to_adjacency_matrix(data: dict) -> Tuple[np.ndarray, np.ndarray]:
-    """
-    Convert the parsed .obj file data into an adjacency matrix.
+    x_coords, y_coords = zip(*points)
 
-    Parameters:
-    - data: The parsed .obj file data.
+    plt.plot(y_coords, x_coords, color='blue', linewidth=2)
 
-    Returns:
-    - An adjacency matrix representing the graph.
-    - An array of vertex coordinates.
-    """
-    vertices = np.array(data['vertices'])
-    num_vertices = len(vertices)
-    adjacency_matrix = lil_matrix((num_vertices, num_vertices), dtype=bool)
+    plt.show()
 
-    for face in data['faces']:
-        for i in range(len(face)):
-            v1 = face[i-1] - 1
-            v2 = face[i] - 1
-            adjacency_matrix[v1, v2] = True
-            adjacency_matrix[v2, v1] = True
+    print("Path Visualized")
 
-    print(adjacency_matrix)
-    return adjacency_matrix.tocsr(), vertices
+def run_astar():
+    print("Finding Optimized Path")
 
+    global GRID
+    GRID = load(SPATIAL_HEIGHTMAP_PATH)
+    (start_x, start_y), (goal_x, goal_y) = (GRID.shape[0] - 1, 0), (0, GRID.shape[1] - 1)
 
-def parse_obj_file(file_path: str) -> dict:
-    """
-    Parse a .obj file and convert it into a dictionary containing vertices, faces, and normal vectors.
+    global neighbor_cache
+    neighbor_cache = precompute_neighbors() 
 
-    Parameters:
-    - file_path: The path to the .obj file.
+    global goal_node, start_node
+    goal_node = Node(goal_x, goal_y)
+    start_node = Node(start_x, start_y)
 
-    Returns:
-    - A dictionary containing vertices, faces, and normal vectors.
-    """
-    data = {'vertices': [], 'faces': [], 'normals': []}
-
-    with open(file_path, 'r') as file:
-        for line in file:
-            parts = line.split()
-
-            if not parts:
-                continue
-
-            try:
-                if parts[0] == 'v':  # Vertex data
-                    data['vertices'].append(list(map(float, parts[1:])))
-
-                elif parts[0] == 'f':  # Face data
-                    face = [int(part.split('/')[0]) for part in parts[1:]]
-                    data['faces'].append(face)
-
-                elif parts[0] == 'vn':  # Normal vector data
-                    data['normals'].append(list(map(float, parts[1:])))
-            except ValueError:
-                continue
-
-    if not data['vertices'] or not data['faces']:
-        raise ValueError("Missing vertices or faces in .obj file")
-
-    return data
-
-
-def run_astar(file_path: str) -> None:
-    """
-    Main function to run the A* algorithm.
-    """
-    print("Parsing .obj file")
-    data = parse_obj_file(file_path)
-    # print(data)
-
-    print("Converting to adjacency matrix")
-    adjacency_matrix, vertices = convert_to_adjacency_matrix(data)
-    print(adjacency_matrix)
-    print("vertices", vertices)
-
-    print("Finding a suitable lunar path")
-    start_coords = np.min(vertices, axis=0)
-    end_coords = np.max(vertices, axis=0)
-
-    start_node = Node(*start_coords, adjacency_matrix, vertices, end_coords)
-    # print(start_node.position)
-    final_path = astar(start_node, end_coords, adjacency_matrix, vertices)
-
-    print("Initial path generated")
-
-    if final_path.size > 0:
-        generate_image(final_path, vertices)
+    final_path = astar()
+    if final_path:
+        print(final_path)
+        visualize_path(final_path)
     else:
         print("No path found.")
 
-
-def generate_image(final_path: np.ndarray, vertices: np.ndarray) -> None:
-    """
-    Generate an image of the optimal path using Pillow library.
-    """
-    min_coords = np.min(vertices, axis=0)
-    max_coords = np.max(vertices, axis=0)
-    SIZE = (int(max_coords[0] - min_coords[0]), int(max_coords[1] - min_coords[1]))
-
-    img = Image.new("RGB", SIZE, color="white")  
-    draw = ImageDraw.Draw(img)  
-    for node in final_path:
-        draw.point((int(node[0] - min_coords[0]), int(node[1] - min_coords[1])), fill="blue")
-    img.show()
-
+    print("Path Generation Complete")
 
 if __name__ == "__main__":
-    run_astar("SpatialMapping.obj")  
+    run_astar()

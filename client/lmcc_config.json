@@ -1,6 +1,8 @@
 {
-    "lmcc_url": "http://172.31.154.219:3001",
+    "lmcc_url": "http://0.0.0.0:3001",
+    "lmcc_ip": "0.0.0.0",
     "tickspeed": 100,
     "scale_factor": 5,
-    "eva1_ip": "1.1.1.1"
+    "eva1_ip": "1.1.1.1",
+    "autowarn": false
 }

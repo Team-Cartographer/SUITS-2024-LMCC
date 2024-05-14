@@ -1,5 +1,8 @@
 import { fetchWithParams } from "@/api/fetchServer"
 import { Biometrics, WarningData, biometricIDMap as IDs } from "@/hooks/types";
+import lmcc_config from "@/lmcc_config.json"
+
+const AUTOWARN = false; 
 
 const higher = (value: number, upper: number): boolean => { return (value > upper) }
 const lower = (value : number, lower: number): boolean => { return (value < lower) }
@@ -13,9 +16,8 @@ const isntNominal = (value: number, nom: number): boolean => { return (value !==
 const raiseAlert = async (message: string) => {
     try {
         await fetchWithParams<WarningData>(
-          `api/v0`,
+          `setwarning`,
           {
-            notif: 'update_warning',
             infoWarning: message,
           });
       } catch (err) {
@@ -37,18 +39,17 @@ const checkBiometricsHelper = (
     nom?: number,
 ): string => {
     if (higher(value, upper)) { 
-        raiseAlert(todoItemHigh)
+        if(AUTOWARN) { raiseAlert(todoItemHigh) }
         return id;
     } else if (lower(value, _lower)) { 
-        raiseAlert(todoItemLow)
+        if(AUTOWARN) { raiseAlert(todoItemLow) }
         return id;
     } 
     
-    // FIXME: Add back as necessary 
-    // if (nom && isntNominal(value, nom)) {
-    //     raiseAlert(todoItemNom)
-    //     return id;
-    // }
+    if (nom && isntNominal(value, nom)) {
+        if(AUTOWARN) { raiseAlert(todoItemNom) }
+        return id;
+    }
     
     return '0';
 }
@@ -57,18 +58,17 @@ const checkBiometricsHelper = (
 const checkOtherHelper = (
     value: number, upper: number, _lower: number, val_type: string, evaNumber: number, id: string, nom?: number): string => {
     if (higher(value, upper)) {
-        raiseAlert(`EVA ${evaNumber}: ${val_type} is too high! Current: ${value}, Max: ${upper}`)
+        if(AUTOWARN) { raiseAlert(`EVA ${evaNumber}: ${val_type} is too high! Current: ${value}, Max: ${upper}`); }
         return id 
     } else if (lower(value, _lower)) {
-        raiseAlert(`EVA ${evaNumber}: ${val_type} is too low! Current: ${value}, Min: ${_lower}`)
+        if(AUTOWARN) { raiseAlert(`EVA ${evaNumber}: ${val_type} is too low! Current: ${value}, Min: ${_lower}`); }
         return id 
     }
 
-    // FIXME: Add back as necessary 
-    // if (nom && isntNominal(value, nom)) {
-    //     raiseAlert(`EVA ${evaNumber}: ${val_type} is not nominal! Current: ${value}, Nominal: ${nom}`)
-    //     return id
-    // }
+    if (nom && isntNominal(value, nom) && AUTOWARN) {
+        if(AUTOWARN) { raiseAlert(`EVA ${evaNumber}: ${val_type} is not nominal! Current: ${value}, Nominal: ${nom}`); } 
+        return id
+    }
     return '0'
 }
 
@@ -215,6 +215,7 @@ const EVADataMap = (evaData: Biometrics, evaNumber: number, criticalIDs: string[
     }
 
     const evaTelemetry = evaData.telemetry.eva
+
     return(
         <div className="overflow-scroll flex flex-col gap-y-3 text-sm">
             <div className="flex flex-row gap-x-3">
@@ -235,7 +236,7 @@ const EVADataMap = (evaData: Biometrics, evaNumber: number, criticalIDs: string[
                     <li className={setClassName(IDs.oxy_consumption)}>O2 Consumption: {evaTelemetry.oxy_consumption.toFixed(2)}psi/min {'[0.05, 0.15, 0.1]'}</li>
                     <li className={setClassName(IDs.suit_pressure_oxy)}>O2 Suit Pressure: {evaTelemetry.suit_pressure_oxy.toFixed(2)}psi/min {'[0.05, 0.15, 0.1]'}</li>
                     <li className={setClassName(IDs.suit_pressure_co2)}>CO2 Production: {evaTelemetry.co2_production.toFixed(2)}psi {'[3.5, 4.1, 4.0]'}</li>
-                    <li className={setClassName(IDs.suit_pressure_other)}>Other Suit Pressure: {evaTelemetry.suit_pressure_other.toFixed(2)}psi {'0, 0.1, 0]'}</li>
+                    <li className={setClassName(IDs.suit_pressure_other)}>Other Suit Pressure: {evaTelemetry.suit_pressure_other.toFixed(2)}psi {'[0, 0.1, 0]'}</li>
                     <li className={setClassName(IDs.suit_pressure_total)}>Total Suit Pressure: {evaTelemetry.suit_pressure_total.toFixed(2)}psi {'[0, 0.5, 0]'}</li>
                     <li className={setClassName(IDs.helmet_pressure_co2)}>Helmet Pressure Co2: {evaTelemetry.helmet_pressure_co2.toFixed(2)}psi {'[3.5, 4.5, 4.0]'}</li>
                 </div>
