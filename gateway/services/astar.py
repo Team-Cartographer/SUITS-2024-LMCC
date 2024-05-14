@@ -10,18 +10,19 @@ SLOPE_PENALTY = 10
 class Node:
     heuristic_cache = {}
 
-    def __init__(self, x: int, y: int, parent: "Node" = None) -> None:
+    def __init__(self, x: int, y: int, parent: "Node" = None, penalty: float = 0) -> None:
         self.x = x
         self.y = y
         self.parent = parent
         self.height = GRID[x][y]
+        self.penalty = penalty
 
         self.g: float = 0
         self.h: float = 0
         self.f: float = 0
 
         if parent is not None:
-            self.g = parent.g + self.dist_btw(parent)
+            self.g = parent.g + self.dist_btw(parent, self) + self.penalty
             self.h = self.heuristic(goal_node)
             self.f = self.g + self.h
 
@@ -39,11 +40,15 @@ class Node:
         Node.heuristic_cache[key] = result
         return result
 
-    def dist_btw(self, other: "Node") -> float:
-        dx = self.x - other.x
-        dy = self.y - other.y
-        return sqrt(dx ** 2 + dy ** 2)
-
+    def dist_btw(node1: 'Node', node2: 'Node') -> float:
+        dx = node1.x - node2.x
+        dy = node1.y - node2.y
+        height_diff = abs(node1.height - node2.height)
+        penalty = height_diff * SLOPE_PENALTY
+        return sqrt(dx ** 2 + dy ** 2) + penalty
+    
+    
+    
 obstacle_cache = set()
 
 def is_obstacle(x, y):
@@ -74,9 +79,11 @@ def is_obstacle(x, y):
 neighbor_cache = {}
 
 def precompute_neighbors():
+    neighbor_cache = {}
     for x in range(len(GRID)):
         for y in range(len(GRID[0])):
             neighbors = []
+            node_height = GRID[x][y]
             for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
                 x2 = x + dx
                 y2 = y + dy
@@ -85,11 +92,19 @@ def precompute_neighbors():
                     and 0 <= y2 < len(GRID[0])
                     and not is_obstacle(x2, y2)
                 ):
-                    neighbors.append((x2, y2))
+                    neighbor_height = GRID[x2][y2]
+                    height_diff = abs(neighbor_height - node_height)
+                    penalty = height_diff * SLOPE_PENALTY
+                    neighbors.append(((x2, y2), penalty))
             neighbor_cache[(x, y)] = neighbors
 
+    return neighbor_cache
+
 def get_neighbors(node):
-    return [Node(x, y, node) for x, y in neighbor_cache[(node.x, node.y)]]
+    neighbors = []
+    for (x, y), penalty in neighbor_cache[(node.x, node.y)]:
+        neighbors.append(Node(x, y, node, penalty))
+    return neighbors
 
 def astar():
     nodes = []
@@ -144,13 +159,16 @@ def run_astar():
     GRID = load(SPATIAL_HEIGHTMAP_PATH)
     (start_x, start_y), (goal_x, goal_y) = (GRID.shape[0] - 1, 0), (0, GRID.shape[1] - 1)
 
+    global neighbor_cache
+    neighbor_cache = precompute_neighbors() 
+
     global goal_node, start_node
     goal_node = Node(goal_x, goal_y)
     start_node = Node(start_x, start_y)
 
     final_path = astar()
     if final_path:
-        # print(final_path)
+        print(final_path)
         visualize_path(final_path)
     else:
         print("No path found.")
