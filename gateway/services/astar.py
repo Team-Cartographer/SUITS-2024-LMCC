@@ -152,18 +152,6 @@ def visualize_path(points):
 
     print("Path Visualized")
 
-
-def timeit(func): 
-    def execute(*args, **kwargs): 
-        import time
-        start = time.time()
-        output = func(*args, **kwargs)
-        print(f"Time taken: {time.time() - start:.2f} seconds")
-        return output
-    return execute
-
-
-@timeit
 def run_astar():
     print("Finding Optimized Path")
 
