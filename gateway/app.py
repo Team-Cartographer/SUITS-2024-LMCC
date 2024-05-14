@@ -1,6 +1,6 @@
 # File Imports
 import paths
-from services.utils import request_utm_data, get_x_y_from_lat_lon, extend_eva_to_geojson
+from services.utils import request_utm_data, get_x_y_from_lat_lon, extend_eva_to_geojson, extend_cache_to_geojson
 from services.database import JSONDatabase, ListCache
 from services.schema import GeoJSON, WarningItem, TodoItems, \
                             GeoJSONFeature, TodoItem
@@ -154,6 +154,20 @@ def get_warning() -> JSONResponse:
 def get_geojson() -> JSONResponse:
     app.get_reqs += 1
     return JSONResponse(geojsonDb, status.HTTP_200_OK)
+
+@app.get('/geojson_hmd')
+def get_geojson_hmd() -> JSONResponse:
+    app.get_reqs += 1
+    data = {
+        "features": []
+    }
+    for feature in geojsonDb["features"]:
+        data["features"].append({
+            "name": feature["properties"]["name"],
+            "description": feature["properties"]["description"],
+            "location": feature["geometry"]["coordinates"]
+        })
+    return JSONResponse(data, status.HTTP_200_OK)
 
 ########## MISSION ROUTES ###################################
 
@@ -366,35 +380,15 @@ async def map_socket(websocket: WebSocket):
                 future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
                 future3 = executor.submit(get_x_y_from_lat_lon, ll3.lat, ll3.lon)
             
-            
             x_ev1, y_ev1 = future1.result()
             x_ev2, y_ev2 = future2.result()
             x_rov, y_rov = future3.result()
 
             geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-            print(geojsonDb)
-
-            for feature in geojsonDb["features"]:
-                description = feature["properties"]["description"]
-                name = feature["properties"]["name"]
-
-                x, y = map(int, description.split('x'))
-                x, y = x/5, y/5
-
-                if name in ["EVA 1", "EVA 2", "Rover"]:
-                    radius = 5
-                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
-                else: 
-                    radius = 3
-                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-                
-                if name != "":
-                    text_offset_x = 10
-                    text_offset_y = -5
-                    draw.text((x + text_offset_x, y + text_offset_y), name, fill='white', stroke_fill='black', stroke_width=2)
 
 
             if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
+                geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
                 eva1_poscache.append((x_ev1, y_ev1))
                 eva2_poscache.append((x_ev2, y_ev2))
                 rover_poscache.append((x_rov, y_rov))
@@ -415,7 +409,30 @@ async def map_socket(websocket: WebSocket):
                 thread1.join()
                 thread2.join()
                 thread3.join()
-            
+
+
+            for feature in geojsonDb["features"]:
+                description = feature["properties"]["description"]
+                name = feature["properties"]["name"]
+
+                if name in ["EVA 1 Cache Point", "EVA 2 Cache Point", "Rover Cache Point"]:
+                    continue
+
+                x, y = map(int, description.split('x'))
+                x, y = x/5, y/5
+
+                if name in ["EVA 1", "EVA 2", "Rover"]:
+                    radius = 5
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
+                else: 
+                    radius = 3
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+                
+                if name != "":
+                    text_offset_x = 10
+                    text_offset_y = -5
+                    draw.text((x + text_offset_x, y + text_offset_y), name, fill='white', stroke_fill='black', stroke_width=2)
+
 
             img_io = BytesIO()
             image.save(img_io, 'PNG')
