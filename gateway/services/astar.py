@@ -1,9 +1,11 @@
 import heapq
 from numpy import sqrt, load
 from pathlib import Path
+import numpy as np
 
 SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
-OBSTACLE_CLEARANCE = 1  # Minimum distance from obstacles
+OBSTACLE_CLEARANCE = 1  
+SLOPE_PENALTY = 10
 
 class Node:
     heuristic_cache = {}
@@ -42,9 +44,15 @@ class Node:
         dy = self.y - other.y
         return sqrt(dx ** 2 + dy ** 2)
 
+obstacle_cache = set()
+
 def is_obstacle(x, y):
+    if (x, y) in obstacle_cache:
+        return True
+
     height = GRID[x][y]
     if height > 1000:
+        obstacle_cache.add((x, y))
         return True
 
     for dx in [-1, 0, 1]:
@@ -58,25 +66,30 @@ def is_obstacle(x, y):
                 and 0 <= y2 < len(GRID[0])
                 and GRID[x2][y2] > 1000
             ):
+                obstacle_cache.add((x, y))
                 return True
 
     return False
 
+neighbor_cache = {}
+
+def precompute_neighbors():
+    for x in range(len(GRID)):
+        for y in range(len(GRID[0])):
+            neighbors = []
+            for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
+                x2 = x + dx
+                y2 = y + dy
+                if (
+                    0 <= x2 < len(GRID)
+                    and 0 <= y2 < len(GRID[0])
+                    and not is_obstacle(x2, y2)
+                ):
+                    neighbors.append((x2, y2))
+            neighbor_cache[(x, y)] = neighbors
+
 def get_neighbors(node):
-    neighbors = []
-    for dx, dy in [(0, 1), (0, -1), (1, 0), (-1, 0)]:
-        x2 = node.x + dx
-        y2 = node.y + dy
-
-        if (
-            0 <= x2 < len(GRID)
-            and 0 <= y2 < len(GRID[0])
-            and not is_obstacle(x2, y2)
-            and node.dist_btw(Node(x2, y2)) >= OBSTACLE_CLEARANCE
-        ):
-            neighbors.append(Node(x2, y2, node))
-
-    return neighbors
+    return [Node(x, y, node) for x, y in neighbor_cache[(node.x, node.y)]]
 
 def astar():
     nodes = []
@@ -137,7 +150,7 @@ def run_astar():
 
     final_path = astar()
     if final_path:
-        print(final_path)
+        # print(final_path)
         visualize_path(final_path)
     else:
         print("No path found.")
