@@ -10,9 +10,10 @@ from json import loads, load
 from base64 import b64encode
 from time import time 
 from io import BytesIO
+import asyncio 
 
 # Third-Party Imports
-from fastapi import FastAPI, status
+from fastapi import FastAPI, WebSocket, status, WebSocketDisconnect
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
@@ -325,3 +326,69 @@ def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
     print(feature)
     geojsonDb["features"].remove(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
+
+
+####################################################################################
+################################# WEBSOCKETS #######################################
+####################################################################################
+
+
+@app.websocket("/map")
+async def map_socket(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            image = Image.open(paths.PNG_PATH)
+            draw = ImageDraw.Draw(image)
+
+            ll1, ll2, ll3 = request_utm_data(TSS_HOST)
+            x_ev1, y_ev1 = get_x_y_from_lat_lon(ll1.lat, ll1.lon)
+            x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
+            x_rov, y_rov = get_x_y_from_lat_lon(ll3.lat, ll3.lon)
+
+            pins = []
+            for feature in geojsonDb["features"]:
+                pins.append((feature["properties"]["description"], feature["properties"]["name"]))
+
+            for pin, name in pins:
+                x, y = map(int, pin.split('x'))
+                x, y = x / 5, y / 5
+                radius = 3
+                draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+                text_offset_x = 10
+                text_offset_y = -5  
+                draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
+
+            if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
+                eva1_poscache.append((x_ev1, y_ev1))
+                eva2_poscache.append((x_ev2, y_ev2))
+                rover_poscache.append((x_rov, y_rov))
+
+                for i in range(1, len(eva1_poscache)):
+                    x1, y1 = eva1_poscache[i-1]
+                    x2, y2 = eva1_poscache[i]
+                    draw.line([(x1 / 5, y1 / 5), (x2 / 5, y2 / 5)], fill='lawngreen', width=2)
+                    
+                    x1, y1 = eva2_poscache[i-1]
+                    x2, y2 = eva2_poscache[i]
+                    draw.line([(x1 / 5, y1 / 5), (x2 / 5, y2 / 5)], fill='deeppink', width=2)
+                    
+                    x1, y1 = rover_poscache[i-1]
+                    x2, y2 = rover_poscache[i]
+                    draw.line([(x1 / 5, y1 / 5), (x2 / 5, y2 / 5)], fill='aqua', width=2)
+
+            radius = 5
+            draw.ellipse([(x_ev1 / 5 - radius, y_ev1 / 5 - radius), (x_ev1 / 5 + radius, y_ev1 / 5 + radius)], fill='lawngreen', outline="black", width=2)
+            draw.ellipse([(x_ev2 / 5 - radius, y_ev2 / 5 - radius), (x_ev2 / 5 + radius, y_ev2 / 5 + radius)], fill='deeppink', outline="black", width=2)
+            draw.ellipse([(x_rov / 5 - radius, y_rov / 5 - radius), (x_rov / 5 + radius, y_rov / 5 + radius)], fill='aqua', outline="black", width=2)
+
+            img_io = BytesIO()
+            image.save(img_io, 'PNG')
+            img_io.seek(0)
+            await websocket.send_bytes(img_io.read())
+            await asyncio.sleep(1.5)
+    except WebSocketDisconnect:
+        print("WebSocket disconnected")
+    except Exception as e:
+        print(f"Error: {e}")
+        await websocket.close()

@@ -50,16 +50,16 @@ const Map = () => {
     const networkProvider = useNetwork();
 
     // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            fetchImage();
-            const mapData = networkProvider.getGeoJSONData()
-            setPoints(mapData.features);
-        }, 150); 
-        return () => {
-            clearInterval(interval);
-        };
-    });
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         fetchImage();
+    //         const mapData = networkProvider.getGeoJSONData()
+    //         setPoints(mapData.features);
+    //     }, 150); 
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // });
 
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
@@ -81,26 +81,61 @@ const Map = () => {
     }, []);
 
 
-    // Fetches the current map image and sets them to the URL state, checking for errors
-    const fetchImage = async () => {
-        try {
-            const imageBlob = await fetchImageWithoutParams('map');
-            if (imageBlob) {
-                for (let mapUrl of MAP_URLS) {
-                    URL.revokeObjectURL(mapUrl);
-                }
-                const newUrl = URL.createObjectURL(imageBlob);
+    // // Fetches the current map image and sets them to the URL state, checking for errors
+    // const fetchImage = async () => {
+    //     try {
+    //         const imageBlob = await fetchImageWithoutParams('map');
+    //         if (imageBlob) {
+    //             for (let mapUrl of MAP_URLS) {
+    //                 URL.revokeObjectURL(mapUrl);
+    //             }
+    //             const newUrl = URL.createObjectURL(imageBlob);
+    //             setMapImage(newUrl);
+    //             MAP_URLS = [...MAP_URLS, newUrl]
+    //         } else {
+    //             throw new Error('Image blob is undefined');
+    //         }
+    //     } catch (err) {
+    //         const error = err as Error;
+    //         setErr(error.message);
+    //         console.error('Error fetching image:', error);
+    //     }
+    // }
+
+    useEffect(() => {
+        const socket = new WebSocket("ws://192.168.4.36:3001/map");
+    
+        socket.binaryType = "arraybuffer";
+    
+        socket.onopen = () => {
+          console.log("WebSocket connection established");
+        };
+    
+        socket.onmessage = (event) => {
+            // console.log("WebSocket message received:", event);
+            if (event.data instanceof ArrayBuffer) {
+                const arrayBuffer = event.data;
+                const blob = new Blob([arrayBuffer], { type: "image/png" });
+        
+                const newUrl = URL.createObjectURL(blob);
                 setMapImage(newUrl);
-                MAP_URLS = [...MAP_URLS, newUrl]
-            } else {
-                throw new Error('Image blob is undefined');
+                MAP_URLS = [...MAP_URLS, newUrl];
             }
-        } catch (err) {
-            const error = err as Error;
-            setErr(error.message);
-            console.error('Error fetching image:', error);
-        }
-    }
+        };
+    
+        // socket.onerror = (error) => {
+        //   console.error("WebSocket error:", error);
+        //   setErr("WebSocket error occurred: " + error);
+        // };
+    
+        socket.onclose = (event) => {
+          console.log("WebSocket connection closed:", event);
+        };
+    
+        return () => {
+          socket.close();
+        };
+      }, []);
 
     // Checks if the image was clicked, and whether that click was/wasn't near an existing point
     const handleImageClick = async (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
