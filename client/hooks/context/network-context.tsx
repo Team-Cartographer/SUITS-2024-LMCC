@@ -69,7 +69,7 @@ const defaultNetworkValue: NetworkContextType = {
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
-	const TICKSPEED = 2000;
+	const TICKSPEED = 1000;
 
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");

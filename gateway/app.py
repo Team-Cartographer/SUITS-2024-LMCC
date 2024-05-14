@@ -386,7 +386,7 @@ async def map_socket(websocket: WebSocket):
             image.save(img_io, 'PNG')
             img_io.seek(0)
             await websocket.send_bytes(img_io.read())
-            await asyncio.sleep(1.5)
+            await asyncio.sleep(1)
     except WebSocketDisconnect:
         print("WebSocket disconnected")
     except Exception as e:

@@ -1,6 +1,6 @@
 import json
 from logging import getLogger
-from typing import TypeVar
+
 
 log = getLogger(__name__)
 

@@ -49,18 +49,6 @@ const Map = () => {
     
     const networkProvider = useNetwork();
 
-    // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
-    // useEffect(() => {
-    //     const interval = setInterval(() => {
-    //         fetchImage();
-    //         const mapData = networkProvider.getGeoJSONData()
-    //         setPoints(mapData.features);
-    //     }, 150); 
-    //     return () => {
-    //         clearInterval(interval);
-    //     };
-    // });
-
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if(event.key === 'Shift') {
@@ -79,6 +67,19 @@ const Map = () => {
             window.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
+
+    
+    // // This updates the map image on all computers running every {lmcc_config.tickspeed} seconds. 
+    // useEffect(() => {
+    //     const interval = setInterval(() => {
+    //         fetchImage();
+    //         const mapData = networkProvider.getGeoJSONData()
+    //         setPoints(mapData.features);
+    //     }, 600); 
+    //     return () => {
+    //         clearInterval(interval);
+    //     };
+    // });
 
 
     // // Fetches the current map image and sets them to the URL state, checking for errors
