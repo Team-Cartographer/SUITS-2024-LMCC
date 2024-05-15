@@ -36,6 +36,11 @@ def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]:
     return LATLON(lat_eva_1, lon_eva_1), LATLON(lat_eva_2, lon_eva_2), LATLON(lat_rover, lon_rover)
 
 
+def get_lat_lon_from_utm(easting: int, northing: int): 
+    lon, lat = map(round_8, transform(utm_proj, lat_lon_proj, easting, northing))
+    return LATLON(lat, lon)
+
+
 
 def get_x_y_from_lat_lon(lat: float, lon: float): 
     lat_diff = np.abs(TIFF_DATASET[..., 1] - lat)

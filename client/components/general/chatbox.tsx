@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sparkles, Upload } from "lucide-react";
 import { Spinner } from "../ui/spinner";
 import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
-import { ChatHistoryType, ChatItemType } from "@/hooks/types";
+import { ChatHistoryType, ChatItemType } from "@/lib/types";
 
 import Image from "next/image";
 import MarkdownContent from "./markdowner";

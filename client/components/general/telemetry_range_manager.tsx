@@ -1,5 +1,5 @@
 import { fetchWithParams } from "@/api/fetchServer"
-import { Biometrics, WarningData, biometricIDMap as IDs } from "@/hooks/types";
+import { Biometrics, WarningData, biometricIDMap as IDs } from "@/lib/types";
 import lmcc_config from "@/lmcc_config.json"
 
 const AUTOWARN = false; 

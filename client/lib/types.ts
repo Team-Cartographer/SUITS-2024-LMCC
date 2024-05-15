@@ -72,17 +72,17 @@ id: number;
 name: string;
 }
 
+interface SpecRequest { 
+    spec: EVASpecItems
+}
+
 interface Spec {
 [key: string]: SpecItem;
 }
 
-interface SpecData {
-spec: Spec;
-}
-
 interface EVASpecItems {
-	eva1: SpecItem | null
-	eva2: SpecItem | null
+	eva1: SpecItem
+	eva2: SpecItem
 }
 
 // BIOMETRICDATA /////////////////////////////////////////////////////////////
@@ -176,6 +176,7 @@ export type {
     Spec,
     SpecData,
     SpecItem,
+    SpecRequest,
     EVASpecItems, 
     Biometrics,
     BiometricData,
