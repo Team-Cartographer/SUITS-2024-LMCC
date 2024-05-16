@@ -6,7 +6,7 @@
  */
 
 import { Chart } from "react-google-charts";
-import { SpecItem } from "@/hooks/types"
+import { SpecItem } from "@/lib/types"
 
 import {
     Table,

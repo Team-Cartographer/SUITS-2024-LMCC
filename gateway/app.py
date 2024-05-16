@@ -1,12 +1,13 @@
 # File Imports
 import paths
-from services.utils import request_utm_data, get_x_y_from_lat_lon, extend_eva_to_geojson
+from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
+                    extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
 from services.database import JSONDatabase, ListCache
 from services.schema import GeoJSON, WarningItem, TodoItems, \
                             GeoJSONFeature, TodoItem
 
 # Standard Imports 
-from json import loads, load
+from json import loads, load, dumps
 from base64 import b64encode
 from time import time 
 from io import BytesIO
@@ -15,7 +16,7 @@ from threading import Thread
 import asyncio 
 
 # Third-Party Imports
-from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket
+from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket, Request
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
@@ -155,6 +156,21 @@ def get_geojson() -> JSONResponse:
     app.get_reqs += 1
     return JSONResponse(geojsonDb, status.HTTP_200_OK)
 
+@app.get('/geojson_hmd')
+def get_geojson_hmd() -> JSONResponse:
+    app.get_reqs += 1
+    data = {
+        "features": []
+    }
+    for feature in geojsonDb["features"]:
+        data["features"].append({
+            "name": feature["properties"]["name"],
+            "description": feature["properties"]["description"],
+            "utm": feature["properties"]["utm"],
+            "latlon": feature["geometry"]["coordinates"]
+        })
+    return JSONResponse(data, status.HTTP_200_OK)
+
 ########## MISSION ROUTES ###################################
 
 @app.get('/mission/comm')
@@ -185,13 +201,22 @@ def imu():
 def rover():
     app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/ROVER.json")
-    return loads(req.text)
+    ret = req.json() 
+    east_rover, north_rover = int(ret["rover"]["posx"]), int(ret["rover"]["posy"])
+    llr = get_lat_lon_from_utm(east_rover, north_rover)
+    return { 
+        "rover": {
+            "posx": llr.lon,
+            "posy": llr.lat,
+            "qr_id": ret["rover"]["qr_id"]
+        }
+    }
 
 @app.get('/mission/spec')
 def spec():
     app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/SPEC.json")
-    return loads(req.text)
+    return loads(req.text) 
 
 @app.get('/mission/uia')
 def uia():
@@ -244,39 +269,24 @@ def getmap():
     app.get_reqs += 1
     image = Image.open(paths.PNG_PATH)
     draw = ImageDraw.Draw(image)
-     
+    
     geojsonDb["features"] = [feature for feature in geojsonDb["features"] if feature["properties"]["name"] not in ["EVA 1", "EVA 2", "Rover"]]    
-    print(geojsonDb["features"])
+
     ll1, ll2, ll3 = request_utm_data(TSS_HOST)
     with ProcessPoolExecutor() as executor:
         future1 = executor.submit(get_x_y_from_lat_lon, ll1.lat, ll1.lon)
         future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
         future3 = executor.submit(get_x_y_from_lat_lon, ll3.lat, ll3.lon)
     
-    
     x_ev1, y_ev1 = future1.result()
     x_ev2, y_ev2 = future2.result()
     x_rov, y_rov = future3.result()
 
-    geojsonDb["features"].extend(extend_eva_to_geojson(x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-
-    for feature in geojsonDb["features"]:
-        description = feature["properties"]["description"]
-        name = feature["properties"]["name"]
-
-        x, y = map(int, description.split('x'))
-        x, y = x/5, y/5
-
-        radius = 3
-        draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-        
-        if name != "":
-            text_offset_x = 10
-            text_offset_y = -5
-            draw.text((x + text_offset_x, y + text_offset_y), name, fill='black')
+    geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
 
 
-    if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
+    if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) >= 1: 
+        geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
         eva1_poscache.append((x_ev1, y_ev1))
         eva2_poscache.append((x_ev2, y_ev2))
         rover_poscache.append((x_rov, y_rov))
@@ -297,12 +307,30 @@ def getmap():
         thread1.join()
         thread2.join()
         thread3.join()
-    
 
-    radius = 5
-    draw.ellipse([(x_ev1/5 - radius, y_ev1/5 - radius), (x_ev1/5 + radius, y_ev1/5 + radius)], fill='lawngreen', outline="black", width=2)
-    draw.ellipse([(x_ev2/5 - radius, y_ev2/5 - radius), (x_ev2/5 + radius, y_ev2/5 + radius)], fill='deeppink', outline="black", width=2)
-    draw.ellipse([(x_rov/5 - radius, y_rov/5 - radius), (x_rov/5 + radius, y_rov/5 + radius)], fill='aqua', outline="black", width=2)
+
+    for feature in geojsonDb["features"]:
+        description = feature["properties"]["description"]
+        name = feature["properties"]["name"]
+
+        if name in ["EVA 1 Cache Point", "EVA 2 Cache Point", "Rover Cache Point"]:
+            continue
+
+        x, y = map(int, description.split('x'))
+        x, y = x/5, y/5
+
+        if name in ["EVA 1", "EVA 2", "Rover"]:
+            radius = 5
+            draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
+        else: 
+            radius = 3
+            draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+        
+        if name != "":
+            text_offset_x = 10
+            text_offset_y = -5
+            draw.text((x + text_offset_x, y + text_offset_y), name, fill='white', stroke_fill='black', stroke_width=2)
+
 
     img_io = BytesIO()
     image.save(img_io, 'PNG')
@@ -333,14 +361,21 @@ def update_warning(warningData: WarningItem) -> JSONResponse:
 @app.post('/addfeature')
 def update_features(feature: GeoJSONFeature) -> JSONResponse:
     app.post_reqs += 1
+    
+    feature = process_geojson_request(feature)
+    print(feature) 
+
     geojsonDb["features"].append(feature.feature)
-    return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
+    return JSONResponse(geojsonDb, status_code=201)
 
 
 @app.post('/removefeature')
 def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
     app.post_reqs += 1
-    print(feature)
+
+    feature = process_geojson_request(feature)
+    print(feature) 
+
     geojsonDb["features"].remove(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
 
@@ -348,6 +383,48 @@ def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
 ####################################################################################
 ################################# WEBSOCKETS #######################################
 ####################################################################################
+
+# # DATA POLLING WEBSOCKET (UNSTABLE, DO NOT USE)
+# @app.websocket("/ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await websocket.accept()
+#     try:
+#         while True:
+#             message = await websocket.receive_text()
+#             request = loads(message)
+#             request_type = request.get("type")
+
+#             if request_type == "test":
+#                 await websocket.send_text(dumps({"message": "Hello, world!"}))
+
+#             elif request_type == "apimonitor":
+#                 uptime = round(time() - app.start_time, 3)
+#                 total_reqs = app.get_reqs + app.post_reqs
+#                 await websocket.send_text(dumps({
+#                     "message": "Gateway API Monitoring Service",
+#                     "uptime": uptime,
+#                     "get_requests": app.get_reqs,
+#                     "post_requests": app.post_reqs,
+#                     "total_requests": total_reqs,
+#                     "avg_requests_per_min": round(total_reqs / (uptime / 60), 3)
+#                 }))
+
+#             elif request_type == "todo":
+#                 await websocket.send_text(dumps(todoDb))
+
+#             elif request_type == "warning":
+#                 await websocket.send_text(dumps(warningDb))
+
+#             elif request_type == "geojson":
+#                 await websocket.send_text(dumps(geojsonDb))
+
+#             await asyncio.sleep(0.5)
+#     except WebSocketDisconnect:
+#         print("WebSocket disconnected")
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         await websocket.close()
+
 
 
 @app.websocket("/map")
@@ -366,35 +443,15 @@ async def map_socket(websocket: WebSocket):
                 future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
                 future3 = executor.submit(get_x_y_from_lat_lon, ll3.lat, ll3.lon)
             
-            
             x_ev1, y_ev1 = future1.result()
             x_ev2, y_ev2 = future2.result()
             x_rov, y_rov = future3.result()
 
             geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-            print(geojsonDb)
-
-            for feature in geojsonDb["features"]:
-                description = feature["properties"]["description"]
-                name = feature["properties"]["name"]
-
-                x, y = map(int, description.split('x'))
-                x, y = x/5, y/5
-
-                if name in ["EVA 1", "EVA 2", "Rover"]:
-                    radius = 5
-                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
-                else: 
-                    radius = 3
-                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
-                
-                if name != "":
-                    text_offset_x = 10
-                    text_offset_y = -5
-                    draw.text((x + text_offset_x, y + text_offset_y), name, fill='white', stroke_fill='black', stroke_width=2)
 
 
-            if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) > 2: 
+            if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) >= 1: 
+                geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
                 eva1_poscache.append((x_ev1, y_ev1))
                 eva2_poscache.append((x_ev2, y_ev2))
                 rover_poscache.append((x_rov, y_rov))
@@ -415,13 +472,36 @@ async def map_socket(websocket: WebSocket):
                 thread1.join()
                 thread2.join()
                 thread3.join()
-            
+
+
+            for feature in geojsonDb["features"]:
+                description = feature["properties"]["description"]
+                name = feature["properties"]["name"]
+
+                if name in ["EVA 1 Cache Point", "EVA 2 Cache Point", "Rover Cache Point"]:
+                    continue
+
+                x, y = map(int, description.split('x'))
+                x, y = x/5, y/5
+
+                if name in ["EVA 1", "EVA 2", "Rover"]:
+                    radius = 5
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
+                else: 
+                    radius = 3
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red', outline="black", width=1)
+                
+                if name != "":
+                    text_offset_x = 10
+                    text_offset_y = -5
+                    draw.text((x + text_offset_x, y + text_offset_y), name, fill='white', stroke_fill='black', stroke_width=2)
+
 
             img_io = BytesIO()
             image.save(img_io, 'PNG')
             img_io.seek(0)
             await websocket.send_bytes(img_io.read())
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.5)
     except WebSocketDisconnect:
         print("WebSocket disconnected")
     except Exception as e:

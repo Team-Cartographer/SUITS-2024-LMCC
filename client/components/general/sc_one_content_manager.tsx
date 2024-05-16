@@ -3,7 +3,7 @@ import Map from "../nav/map";
 import { Button } from "../ui/button";
 import ProcedureLists from "../hmd_link/procedure-lists";
 import dynamic from "next/dynamic";
-import { SpecItem } from "@/hooks/types";
+import { SpecItem } from "@/lib/types";
 import { fetchWithParams } from "@/api/fetchServer";
 import { useNetwork } from "@/hooks/context/network-context";
 

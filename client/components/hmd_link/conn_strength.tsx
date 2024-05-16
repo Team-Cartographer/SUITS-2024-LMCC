@@ -47,7 +47,13 @@ const ConnectionStrength = () => {
         <HoverCardContent className="w-80">
           {gatewayInfo ? (
             <div>
-              <div className="text-lg font-bold pb-2 self-start">
+              <div 
+                className="text-lg font-bold pb-2 self-start hover:underline"
+                role="button"
+                onClick={() => 
+                  window.open("http://0.0.0.0:3001/docs", "_blank")
+                }
+              >
                 Gateway Info
               </div>
               <div className="pb-4 self-start text-base">

@@ -18,11 +18,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <NetworkProvider>
+        <NetworkProvider>
         <VignetteProvider>
           <body className={inter.className} suppressHydrationWarning={true}>{children}</body>
         </VignetteProvider>
-      </NetworkProvider>
+        </NetworkProvider>
     </html>
   );
 }

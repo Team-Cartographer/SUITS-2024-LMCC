@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
-import { WarningData } from "@/hooks/types";
+import { WarningData } from "@/lib/types";
 import { useNetwork } from "@/hooks/context/network-context";
 
 const PanicButton = () => {

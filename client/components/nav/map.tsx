@@ -10,7 +10,7 @@ import lmcc_config from "@/lmcc_config.json"
 import { fetchWithParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
-import { GeoJSONFeature } from "@/hooks/types";
+import { GeoJSONFeature } from "@/lib/types";
 
 // Note that all scaling must be based off of 1024x815 dimensions!
 
@@ -177,11 +177,12 @@ const Map = () => {
                 type: "Feature",
                 properties: {
                     name: _descContent,
-                    description: xystring
+                    description: xystring,
+                    utm: [0, 0] 
                 },
                 geometry: {
                     type: "Point",
-                    coordinates: [xystring.split('x').map(Number)]
+                    coordinates: xystring.split('x').map(Number)
                 }
             }
             await fetchWithParams('addfeature', {
@@ -200,11 +201,12 @@ const Map = () => {
                 type: "Feature",
                 properties: {
                     name: _descContent,
-                    description: xystring
+                    description: xystring,
+                    utm: [0, 0]
                 },
                 geometry: {
                     type: "Point",
-                    coordinates: [xystring.split('x').map(Number)]
+                    coordinates: xystring.split('x').map(Number)
                 }
             }
             console.log("Removing: " + JSON.stringify(feature))

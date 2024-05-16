@@ -13,7 +13,8 @@ import {
 	Biometrics,
 	RoverData,
 	ErrorData,
-} from "../types";
+	SpecRequest,
+} from "@/lib/types";
 import { 
     defaultTodoValue,
 	defaultWarningValue,
@@ -23,7 +24,7 @@ import {
     defaultTimerValue, 
     defaultBiometricValue,
 	defaultErrorValue
-} from "../defaults"
+} from "@/lib/defaults"
 
 ////////////////////////////////////////////////
 
@@ -231,7 +232,7 @@ export const NetworkProvider = ({ children }: any) => {
 				}
 
 
-				const specData = await fetchWithoutParams<SpecData>("mission/spec");
+				const specData = await fetchWithoutParams<SpecRequest>("mission/spec");
 				if (specData) {
 					setEVA1SpecItem({
 						data: specData.spec["eva1"].data,
