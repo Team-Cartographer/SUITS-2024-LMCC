@@ -177,11 +177,12 @@ const Map = () => {
                 type: "Feature",
                 properties: {
                     name: _descContent,
-                    description: xystring
+                    description: xystring,
+                    utm: [0, 0] 
                 },
                 geometry: {
                     type: "Point",
-                    coordinates: [xystring.split('x').map(Number)]
+                    coordinates: xystring.split('x').map(Number)
                 }
             }
             await fetchWithParams('addfeature', {
@@ -200,11 +201,12 @@ const Map = () => {
                 type: "Feature",
                 properties: {
                     name: _descContent,
-                    description: xystring
+                    description: xystring,
+                    utm: [0, 0]
                 },
                 geometry: {
                     type: "Point",
-                    coordinates: [xystring.split('x').map(Number)]
+                    coordinates: xystring.split('x').map(Number)
                 }
             }
             console.log("Removing: " + JSON.stringify(feature))

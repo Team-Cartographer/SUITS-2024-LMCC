@@ -1,6 +1,6 @@
 # File Imports
 import paths
-from services.utils import request_utm_data, get_x_y_from_lat_lon, \
+from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
                     extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
 from services.database import JSONDatabase, ListCache
 from services.schema import GeoJSON, WarningItem, TodoItems, \
@@ -166,7 +166,8 @@ def get_geojson_hmd() -> JSONResponse:
         data["features"].append({
             "name": feature["properties"]["name"],
             "description": feature["properties"]["description"],
-            "location": feature["geometry"]["coordinates"]
+            "utm": feature["properties"]["utm"],
+            "latlon": feature["geometry"]["coordinates"]
         })
     return JSONResponse(data, status.HTTP_200_OK)
 
@@ -360,14 +361,21 @@ def update_warning(warningData: WarningItem) -> JSONResponse:
 @app.post('/addfeature')
 def update_features(feature: GeoJSONFeature) -> JSONResponse:
     app.post_reqs += 1
+    
+    feature = process_geojson_request(feature)
+    print(feature) 
+
     geojsonDb["features"].append(feature.feature)
-    return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
+    return JSONResponse(geojsonDb, status_code=201)
 
 
 @app.post('/removefeature')
 def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
     app.post_reqs += 1
-    print(feature)
+
+    feature = process_geojson_request(feature)
+    print(feature) 
+
     geojsonDb["features"].remove(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
 
@@ -376,45 +384,46 @@ def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
 ################################# WEBSOCKETS #######################################
 ####################################################################################
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            message = await websocket.receive_text()
-            request = loads(message)
-            request_type = request.get("type")
+# # DATA POLLING WEBSOCKET (UNSTABLE, DO NOT USE)
+# @app.websocket("/ws")
+# async def websocket_endpoint(websocket: WebSocket):
+#     await websocket.accept()
+#     try:
+#         while True:
+#             message = await websocket.receive_text()
+#             request = loads(message)
+#             request_type = request.get("type")
 
-            if request_type == "test":
-                await websocket.send_text(dumps({"message": "Hello, world!"}))
+#             if request_type == "test":
+#                 await websocket.send_text(dumps({"message": "Hello, world!"}))
 
-            elif request_type == "apimonitor":
-                uptime = round(time() - app.start_time, 3)
-                total_reqs = app.get_reqs + app.post_reqs
-                await websocket.send_text(dumps({
-                    "message": "Gateway API Monitoring Service",
-                    "uptime": uptime,
-                    "get_requests": app.get_reqs,
-                    "post_requests": app.post_reqs,
-                    "total_requests": total_reqs,
-                    "avg_requests_per_min": round(total_reqs / (uptime / 60), 3)
-                }))
+#             elif request_type == "apimonitor":
+#                 uptime = round(time() - app.start_time, 3)
+#                 total_reqs = app.get_reqs + app.post_reqs
+#                 await websocket.send_text(dumps({
+#                     "message": "Gateway API Monitoring Service",
+#                     "uptime": uptime,
+#                     "get_requests": app.get_reqs,
+#                     "post_requests": app.post_reqs,
+#                     "total_requests": total_reqs,
+#                     "avg_requests_per_min": round(total_reqs / (uptime / 60), 3)
+#                 }))
 
-            elif request_type == "todo":
-                await websocket.send_text(dumps(todoDb))
+#             elif request_type == "todo":
+#                 await websocket.send_text(dumps(todoDb))
 
-            elif request_type == "warning":
-                await websocket.send_text(dumps(warningDb))
+#             elif request_type == "warning":
+#                 await websocket.send_text(dumps(warningDb))
 
-            elif request_type == "geojson":
-                await websocket.send_text(dumps(geojsonDb))
+#             elif request_type == "geojson":
+#                 await websocket.send_text(dumps(geojsonDb))
 
-            await asyncio.sleep(0.5)
-    except WebSocketDisconnect:
-        print("WebSocket disconnected")
-    except Exception as e:
-        print(f"Error: {e}")
-        await websocket.close()
+#             await asyncio.sleep(0.5)
+#     except WebSocketDisconnect:
+#         print("WebSocket disconnected")
+#     except Exception as e:
+#         print(f"Error: {e}")
+#         await websocket.close()
 
 
 
@@ -480,7 +489,7 @@ async def map_socket(websocket: WebSocket):
                     draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
                 else: 
                     radius = 3
-                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red', outline="black", width=1)
                 
                 if name != "":
                     text_offset_x = 10

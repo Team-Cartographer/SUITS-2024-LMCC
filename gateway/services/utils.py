@@ -1,22 +1,21 @@
 from pathlib import Path 
 from trimesh import load as meshload
-from pyproj import Proj, transform
+import utm 
 from collections import namedtuple
 import numpy as np 
 from requests import get
 from json import loads 
 
-
 GEODATA_PATH = Path(__file__).parent / 'geodata.npy'
 SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
 BREADCRUMBS_PATH = Path(__file__).parent / 'breadcrumbs.npy'
 
-utm_proj = Proj(proj='utm', zone=15, ellps='WGS84', datum='WGS84', units='m', north=True)
-lat_lon_proj = Proj(proj='latlong', datum='WGS84')
-round_8 = lambda x: round(x, 8)
-
 LATLON = namedtuple('LATLON', ['lat', 'lon'])
 TIFF_DATASET = np.load(GEODATA_PATH)
+
+def latlon_to_utm(lat, lon):
+    easting, northing, _, _ = utm.from_latlon(lat, lon)
+    return [easting, northing]
 
 
 def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]: 
@@ -29,15 +28,15 @@ def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]:
     east_eva2, north_eva2 = int(imu_data["imu"]["eva2"]["posx"]), int(imu_data["imu"]["eva2"]["posy"])
     east_rover, north_rover = int(rover_data["rover"]["posx"]), int(rover_data["rover"]["posy"])
 
-    lon_eva_1, lat_eva_1 = map(round_8, transform(utm_proj, lat_lon_proj, east_eva1, north_eva1))
-    lon_eva_2, lat_eva_2 = map(round_8, transform(utm_proj, lat_lon_proj, east_eva2, north_eva2))
-    lon_rover, lat_rover = map(round_8, transform(utm_proj, lat_lon_proj, east_rover, north_rover))
+    lat_eva_1, lon_eva_1 = utm.to_latlon(east_eva1, north_eva1, 15, 'R')
+    lat_eva_2, lon_eva_2 = utm.to_latlon(east_eva2, north_eva2, 15, 'R')
+    lat_rover, lon_rover = utm.to_latlon(east_rover, north_rover, 15, 'R')
 
     return LATLON(lat_eva_1, lon_eva_1), LATLON(lat_eva_2, lon_eva_2), LATLON(lat_rover, lon_rover)
 
 
 def get_lat_lon_from_utm(easting: int, northing: int): 
-    lon, lat = map(round_8, transform(utm_proj, lat_lon_proj, easting, northing))
+    lat, lon = utm.to_latlon(easting, northing, 15, 'R')
     return LATLON(lat, lon)
 
 
@@ -58,6 +57,13 @@ def get_x_y_from_lat_lon(lat: float, lon: float):
         return TIFF_DATASET.shape[1]//2, TIFF_DATASET.shape[0]//2
     
 
+
+def get_lat_lon_from_x_y(x: int, y: int): 
+    lat = TIFF_DATASET[x, y, 1]
+    lon = TIFF_DATASET[x, y, 0]
+    return lat, lon
+    
+
 def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov):
     return [
         {
@@ -68,7 +74,8 @@ def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1
             },
             "properties": {
                 "name": "EVA 1 Cache Point",
-                "description": f"{x_ev1}x{y_ev1}"
+                "description": f"{x_ev1}x{y_ev1}",
+                "utm": latlon_to_utm(lat1, lon1)
             }
         },
         {
@@ -79,7 +86,8 @@ def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1
             },
             "properties": {
                 "name": "EVA 2 Cache Point",
-                "description": f"{x_ev2}x{y_ev2}"
+                "description": f"{x_ev2}x{y_ev2}",
+                "utm": latlon_to_utm(lat2, lon2)
             }
         },
         {
@@ -90,7 +98,8 @@ def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1
             },
             "properties": {
                 "name": "Rover Cache Point",
-                "description": f"{x_rov}x{y_rov}"
+                "description": f"{x_rov}x{y_rov}",
+                "utm": latlon_to_utm(latrov, lonrov)
             }
         }
     ]
@@ -105,7 +114,8 @@ def extend_eva_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, 
             },
             "properties": {
                 "name": "EVA 1",
-                "description": f"{x_ev1}x{y_ev1}"
+                "description": f"{x_ev1}x{y_ev1}",
+                "utm": latlon_to_utm(lat1, lon1)                
             }
         },
         {
@@ -116,7 +126,8 @@ def extend_eva_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, 
             },
             "properties": {
                 "name": "EVA 2",
-                "description": f"{x_ev2}x{y_ev2}"
+                "description": f"{x_ev2}x{y_ev2}",
+                "utm": latlon_to_utm(lat2, lon2)
             }
         },
         {
@@ -127,10 +138,27 @@ def extend_eva_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, 
             },
             "properties": {
                 "name": "Rover",
-                "description": f"{x_rov}x{y_rov}"
+                "description": f"{x_rov}x{y_rov}",
+                "utm": latlon_to_utm(latrov, lonrov)
             }
         }
     ]
+
+
+def process_geojson_request(feature): 
+    coordinates = feature.feature["geometry"].get("coordinates", [0, 0])
+    utm = feature.feature["properties"].get("utm", [0, 0])
+
+    if(coordinates[0] > 0 and coordinates[1] > 0):
+        lat, lon = get_lat_lon_from_x_y(coordinates[0], coordinates[1])
+        feature.feature["geometry"]["coordinates"] = [lat, lon]
+
+    lat, lon = feature.feature["geometry"]["coordinates"]
+
+    if(utm[0] == 0 and utm[1] == 0):
+        feature.feature["properties"]["utm"] = latlon_to_utm(lat, lon)
+    
+    return feature 
 
 
 
