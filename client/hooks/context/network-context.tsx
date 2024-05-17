@@ -14,6 +14,8 @@ import {
 	RoverData,
 	ErrorData,
 	SpecRequest,
+	EvaStatus,
+	EvaData,
 } from "@/lib/types";
 import { 
     defaultTodoValue,
@@ -23,7 +25,8 @@ import {
     defaultSpecValue, 
     defaultTimerValue, 
     defaultBiometricValue,
-	defaultErrorValue
+	defaultErrorValue,
+	defaultEvaStatusValue
 } from "@/lib/defaults"
 
 ////////////////////////////////////////////////
@@ -47,7 +50,7 @@ interface NetworkContextType {
 	getTelemetryData: (evaNumber: number) => Biometrics;
 	getRoverData: () => RoverData;
 	getErrorData: () => ErrorData; 
-	
+	getEvaData: () => EvaStatus;
 	updateTodoItems: (newItem: string) => any; 
 	updateTodoItemsViaList: (newItems: string[][]) => any;
 	updateWarning: (warning: string) => any;
@@ -62,6 +65,7 @@ const defaultNetworkValue: NetworkContextType = {
 	getTelemetryData: (evaNumber: number) => defaultBiometricValue,
 	getRoverData: () => defaultRoverValue,
 	getErrorData: () => defaultErrorValue,
+	getEvaData: () => defaultEvaStatusValue,
 	updateTodoItems: (newItem: string) => 0,
 	updateTodoItemsViaList: (newItems: string[][]) => 0,
 	updateWarning: (warning: string) => 0,
@@ -87,45 +91,21 @@ export const NetworkProvider = ({ children }: any) => {
 	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometrics>(defaultBiometricValue);
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 	const [errorData, setErrorData] = useState<ErrorData>(defaultErrorValue);
+	const [evaData, setEvaData] = useState<EvaStatus>(defaultEvaStatusValue); 
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
 			try {
-				const eva_data = await fetchWithoutParams<{ telemetry: { eva_time: number } }>('tss/telemetry'); 
-				if (eva_data?.telemetry?.eva_time !== undefined) {
-				  	setMissionTime(formatTime(eva_data.telemetry.eva_time)); 
-			  	} else {
-					throw new Error('EVA Data is undefined')
-				}
-
-				const timer_data = await fetchWithoutParams<{ 
-						eva: 
-							{ 
-								uia: { time: number }, 
-								spec: { time: number },
-								rover: { time: number },
-								dcu: { time: number }
-							}
-						}>('tss/eva_info'); 
-				if (timer_data?.eva?.uia?.time !== undefined) {
-					setUiaTime(formatTime(timer_data.eva.uia.time)); 
-				} else {
-					throw new Error('UIA Data is undefined')
-				}
-				if (timer_data?.eva?.spec?.time !== undefined) {
-					setSpecTime(formatTime(timer_data.eva.spec.time));
-				} else {
-					throw new Error('Spec Data is undefined')
-				}
-				if (timer_data?.eva?.rover?.time !== undefined) {
-					setRoverTime(formatTime(timer_data.eva.rover.time));
-				} else {
-					throw new Error('Rover data is undefined')
-				}; 
-				if (timer_data?.eva?.dcu?.time !== undefined) {
-					setDcuTime(formatTime(timer_data.eva.dcu.time));
-				} else {
-					throw new Error('DCU data is undefined')
+				const eva_data = await fetchWithoutParams<EvaData>('tss/eva_info'); 
+				if(eva_data) { 
+					setMissionTime(formatTime(eva_data.eva.total_time));
+					setUiaTime(formatTime(eva_data.eva.uia.time));
+					setSpecTime(formatTime(eva_data.eva.spec.time));
+					setRoverTime(formatTime(eva_data.eva.rover.time));
+					setDcuTime(formatTime(eva_data.eva.dcu.time));
+					setEvaData(eva_data.eva)
+				} else { 
+					throw new Error("EVA Data is Undefined")
 				}
 
 				const warningData = await fetchWithoutParams<WarningData>('warning');
@@ -342,6 +322,10 @@ export const NetworkProvider = ({ children }: any) => {
 	};
 
 
+	const getEvaData = (): EvaStatus => {
+		return evaData || defaultEvaStatusValue
+	}
+
 	const updateTodoItems = async (newItem: string) => { 
         const newItems = await fetchWithParams('settodo',
         {
@@ -376,6 +360,7 @@ export const NetworkProvider = ({ children }: any) => {
 			getTelemetryData,
 			getRoverData,
 			getErrorData,
+			getEvaData,
 			updateTodoItems,
 			updateTodoItemsViaList,
 			updateWarning,

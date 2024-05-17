@@ -8,6 +8,7 @@ import {
 	Biometrics,
 	RoverData,
 	WarningData,
+	EvaStatus,
 } from "./types";
 
 ///////////////////////////////////////
@@ -114,6 +115,34 @@ const defaultErrorValue = {
     }
 }
 
+
+const defaultEvaStatusValue: EvaStatus = { 
+  started: false,
+  paused: false,
+  completed: false,
+  total_time: 0,
+  uia: {
+    started: false,
+    completed: false,
+    time: 0
+  },
+  dcu: {
+    started: false,
+    completed: false,
+    time: 0
+  },
+  rover: {
+    started: false,
+    completed: false,
+    time: 0
+  },
+  spec: {
+    started: false,
+    completed: false,
+    time: 0
+  }
+}
+
 ///////////////////////////////////////////
 
 export { 
@@ -125,4 +154,5 @@ export {
     defaultTimerValue, 
     defaultBiometricValue,
 	defaultErrorValue,
+	defaultEvaStatusValue,
 }
