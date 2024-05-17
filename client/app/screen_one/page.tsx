@@ -19,8 +19,8 @@ const NoSSR_Timers = dynamic(() => import('@/components/ui/timing'), { ssr: fals
 
 const HomePage = () => {
   return (
-    <div className="h-full flex flex-row gap-x-8">
-      <div className="flex flex-col items-left pl-3 justify-start max-w-[600px]">
+    <div className="h-screen flex flex-row gap-x-8 overflow-hidden">
+      <div className="flex flex-col items-left pl-3 justify-start max-w-[600px] overflow-auto">
         <div>
           <NoSSR_Timers />
           <div className="flex flex-row items-center absolute top-[0.8rem] left-[26rem]">
@@ -37,7 +37,7 @@ const HomePage = () => {
           <PhotoCapture eva={2} />
         </div>
       </div>
-      <div className=" bg-slate-600 w-full p-4">
+      <div className="bg-slate-600 p-4 flex-1 overflow-auto">
           <ScreenOneContentManager />
       </div>
     </div>

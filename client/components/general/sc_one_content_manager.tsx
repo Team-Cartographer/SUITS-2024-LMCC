@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Map from "../nav/map";
-import { Button } from "../ui/button";
 import ProcedureLists from "../hmd_link/procedure-lists";
 import dynamic from "next/dynamic";
 import { SpecItem } from "@/lib/types";
@@ -8,10 +7,6 @@ import { fetchWithParams } from "@/api/fetchServer";
 import { useNetwork } from "@/hooks/context/network-context";
 
 const NoSSR_GeoSampler = dynamic(() => import('@/components/hmd_link/geo_sampling'), { ssr: false })
-
-interface WindowNames {
-    [key: string]: JSX.Element;
-  }
 
 const windows = {
     "map": "Map",
@@ -21,10 +16,6 @@ const windows = {
 
 const ScreenOneContentManager = () => {
     const networkProvider = useNetwork();
-
-
-    //////////////////////////////////////////////////////////////////////
-    // GEO SAMPLER LOGIC /////////////////////////////////////////////////
 
     const [spec1Items, setSpec1Items] = useState<SpecItem[]>([]);
     const [spec2Items, setSpec2Items] = useState<SpecItem[]>([]);
@@ -91,14 +82,17 @@ const ScreenOneContentManager = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [EVA1SpecItem, EVA2SpecItem])
 
-
-    //////////////////////////////////////////////////////////////////////
     return ( 
-        <div className="grid grid-cols-1 grid-rows-2">
-            <div className="flex flex-row">
-                <Map />
-                <ProcedureLists />
+        <div className="flex flex-col h-full">
+            <div className="flex flex-row flex-1 overflow-hidden">
+                <div className="flex-1 overflow-auto">
+                    <Map />
+                </div>
+                <div className="flex-1 max-w-[400px] pr-3">
+                    <ProcedureLists />
+                </div>
             </div>
+            <div className="flex-1 overflow-auto max-h-[300px] mt-4">
                 <NoSSR_GeoSampler 
                     spec1Items={spec1Items}
                     spec2Items={spec2Items}
@@ -107,8 +101,9 @@ const ScreenOneContentManager = () => {
                     setEva1CompletedItems={setEva1CompletedItems}
                     setEva2CompletedItems={setEva2CompletedItems}
                 />
+            </div>
         </div>
-     );
+    );
 }
- 
+
 export default ScreenOneContentManager;

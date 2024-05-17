@@ -245,14 +245,17 @@ const ProcedureLists = () => {
     }
 
     return ( 
-        <div className="max-h-[700px] w-[600px] pl-3 flex flex-col items-end justify-end">
+        <div className="max-h-[650px] w-[400px] pl-3 flex flex-col items-center justify-center">
+            <div className="overflow-scroll">
+                {windowNames[visibleWindow]}
+            </div>
             <DropdownMenu>
-            <DropdownMenuTrigger>
-                <Button variant="secondary">
+            <DropdownMenuTrigger asChild>
+                <Button variant="secondary" className="absolute top-[43rem]">
                     {windows[visibleWindow]}
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent side="top">
                 <DropdownMenuLabel>All Procedures</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 {Object.keys(windows).map((window) => (
@@ -262,9 +265,6 @@ const ProcedureLists = () => {
                 ))}
             </DropdownMenuContent>
             </DropdownMenu>
-            <div className="overflow-scroll">
-                {windowNames[visibleWindow]}
-            </div>
         </div>
      );
 }

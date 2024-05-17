@@ -21,7 +21,7 @@ const NoSSR_LiveView = dynamic(() => import ('@/components/rover/rover_live_view
 
 const ScreenTwo = () => {
   return (
-    <div className="h-full flex flex-row gap-x-4">
+    <div className="h-screen flex flex-row gap-x-4">
 
       <div className="absolute top-0 left-0 p-1 flex flex-row gap-x-1 justify-start text-3xl font-bold"> <NoSSR_Timers /></div>
       <div className="absolute top-4 left-[40rem] p-1 flex flex-row gap-x-1 justify-start text-3xl font-bold"> <PanicButton /></div>

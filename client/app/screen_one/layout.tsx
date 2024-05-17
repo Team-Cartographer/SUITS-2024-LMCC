@@ -11,7 +11,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-      <html lang="en" className="dark">
+      <html lang="en" className="dark overflow-y-hidden">
         <Notifier />
         <body>{children}</body>
       </html>

@@ -82,7 +82,7 @@ const StartPage = () => {
             open("https://github.com/Team-Cartographer/SUITS-2024-LMCC");
           }}
         >
-          <GitHub className="h-5 w-5" /> GitHub
+          <GitHub className="h-5 w-5"/> GitHub
         </Button>
         </div>
         </div>
