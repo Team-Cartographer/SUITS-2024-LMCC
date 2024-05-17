@@ -14,8 +14,8 @@ const ScreenTwoContentManager = () => {
     const criticalIDs2 = checkNominalValues(EVA2Data.telemetry.eva, 2)
     
     return ( 
-        <div className="grid grid-cols-1 grid-rows-2 p-8 outline outline-4 items-center justify-center max-h-svh outline-slate-700 rounded-lg gap-y-2">
-            <div className="border-b-slate-700 pb-4 border-b-4">
+        <div className="grid grid-cols-1 grid-rows-2 p-8 items-center justify-centerrounded-lg gap-y-2 min-w-[700px]">
+            <div className="border-b-slate-700 pb-5 border-b-4">
                 {EVADataMap(EVA1Data, 1, criticalIDs1)}
             </div>
             <div>

@@ -209,7 +209,7 @@ const checkNominalValues = (evaTelemetry: Biometrics["telemetry"]["eva"], evaNum
 const EVADataMap = (evaData: Biometrics, evaNumber: number, criticalIDs: string[]) => { 
     const setClassName = (id: string): string => { 
         if (criticalIDs.includes(id)) {
-            return 'bg-red-900 p-1 rounded-xl'
+            return 'text-red-500'
         }
         return '' 
     }
@@ -217,10 +217,10 @@ const EVADataMap = (evaData: Biometrics, evaNumber: number, criticalIDs: string[
     const evaTelemetry = evaData.telemetry.eva
 
     return(
-        <div className="text-xs overflow-scroll flex flex-col gap-y-1">
+        <div className="text-sm overflow-scroll flex flex-col gap-y-1">
             <div className="flex flex-row gap-x-3">
                 <div className="flex flex-col gap-y-3">
-                    <h1 className="font-bold"><span className="italic pr-1 underline">{`EVA ${evaNumber}`}</span> Suit Resources {'[Lower, Upper, Nominal]'}</h1>
+                    <h1 className="font-bold"><span className="italic pr-1 underline text-muted-foreground">{`EVA ${evaNumber}`}</span> Suit Resources {'[Lower, Upper, Nominal]'}</h1>
                     <li className={setClassName(IDs.batt_time_left)}>Batt. Time Left:  {evaTelemetry.batt_time_left.toFixed(2)}sec {'[3,600, 10,800]'}</li>
                     <li className={setClassName(IDs.oxy_pri_storage)}>O2 Sec. Stor:  {evaTelemetry.oxy_pri_storage.toFixed(2)}% {'[20, 100]'}</li>
                     <li className={setClassName(IDs.oxy_sec_pressure)}>O2 Sec. Stor: {evaTelemetry.oxy_sec_storage.toFixed(2)}% {'[20, 100]'}</li>

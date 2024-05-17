@@ -76,7 +76,7 @@ const GeoSampler = ({
                                                 <Chart
                                                     chartType="BarChart"
                                                     width="100%"
-                                                    height="300px"
+                                                    height="200px"
                                                     data={[['Element', 'Value'], ...Object.entries(specItem.data)]}
                                                     options={{ title: specItem.name, legend: { position: 'none' }}}
                                                     loader={<div>Loading Chart</div>}
@@ -130,7 +130,7 @@ const GeoSampler = ({
                                                 <Chart
                                                     chartType="BarChart"
                                                     width="100%"
-                                                    height="300px"
+                                                    height="200px"
                                                     data={[['Element', 'Value'], ...Object.entries(specItem.data)]}
                                                     options={{ title: specItem.name, legend: { position: 'none' }}}
                                                     loader={<div>Loading Chart</div>}
