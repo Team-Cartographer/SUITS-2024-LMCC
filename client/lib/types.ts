@@ -118,6 +118,7 @@ interface Biometrics {
     }
 }
 
+
 const biometricIDMap = { 
     batt_time_left:            '1',
     co2_production:            '2',
@@ -163,6 +164,29 @@ interface ErrorData {
     }
 }
 
+/// EVA STATE /////////////////////////////////////////////////////////
+
+type TaskStatus = {
+    started: boolean;
+    completed: boolean;
+    time: number;
+  };
+  
+  type EvaStatus = {
+    started: boolean;
+    paused: boolean;
+    completed: boolean;
+    total_time: number;
+    uia: TaskStatus;
+    dcu: TaskStatus;
+    rover: TaskStatus;
+    spec: TaskStatus;
+  };
+
+type EvaData = { 
+    eva: EvaStatus
+}
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -181,7 +205,10 @@ export type {
     Biometrics,
     BiometricData,
     RoverData,
-    ErrorData
+    ErrorData,
+    EvaStatus,
+    TaskStatus,
+    EvaData
 }
 
 export { biometricIDMap }

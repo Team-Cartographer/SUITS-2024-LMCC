@@ -2,7 +2,7 @@ import { fetchWithParams } from "@/api/fetchServer"
 import { Biometrics, WarningData, biometricIDMap as IDs } from "@/lib/types";
 import lmcc_config from "@/lmcc_config.json"
 
-const AUTOWARN = false; 
+const AUTOWARN = lmcc_config.autowarn; 
 
 const higher = (value: number, upper: number): boolean => { return (value > upper) }
 const lower = (value : number, lower: number): boolean => { return (value < lower) }
@@ -198,7 +198,7 @@ const checkNominalValues = (evaTelemetry: Biometrics["telemetry"]["eva"], evaNum
         `EVA ${evaNumber}'s temperature is too high! Alert him to slow down.`,
         `EVA ${evaNumber}'s temperature is too low! Alert him to warm up.`,
         `EVA ${evaNumber}'s temperature is not nominal! Alert him to adjust to 70 degrees.`,
-        evaNumber, IDs.temperature); //FIXME: Apparently Nominal should be 70, but with normal fluctuation that makes no sense... 70);
+        evaNumber, IDs.temperature); 
         if (out !== '0') criticalIds.push(out);
 
 
@@ -209,7 +209,7 @@ const checkNominalValues = (evaTelemetry: Biometrics["telemetry"]["eva"], evaNum
 const EVADataMap = (evaData: Biometrics, evaNumber: number, criticalIDs: string[]) => { 
     const setClassName = (id: string): string => { 
         if (criticalIDs.includes(id)) {
-            return 'bg-red-900 p-1 rounded-xl'
+            return 'text-red-500'
         }
         return '' 
     }
@@ -217,10 +217,10 @@ const EVADataMap = (evaData: Biometrics, evaNumber: number, criticalIDs: string[
     const evaTelemetry = evaData.telemetry.eva
 
     return(
-        <div className="overflow-scroll flex flex-col gap-y-3 text-sm">
+        <div className="text-sm overflow-scroll flex flex-col gap-y-1">
             <div className="flex flex-row gap-x-3">
                 <div className="flex flex-col gap-y-3">
-                    <h1 className="font-bold"><span className="italic pr-1">{`EVA ${evaNumber}`}</span> Suit Resources {'[Lower, Upper, Nominal]'}</h1>
+                    <h1 className="font-bold"><span className="italic pr-1 underline text-muted-foreground">{`EVA ${evaNumber}`}</span> Suit Resources {'[Lower, Upper, Nominal]'}</h1>
                     <li className={setClassName(IDs.batt_time_left)}>Batt. Time Left:  {evaTelemetry.batt_time_left.toFixed(2)}sec {'[3,600, 10,800]'}</li>
                     <li className={setClassName(IDs.oxy_pri_storage)}>O2 Sec. Stor:  {evaTelemetry.oxy_pri_storage.toFixed(2)}% {'[20, 100]'}</li>
                     <li className={setClassName(IDs.oxy_sec_pressure)}>O2 Sec. Stor: {evaTelemetry.oxy_sec_storage.toFixed(2)}% {'[20, 100]'}</li>

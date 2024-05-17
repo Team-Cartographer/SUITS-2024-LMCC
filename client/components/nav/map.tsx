@@ -20,6 +20,7 @@ const MAP_WIDTH = 3720;
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 
 let MAP_URLS: string[] = []
@@ -46,7 +47,8 @@ const Map = () => {
     const [modalOpen, setModalOpen] = useState(false); // Whether the modal is open or not
     const [descContent, setDescContent] = useState<string | null>(null); // Description content for the pin
     const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point  
-    
+    const [loading, setLoading] = useState(false); // Whether the map pin is loading or not
+
     const networkProvider = useNetwork();
 
 
@@ -120,6 +122,7 @@ const Map = () => {
                 const newUrl = URL.createObjectURL(blob);
                 setMapImage(newUrl);
                 setErr('');
+                setLoading(false);
             }
         };
     
@@ -173,6 +176,7 @@ const Map = () => {
     // Updates the Image every time it is clicked
     const addPin = async (xystring: string, _descContent: string) => {
         try {
+            setLoading(true)
             const feature = { 
                 type: "Feature",
                 properties: {
@@ -197,6 +201,7 @@ const Map = () => {
 
     const removePin = async (xystring: string, _descContent: string) => {
         try {
+            setLoading(true);
             const feature = { 
                 type: "Feature",
                 properties: {
@@ -224,16 +229,17 @@ const Map = () => {
     // Renders Error if there was an Error
     if(err) {
         return (
-            <div className="flex flex-col items-center justify-center text-muted-foreground">
+            <div className="flex flex-col items-center justify-center text-muted-foreground pt-28">
                 <p>Error: &quot;{err}&quot; was thrown while loading Map</p>
-                <p>Make sure Gateway and the TSS Server are running.</p>            
+                <p className="pb-20">Make sure Gateway and the TSS Server are running.</p>         
+                <Spinner size="icon" />   
             </div>
         )
     }
 
     // Renders the Map Image if it exists. 
     return ( 
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center pb-2">
             {modalOpen && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }} className="transition-all">
                 <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -266,8 +272,8 @@ const Map = () => {
             )}
             { /* eslint-disable-next-line @next/next/no-img-element */ }
             {mapImage && <img className="rounded-3xl pb-2" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
-            {shiftPressed && <span className="text-muted-foreground text-sm">Removing: On (Press Shift to Remove)</span>}
-            {!shiftPressed && <span className="text-muted-foreground text-sm">Removing: Off (Press Shift to Remove)</span>}
+            {shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2">Removing: On (Press Shift+Click to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
+            {!shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2">Removing: Off (Press Shift+Click to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
         </div>
     );
 }

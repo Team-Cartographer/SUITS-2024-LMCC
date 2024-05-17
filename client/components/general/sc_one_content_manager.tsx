@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import Map from "../nav/map";
-import { Button } from "../ui/button";
 import ProcedureLists from "../hmd_link/procedure-lists";
 import dynamic from "next/dynamic";
 import { SpecItem } from "@/lib/types";
@@ -9,10 +8,6 @@ import { useNetwork } from "@/hooks/context/network-context";
 
 const NoSSR_GeoSampler = dynamic(() => import('@/components/hmd_link/geo_sampling'), { ssr: false })
 
-interface WindowNames {
-    [key: string]: JSX.Element;
-  }
-
 const windows = {
     "map": "Map",
     "lists": "Procedures",
@@ -20,12 +15,7 @@ const windows = {
 }
 
 const ScreenOneContentManager = () => {
-    const [visibleWindow, setVisibleWindow] = useState("map");
     const networkProvider = useNetwork();
-
-
-    //////////////////////////////////////////////////////////////////////
-    // GEO SAMPLER LOGIC /////////////////////////////////////////////////
 
     const [spec1Items, setSpec1Items] = useState<SpecItem[]>([]);
     const [spec2Items, setSpec2Items] = useState<SpecItem[]>([]);
@@ -92,49 +82,28 @@ const ScreenOneContentManager = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [EVA1SpecItem, EVA2SpecItem])
 
-
-    //////////////////////////////////////////////////////////////////////
-
-
-    const windowNames: WindowNames = {
-        "map": <Map />,
-        "lists": <ProcedureLists />,
-        "geo": <
-            NoSSR_GeoSampler 
-            spec1Items={spec1Items}
-            spec2Items={spec2Items}
-            EVA1SpecItem={EVA1SpecItem}
-            EVA2SpecItem={EVA2SpecItem}
-            setEva1CompletedItems={setEva1CompletedItems}
-            setEva2CompletedItems={setEva2CompletedItems}
-            />
-    }
-
-    const renderWindow = () => {
-        let pane = windowNames[visibleWindow]
-        return (
-            <div style={{ height: '100%', width: '100%' }} className="flex items-center justify-center">
-                {pane}
-            </div>
-        );
-    };
-
-    const renderButtons = Object.entries(windows).map(([key, value]) => (
-        <Button key={key} className={`hover:bg-slate-300 ${visibleWindow === key && "bg-slate-800 text-white hover:bg-slate-800 cursor-default"}`} onClick={() => setVisibleWindow(key)}>
-            {value}
-        </Button>
-    ));
-
     return ( 
-        <div className="flex flex-col items-center justify-center p-4 outline outline-4 outline-slate-700 rounded-lg gap-y-2">
-            <div className="" style={{ height: '850px', width: '900px' }}>
-                {renderWindow()}
+        <div className="flex flex-col h-full">
+            <div className="flex flex-row flex-1 overflow-hidden">
+                <div className="flex-1 overflow-auto">
+                    <Map />
+                </div>
+                <div className="flex-1 max-w-[400px] pr-3">
+                    <ProcedureLists />
+                </div>
             </div>
-            <div className="flex flex-row gap-x-2">
-                {renderButtons}
+            <div className="flex-1 overflow-auto max-h-[300px] mt-4">
+                <NoSSR_GeoSampler 
+                    spec1Items={spec1Items}
+                    spec2Items={spec2Items}
+                    EVA1SpecItem={EVA1SpecItem}
+                    EVA2SpecItem={EVA2SpecItem}
+                    setEva1CompletedItems={setEva1CompletedItems}
+                    setEva2CompletedItems={setEva2CompletedItems}
+                />
             </div>
         </div>
-     );
+    );
 }
- 
+
 export default ScreenOneContentManager;

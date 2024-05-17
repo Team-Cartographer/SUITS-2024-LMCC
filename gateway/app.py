@@ -3,8 +3,7 @@ import paths
 from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
                     extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
 from services.database import JSONDatabase, ListCache
-from services.schema import GeoJSON, WarningItem, TodoItems, \
-                            GeoJSONFeature, TodoItem
+from services.schema import GeoJSON, WarningItem, TodoItems, TodoItem, GeoJSONFeature
 
 # Standard Imports 
 from json import loads, load, dumps
@@ -16,7 +15,7 @@ from threading import Thread
 import asyncio 
 
 # Third-Party Imports
-from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket, Request
+from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
@@ -41,9 +40,9 @@ todoDb: JSONDatabase[list[TodoItems]] = JSONDatabase(paths.TODO_PATH)
 warningDb: JSONDatabase[WarningItem] = JSONDatabase(paths.WARNING_PATH)
 geojsonDb: JSONDatabase[GeoJSON] = JSONDatabase(paths.GEOJSON_PATH)
 
-eva1_poscache = ListCache(5000)
-eva2_poscache = ListCache(5000)
-rover_poscache = ListCache(5000)
+eva1_poscache = ListCache(1000)
+eva2_poscache = ListCache(1000)
+rover_poscache = ListCache(1000)
 
 app.curr_telemetry = dict() 
 app.get_reqs = 0 
@@ -206,8 +205,8 @@ def rover():
     llr = get_lat_lon_from_utm(east_rover, north_rover)
     return { 
         "rover": {
-            "posx": llr.lon,
-            "posy": llr.lat,
+            "posx": llr.lat,
+            "posy": llr.lon,
             "qr_id": ret["rover"]["qr_id"]
         }
     }
@@ -272,21 +271,15 @@ def getmap():
     
     geojsonDb["features"] = [feature for feature in geojsonDb["features"] if feature["properties"]["name"] not in ["EVA 1", "EVA 2", "Rover"]]    
 
-    ll1, ll2, ll3 = request_utm_data(TSS_HOST)
-    with ProcessPoolExecutor() as executor:
-        future1 = executor.submit(get_x_y_from_lat_lon, ll1.lat, ll1.lon)
-        future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
-        future3 = executor.submit(get_x_y_from_lat_lon, ll3.lat, ll3.lon)
-    
-    x_ev1, y_ev1 = future1.result()
-    x_ev2, y_ev2 = future2.result()
-    x_rov, y_rov = future3.result()
+    ll1, ll2, llr = request_utm_data(TSS_HOST)
+    x_ev1, y_ev1 = get_x_y_from_lat_lon(ll1.lat, ll1.lon)
+    x_ev2, y_ev2 = get_x_y_from_lat_lon(ll2.lat, ll2.lon)
+    x_rov, y_rov = get_x_y_from_lat_lon(llr.lat, llr.lon)
 
-    geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-
+    geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, llr.lat, llr.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
 
     if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) >= 1: 
-        geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
+        geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, llr.lat, llr.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
         eva1_poscache.append((x_ev1, y_ev1))
         eva2_poscache.append((x_ev2, y_ev2))
         rover_poscache.append((x_rov, y_rov))
@@ -363,7 +356,6 @@ def update_features(feature: GeoJSONFeature) -> JSONResponse:
     app.post_reqs += 1
     
     feature = process_geojson_request(feature)
-    print(feature) 
 
     geojsonDb["features"].append(feature.feature)
     return JSONResponse(geojsonDb, status_code=201)
@@ -374,7 +366,6 @@ def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
     app.post_reqs += 1
 
     feature = process_geojson_request(feature)
-    print(feature) 
 
     geojsonDb["features"].remove(feature.feature)
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
@@ -383,48 +374,6 @@ def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
 ####################################################################################
 ################################# WEBSOCKETS #######################################
 ####################################################################################
-
-# # DATA POLLING WEBSOCKET (UNSTABLE, DO NOT USE)
-# @app.websocket("/ws")
-# async def websocket_endpoint(websocket: WebSocket):
-#     await websocket.accept()
-#     try:
-#         while True:
-#             message = await websocket.receive_text()
-#             request = loads(message)
-#             request_type = request.get("type")
-
-#             if request_type == "test":
-#                 await websocket.send_text(dumps({"message": "Hello, world!"}))
-
-#             elif request_type == "apimonitor":
-#                 uptime = round(time() - app.start_time, 3)
-#                 total_reqs = app.get_reqs + app.post_reqs
-#                 await websocket.send_text(dumps({
-#                     "message": "Gateway API Monitoring Service",
-#                     "uptime": uptime,
-#                     "get_requests": app.get_reqs,
-#                     "post_requests": app.post_reqs,
-#                     "total_requests": total_reqs,
-#                     "avg_requests_per_min": round(total_reqs / (uptime / 60), 3)
-#                 }))
-
-#             elif request_type == "todo":
-#                 await websocket.send_text(dumps(todoDb))
-
-#             elif request_type == "warning":
-#                 await websocket.send_text(dumps(warningDb))
-
-#             elif request_type == "geojson":
-#                 await websocket.send_text(dumps(geojsonDb))
-
-#             await asyncio.sleep(0.5)
-#     except WebSocketDisconnect:
-#         print("WebSocket disconnected")
-#     except Exception as e:
-#         print(f"Error: {e}")
-#         await websocket.close()
-
 
 
 @app.websocket("/map")
@@ -448,7 +397,6 @@ async def map_socket(websocket: WebSocket):
             x_rov, y_rov = future3.result()
 
             geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-
 
             if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) >= 1: 
                 geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))

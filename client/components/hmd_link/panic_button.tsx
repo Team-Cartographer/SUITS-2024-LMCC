@@ -17,27 +17,28 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
-import { WarningData } from "@/lib/types";
 import { useNetwork } from "@/hooks/context/network-context";
 
 const PanicButton = () => {
   const [inputValue, setInputValue] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
   const { updateWarning } = useNetwork();
 
   const handleInputChange = (event: any) => {
     setInputValue(event.target.value);
   };
 
-  const _updateWarning = () => { 
+  const _updateWarning = (e: any) => { 
+    e.preventDefault();
     updateWarning(inputValue); 
+    setIsOpen(false);
   }
 
   return (
     <div>
-      <AlertDialog>
-        <AlertDialogTrigger className="flex h-12 w-14 items-center justify-center rounded-xl bg-red-600 text-red-200 hover:bg-red-700">
+      <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+        <AlertDialogTrigger className="flex border-2 h-12 w-14 items-center justify-center rounded-xl bg-red-600 text-red-200 hover:bg-red-700">
           <AlertTriangle className="h-7 w-7" />
         </AlertDialogTrigger>
         <AlertDialogContent>

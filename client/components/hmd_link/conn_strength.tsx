@@ -27,11 +27,11 @@ const ConnectionStrength = () => {
   const [gatewayInfo, setGatewayInfo] = useState<GatewayInfo | null>(null);
 
   return (
-    <div className="pt-4">
+    <div className="">
         <HoverCard>
         <HoverCardTrigger asChild>
           <Button variant="link"><div 
-                  className="rounded-xl group:condiv text-sm font-medium flex flex-row items-center px-4 py-[0.6rem] bg-primary text-primary-foreground hover:bg-primary/90 bg-slate-600 text-white hover:bg-slate-700"  
+                  className="rounded-xl border-2 group:condiv text-sm font-medium flex flex-row items-center px-4 py-[0.6rem] bg-primary text-primary-foreground hover:bg-primary/90 bg-slate-600 text-white hover:bg-slate-700"  
                   onMouseEnter={
                       async () => {
                         const response = await fetchWithoutParams<GatewayInfo>("apimonitor");

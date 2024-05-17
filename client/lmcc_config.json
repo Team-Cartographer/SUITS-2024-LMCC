@@ -4,5 +4,6 @@
     "tickspeed": 100,
     "scale_factor": 5,
     "eva1_ip": "1.1.1.1",
+    "eva2_ip": "1.1.1.1",
     "autowarn": false
 }

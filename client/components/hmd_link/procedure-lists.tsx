@@ -1,20 +1,20 @@
 import { useState } from "react";
-import { Button } from "../ui/button";
 import { useNetwork } from "@/hooks/context/network-context";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+import { Button } from "../ui/button";
 
 interface WindowNames {
     [key: string]: JSX.Element;
   }
 
 
-const windows = {
-    "egress": "Egress",
-    "ingress": "Ingress",
-    "geo": "Geological Sampling",
-    "rep": "Equipment Diagnosis & Repairs",
-    "emergency": "Emergencies",
-    "rover": "Rover",
-}
 
 const ProcedureLists = () => {
     const [visibleWindow, setVisibleWindow] = useState("egress");
@@ -234,29 +234,37 @@ const ProcedureLists = () => {
         )
     }
 
-    const renderWindow = () => {
-        let pane = windowNames[visibleWindow]
-        return (
-            <div style={{ height: '100%', width: '100%' }} className="flex flex-col items-center justify-center overflow-auto">
-                {pane}
-            </div>
-        );
-    };
 
-    const renderButtons = Object.entries(windows).map(([key, value]) => (
-        <Button key={key} className={`text-sm p-1 pr-2 pl-2 hover:bg-slate-300 ${visibleWindow === key && "bg-slate-800 text-white hover:bg-slate-800 cursor-default"}`} onClick={() => setVisibleWindow(key)}>
-            {value}
-        </Button>
-    ));
+    const windows: {[key: string]: string} = {
+        "egress": "Egress",
+        "ingress": "Ingress",
+        "geo": "Geological Sampling",
+        "rep": "Equipment Diagnosis & Repairs",
+        "emergency": "Emergencies",
+        "rover": "Rover",
+    }
 
     return ( 
-        <div className="flex flex-col p-4 outline outline-4 outline-slate-700 rounded-lg gap-y-2">
-            <div className="" style={{ height: '730px', width: '850px' }}>
-                {renderWindow()}
+        <div className="max-h-[650px] w-[400px] pl-3 flex flex-col items-center justify-center">
+            <div className="overflow-scroll">
+                {windowNames[visibleWindow]}
             </div>
-            <div className="flex flex-row gap-x-2 pt-3 items-center justify-center">
-                {renderButtons}
-            </div>
+            <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <Button variant="secondary" className="absolute top-[43rem]">
+                    {windows[visibleWindow]}
+                </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top">
+                <DropdownMenuLabel>All Procedures</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {Object.keys(windows).map((window) => (
+                    <DropdownMenuItem key={window} onSelect={() => setVisibleWindow(window)}>
+                        {windows[window]}
+                    </DropdownMenuItem>
+                ))}
+            </DropdownMenuContent>
+            </DropdownMenu>
         </div>
      );
 }
