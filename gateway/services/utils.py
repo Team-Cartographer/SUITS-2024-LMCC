@@ -2,9 +2,10 @@ from pathlib import Path
 from trimesh import load as meshload
 import utm 
 from collections import namedtuple
+from collections import Counter
 import numpy as np 
 from requests import get
-from json import loads 
+from json import loads, dumps
 
 GEODATA_PATH = Path(__file__).parent / 'geodata.npy'
 SPATIAL_HEIGHTMAP_PATH = Path(__file__).parent.parent / 'data' / 'grid.npy'
@@ -12,6 +13,13 @@ BREADCRUMBS_PATH = Path(__file__).parent / 'breadcrumbs.npy'
 
 LATLON = namedtuple('LATLON', ['lat', 'lon'])
 TIFF_DATASET = np.load(GEODATA_PATH)
+
+    
+def is_subset(features_a, features_b):
+    normalize_feature = lambda feature: dumps(feature, sort_keys=True)
+    features_to_set = lambda features: set(normalize_feature(feature) for feature in features)
+    return features_to_set(features_a).issubset(features_to_set(features_b))
+
 
 def latlon_to_utm(lat, lon):
     easting, northing, _, _ = utm.from_latlon(lat, lon)
@@ -28,14 +36,17 @@ def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]:
     east_eva2, north_eva2 = int(imu_data["imu"]["eva2"]["posx"]), int(imu_data["imu"]["eva2"]["posy"])
     east_rover, north_rover = int(rover_data["rover"]["posx"]), int(rover_data["rover"]["posy"])
 
-    lat_eva_1, lon_eva_1 = utm.to_latlon(east_eva1, north_eva1, 15, 'R')
-    lat_eva_2, lon_eva_2 = utm.to_latlon(east_eva2, north_eva2, 15, 'R')
-    lat_rover, lon_rover = utm.to_latlon(east_rover, north_rover, 15, 'R')
+    lat_eva_1, lon_eva_1 = get_lat_lon_from_utm(east_eva1, north_eva1, 15, 'R')
+    lat_eva_2, lon_eva_2 = get_lat_lon_from_utm(east_eva2, north_eva2, 15, 'R')
+    lat_rover, lon_rover = get_lat_lon_from_utm(east_rover, north_rover, 15, 'R')
 
     return LATLON(lat_eva_1, lon_eva_1), LATLON(lat_eva_2, lon_eva_2), LATLON(lat_rover, lon_rover)
 
 
-def get_lat_lon_from_utm(easting: int, northing: int): 
+
+def get_lat_lon_from_utm(easting: int, northing: int, *_): 
+    if(easting == northing == 0): 
+        return LATLON(0, 0)
     lat, lon = utm.to_latlon(easting, northing, 15, 'R')
     return LATLON(lat, lon)
 
@@ -104,6 +115,8 @@ def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1
         }
     ]
 
+        
+
 def extend_eva_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov):
     return [
         {
@@ -143,6 +156,8 @@ def extend_eva_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, 
             }
         }
     ]
+
+
 
 
 def process_geojson_request(feature): 
