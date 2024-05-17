@@ -16,11 +16,11 @@ export function RoverTelemetry() {
                 <p>Rover Telemetry</p>
                 <p> 
                     X: <span> </span>
-                    {roverData?.rover.posx}
+                    {roverData?.rover.posx.toPrecision(5)}
                 </p>
                 <p> 
                     Y:  <span> </span>
-                    {roverData?.rover.posy}
+                    {roverData?.rover.posy.toPrecision(5)}
                 </p>
                 <p>
                     QR ID:  <span> </span>

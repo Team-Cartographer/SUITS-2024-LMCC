@@ -47,6 +47,7 @@ interface NetworkContextType {
 	getTelemetryData: (evaNumber: number) => Biometrics;
 	getRoverData: () => RoverData;
 	getErrorData: () => ErrorData; 
+	
 	updateTodoItems: (newItem: string) => any; 
 	updateTodoItemsViaList: (newItems: string[][]) => any;
 	updateWarning: (warning: string) => any;

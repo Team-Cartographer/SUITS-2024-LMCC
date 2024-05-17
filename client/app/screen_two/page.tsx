@@ -28,7 +28,6 @@ const ScreenTwo = () => {
 
       <div className=" bg-slate-600 flex-grow items-center justify-center rounded-r-2xl p-2 pl-3">
         <div className="flex flex-col pt-[180px]">
-          <RoverTelemetry />
           <NoSSR_LiveView />
           <TodoLister />
         </div>

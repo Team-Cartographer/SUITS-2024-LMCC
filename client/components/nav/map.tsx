@@ -20,6 +20,7 @@ const MAP_WIDTH = 3720;
 
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
 
 let MAP_URLS: string[] = []
@@ -46,7 +47,8 @@ const Map = () => {
     const [modalOpen, setModalOpen] = useState(false); // Whether the modal is open or not
     const [descContent, setDescContent] = useState<string | null>(null); // Description content for the pin
     const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point  
-    
+    const [loading, setLoading] = useState(false); // Whether the map pin is loading or not
+
     const networkProvider = useNetwork();
 
 
@@ -120,6 +122,7 @@ const Map = () => {
                 const newUrl = URL.createObjectURL(blob);
                 setMapImage(newUrl);
                 setErr('');
+                setLoading(false);
             }
         };
     
@@ -173,6 +176,7 @@ const Map = () => {
     // Updates the Image every time it is clicked
     const addPin = async (xystring: string, _descContent: string) => {
         try {
+            setLoading(true)
             const feature = { 
                 type: "Feature",
                 properties: {
@@ -197,6 +201,7 @@ const Map = () => {
 
     const removePin = async (xystring: string, _descContent: string) => {
         try {
+            setLoading(true);
             const feature = { 
                 type: "Feature",
                 properties: {
@@ -268,6 +273,7 @@ const Map = () => {
             {mapImage && <img className="rounded-3xl pb-2" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
             {shiftPressed && <span className="text-muted-foreground text-sm">Removing: On (Press Shift to Remove)</span>}
             {!shiftPressed && <span className="text-muted-foreground text-sm">Removing: Off (Press Shift to Remove)</span>}
+            {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center"><Spinner /> Loading Pin...</span>}
         </div>
     );
 }

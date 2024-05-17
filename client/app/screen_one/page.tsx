@@ -25,7 +25,7 @@ const HomePage = () => {
         <BiometricTelemetry evaNumber={1} bpm={0.0} temp={0.0} oxy={0.0} className="pt-[4.2rem]" />
         <CameraFeed ip={lmcc_config.eva1_ip} />
         <BiometricTelemetry evaNumber={2} bpm={0.0} temp={0.0} oxy={0.0} />
-        <CameraFeed ip={'1.2.3.4'} />
+        <CameraFeed ip={lmcc_config.eva2_ip} />
       </div>
       <div className="h-full flex items-center justify-start pt-9 flex-col gap-x-4">
         <PanicButton />

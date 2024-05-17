@@ -3,8 +3,7 @@ import paths
 from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
                     extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
 from services.database import JSONDatabase, ListCache
-from services.schema import GeoJSON, WarningItem, TodoItems, \
-                            GeoJSONFeature, TodoItem
+from services.schema import GeoJSON, WarningItem, TodoItems, TodoItem, GeoJSONFeature
 
 # Standard Imports 
 from json import loads, load, dumps
@@ -16,7 +15,7 @@ from threading import Thread
 import asyncio 
 
 # Third-Party Imports
-from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket, Request
+from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket
 from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
@@ -41,9 +40,9 @@ todoDb: JSONDatabase[list[TodoItems]] = JSONDatabase(paths.TODO_PATH)
 warningDb: JSONDatabase[WarningItem] = JSONDatabase(paths.WARNING_PATH)
 geojsonDb: JSONDatabase[GeoJSON] = JSONDatabase(paths.GEOJSON_PATH)
 
-eva1_poscache = ListCache(5000)
-eva2_poscache = ListCache(5000)
-rover_poscache = ListCache(5000)
+eva1_poscache = ListCache(1000)
+eva2_poscache = ListCache(1000)
+rover_poscache = ListCache(1000)
 
 app.curr_telemetry = dict() 
 app.get_reqs = 0 
@@ -206,8 +205,8 @@ def rover():
     llr = get_lat_lon_from_utm(east_rover, north_rover)
     return { 
         "rover": {
-            "posx": llr.lon,
-            "posy": llr.lat,
+            "posx": llr.lat,
+            "posy": llr.lon,
             "qr_id": ret["rover"]["qr_id"]
         }
     }
