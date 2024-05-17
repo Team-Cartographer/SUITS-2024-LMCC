@@ -42,8 +42,8 @@ const GeoSampler = ({
     setEva2CompletedItems,
 }: GeoSamplerParams) => {
   return (
-    <div style={{ height: '620px', width: '800px' }} className="flex flex-col container mx-auto mt-8">
-        <p style={{ marginTop: '-50px' }} className={`text-l ${EVA1SpecItem?.id !== 0 ? 'text-green-500' : 'text-red-500'}`}>
+    <div className="flex flex-col container">
+        <p className={`text-l ${EVA1SpecItem?.id !== 0 ? 'text-green-500' : 'text-red-500'}`}>
             EVA 1 Data:
         </p>
         <Table>

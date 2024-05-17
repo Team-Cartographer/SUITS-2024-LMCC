@@ -238,7 +238,7 @@ const Map = () => {
 
     // Renders the Map Image if it exists. 
     return ( 
-        <div className="flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center pb-2">
             {modalOpen && (
                 <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(2, 8, 23, 0.5)' }} className="transition-all">
                 <div style={{ padding: 20, background: '#000', borderRadius: 5, position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }}>
@@ -271,9 +271,8 @@ const Map = () => {
             )}
             { /* eslint-disable-next-line @next/next/no-img-element */ }
             {mapImage && <img className="rounded-3xl pb-2" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
-            {shiftPressed && <span className="text-muted-foreground text-sm">Removing: On (Press Shift to Remove)</span>}
-            {!shiftPressed && <span className="text-muted-foreground text-sm">Removing: Off (Press Shift to Remove)</span>}
-            {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center"><Spinner /> Loading Pin...</span>}
+            {shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2">Removing: On (Press Shift to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
+            {!shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2">Removing: Off (Press Shift to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
         </div>
     );
 }

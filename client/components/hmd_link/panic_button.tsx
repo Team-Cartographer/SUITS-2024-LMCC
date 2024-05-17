@@ -37,7 +37,7 @@ const PanicButton = () => {
   return (
     <div>
       <AlertDialog>
-        <AlertDialogTrigger className="flex h-12 w-14 items-center justify-center rounded-xl bg-red-600 text-red-200 hover:bg-red-700">
+        <AlertDialogTrigger className="flex border-2 h-12 w-14 items-center justify-center rounded-xl bg-red-600 text-red-200 hover:bg-red-700">
           <AlertTriangle className="h-7 w-7" />
         </AlertDialogTrigger>
         <AlertDialogContent>

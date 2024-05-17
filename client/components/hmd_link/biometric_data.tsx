@@ -73,6 +73,7 @@ function BiometricTelemetry({
                     <span className="text-blue-400"> PSI/MIN</span>
                 </p>
             </div>
+            
         </div>
     );
 }
