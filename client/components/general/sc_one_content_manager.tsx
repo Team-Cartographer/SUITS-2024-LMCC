@@ -26,34 +26,7 @@ const ScreenOneContentManager = () => {
     const [eva2CompletedItems, setEva2CompletedItems] = useState<SpecItem[]>([]);
 
     const addTodoItems = async () => {
-        if (EVA1SpecItem && EVA1SpecItem.id !== 0 && !eva1CompletedItems.some(item => item.id === EVA1SpecItem.id)) {
-            const updated = [`(EVA 1) Pick up Spec Item: ${EVA1SpecItem.name} (ID: ${EVA1SpecItem.id})`, "False"];
-    
-            const itemExists = todoItems && todoItems.some(item => 
-                item[0] === updated[0]
-            );
-    
-            if (!itemExists) {
-                await fetchWithParams('api/v0', {
-                    notif: "update_todo",
-                    todoItems: [...(todoItems || []), updated]
-                });
-            }
-        }
-        if (EVA2SpecItem && EVA2SpecItem.id !== 0 && !eva2CompletedItems.some(item => item.id === EVA2SpecItem.id)) {
-            const updated = [`(EVA 2) Pick up Spec Item: ${EVA2SpecItem.name} (ID: ${EVA2SpecItem.id})`, "False"];
-    
-            const itemExists = todoItems && todoItems.some(item => 
-                item[0] === updated[0]
-            );
-    
-            if (!itemExists) {
-                await fetchWithParams('api/v0', {
-                    notif: "update_todo",
-                    todoItems: [...(todoItems || []), updated]
-                });
-            }
-        }
+        // FIXME: Fix all of this stuff
     }
 
     useEffect(() => {

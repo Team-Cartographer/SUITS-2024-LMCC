@@ -1,8 +1,9 @@
 import rasterio 
 import numpy as np 
+from PIL import Image
 from os import mkdir
 from json import dump
-from paths import GEODATA_PATH, GEOJSON_PATH, TODO_PATH, WARNING_PATH, PHOTO_DPATH, DATA_D, TIFF_PATH
+from paths import GEODATA_PATH, GEOJSON_PATH, HEIGHTMAP_IMG_PATH, HEIGHTMAP_NPY, TODO_PATH, WARNING_PATH, PHOTO_DPATH, DATA_D, TIFF_PATH
 
 def create_data_endpoints():
     """
@@ -36,6 +37,16 @@ def create_data_endpoints():
             coordinates = np.stack((xs, ys), axis=-1)
 
             np.save(GEODATA_PATH, coordinates)
+
+
+    if not HEIGHTMAP_NPY.exists():  
+        image = Image.open(HEIGHTMAP_IMG_PATH)
+        image_array = np.array(image)
+        norm = (image_array - np.min(image_array)).T[0].T
+        norm.reshape(-1, 1)
+
+        np.save(HEIGHTMAP_NPY, norm)
+
 
 
     with open(TODO_PATH, 'w') as todo:

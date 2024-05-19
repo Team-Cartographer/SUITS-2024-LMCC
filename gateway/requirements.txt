@@ -26,6 +26,7 @@ urllib3==2.2.1
 uvicorn==0.29.0
 pillow==10.3.0
 pyproj
+tqdm
 trimesh
 websockets
 wsproto

@@ -60,11 +60,11 @@ const HomePage = () => {
         <div className="flex flex-row gap-x-2">
         <Alert>
           <AlertTitle>EVA Phase Manager</AlertTitle>
-          <AlertDescription className="grid grid-rows-2 grid-cols-2 pt-2">
-          <div className={getPhaseStyle(evaStatus.uia)}>{getPhaseStatus(evaStatus.uia, 'UIA')}</div>
-          <div className={getPhaseStyle(evaStatus.dcu)}>{getPhaseStatus(evaStatus.dcu, 'DCU')}</div>
-          <div className={getPhaseStyle(evaStatus.rover)}>{getPhaseStatus(evaStatus.rover, 'Rover')}</div>
-          <div className={getPhaseStyle(evaStatus.spec)}>{getPhaseStatus(evaStatus.spec, 'Spec')}</div>
+            <AlertDescription className="grid grid-rows-2 grid-cols-2 pt-2">
+            <div className={getPhaseStyle(evaStatus.uia)}>{getPhaseStatus(evaStatus.uia, 'UIA')}</div>
+            <div className={getPhaseStyle(evaStatus.dcu)}>{getPhaseStatus(evaStatus.dcu, 'DCU')}</div>
+            <div className={getPhaseStyle(evaStatus.rover)}>{getPhaseStatus(evaStatus.rover, 'Rover')}</div>
+            <div className={getPhaseStyle(evaStatus.spec)}>{getPhaseStatus(evaStatus.spec, 'Spec')}</div>
           </AlertDescription>
         </Alert>
         <div className="flex flex-col items-center gap-y-2 justify-center pb-2 pt-1">

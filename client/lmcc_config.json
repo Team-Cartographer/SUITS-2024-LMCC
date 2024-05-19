@@ -3,7 +3,7 @@
     "lmcc_ip": "0.0.0.0",
     "tickspeed": 100,
     "scale_factor": 5,
-    "eva1_ip": "1.1.1.1",
+    "eva1_ip": "172.24.234.113",
     "eva2_ip": "1.1.1.1",
     "autowarn": false
 }
