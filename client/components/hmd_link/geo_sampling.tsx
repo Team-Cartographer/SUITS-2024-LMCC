@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable @next/next/no-img-element */
+import React, { useState } from 'react';
 import { Chart } from "react-google-charts";
 import { SpecItem } from "@/lib/types";
 
@@ -17,6 +18,7 @@ import {
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion";
+import { fetchImageWithoutParams } from '@/api/fetchServer';
 
 interface GeoSamplerParams { 
     spec1Items: SpecItem[];
@@ -35,6 +37,10 @@ const GeoSampler = ({
     setEva1CompletedItems,
     setEva2CompletedItems,
 }: GeoSamplerParams) => {
+  const [currentEva1, setCurEva1] = useState('');
+  const [currentEva2, setCurEva2] = useState('');
+
+
   return (
     <div className="flex flex-col h-full max-h-[600px] text-sm overflow-y-auto p-4 border border-gray-200 rounded-lg pt-6">
         <div className="space-y-4">
@@ -69,18 +75,19 @@ const GeoSampler = ({
                                 <TableCell className="w-full">
                                     <Accordion type="multiple">
                                         <AccordionItem value={`item-${index}`}>
-                                            <AccordionTrigger>
+                                            <AccordionTrigger onClick={async () => {
+                                                const res = await fetchImageWithoutParams('rock_img?id_number=' + specItem.id);
+                                                if (res) { 
+                                                    const img = URL.createObjectURL(res);
+                                                    setCurEva2(img);
+                                                } else {
+                                                    throw new Error('Failed to fetch image')
+                                                }
+                                            }}>
                                                 Display {specItem.name} Geological Makeup 
                                             </AccordionTrigger>
                                             <AccordionContent>
-                                                <Chart
-                                                    chartType="BarChart"
-                                                    width="100%"
-                                                    height="200px"
-                                                    data={[['Element', 'Value'], ...Object.entries(specItem.data)]}
-                                                    options={{ title: specItem.name, legend: { position: 'none' }}}
-                                                    loader={<div>Loading Chart</div>}
-                                                />
+                                                <img src={currentEva2} alt={specItem.name} className="w-[60%]" />
                                             </AccordionContent>
                                         </AccordionItem>
                                     </Accordion>
@@ -123,18 +130,19 @@ const GeoSampler = ({
                                 <TableCell className="w-full">
                                     <Accordion type="multiple">
                                         <AccordionItem value={`item-${index}`}>
-                                            <AccordionTrigger>
+                                            <AccordionTrigger onClick={async () => {
+                                                const res = await fetchImageWithoutParams('rock_img?id_number=' + specItem.id);
+                                                if (res) { 
+                                                    const img = URL.createObjectURL(res);
+                                                    setCurEva1(img);
+                                                } else {
+                                                    throw new Error('Failed to fetch image')
+                                                }
+                                            }}>
                                                 Display {specItem.name} Geological Makeup 
                                             </AccordionTrigger>
                                             <AccordionContent>
-                                                <Chart
-                                                    chartType="BarChart"
-                                                    width="100%"
-                                                    height="200px"
-                                                    data={[['Element', 'Value'], ...Object.entries(specItem.data)]}
-                                                    options={{ title: specItem.name, legend: { position: 'none' }}}
-                                                    loader={<div>Loading Chart</div>}
-                                                />
+                                                <img src={currentEva1} alt={specItem.name} className="w-[60%]" />
                                             </AccordionContent>
                                         </AccordionItem>
                                     </Accordion>
