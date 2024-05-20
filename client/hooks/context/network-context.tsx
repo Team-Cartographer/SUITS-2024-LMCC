@@ -18,6 +18,7 @@ import {
 	EvaData,
 	UIAState,
 	DCUState,
+	CommState,
 } from "@/lib/types";
 import { 
     defaultTodoValue,
@@ -30,7 +31,8 @@ import {
 	defaultErrorValue,
 	defaultEvaStatusValue,
 	defaultUIAState,
-	defaultDCUState
+	defaultDCUState,
+	defaultCommState
 } from "@/lib/defaults"
 
 ////////////////////////////////////////////////
@@ -57,6 +59,7 @@ interface NetworkContextType {
 	getEvaData: () => EvaStatus;
 	getUIAData: () => UIAState;
 	getDCUData: () => DCUState;
+	getCommData: () => CommState;
 	updateTodoItems: (newItem: string) => any; 
 	updateTodoItemsViaList: (newItems: string[][]) => any;
 	updateWarning: (warning: string) => any;
@@ -74,11 +77,11 @@ const defaultNetworkValue: NetworkContextType = {
 	getEvaData: () => defaultEvaStatusValue,
 	getUIAData: () => defaultUIAState,
 	getDCUData: () => defaultDCUState,
+	getCommData: () => defaultCommState,
 	updateTodoItems: (newItem: string) => 0,
 	updateTodoItemsViaList: (newItems: string[][]) => 0,
 	updateWarning: (warning: string) => 0,
 };
-
 
 const NetworkContext = createContext(defaultNetworkValue);
 
@@ -99,6 +102,7 @@ export const NetworkProvider = ({ children }: any) => {
 	const [biometricDataEva2, setBiometricDataEva2] = useState<Biometrics>(defaultBiometricValue);
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 	const [errorData, setErrorData] = useState<ErrorData>(defaultErrorValue);
+	const [commData, setCommData] = useState<CommState>(defaultCommState);
 	const [evaData, setEvaData] = useState<EvaStatus>(defaultEvaStatusValue); 
 	const [uiaSwitchState, setUiaSwitchState] = useState<UIAState>(defaultUIAState);
 	const [dcuSwitchState, setDcuSwitchState] = useState<DCUState>(defaultDCUState);
@@ -116,6 +120,13 @@ export const NetworkProvider = ({ children }: any) => {
 					setEvaData(eva_data.eva)
 				} else { 
 					throw new Error("EVA Data is Undefined")
+				}
+
+				const commData = await fetchWithoutParams<CommState>('mission/comm');
+				if (commData) {
+					setCommData(commData);
+				} else {
+					throw new Error('Comm Data is Undefined!')
 				}
 
 				const warningData = await fetchWithoutParams<WarningData>('warning');
@@ -291,6 +302,10 @@ export const NetworkProvider = ({ children }: any) => {
 		return mapGeoJSON || defaultGEOJSONValue
 	}
 
+	const getCommData = (): CommState => {
+		return commData || defaultCommState
+	}
+
 	const getSpecData = (): EVASpecItems => {
 		return {
 			eva1: eva1SpecItem || defaultSpecValue.eva1,
@@ -397,7 +412,8 @@ export const NetworkProvider = ({ children }: any) => {
 			updateTodoItems,
 			updateTodoItemsViaList,
 			updateWarning,
-			getUIAData
+			getUIAData,
+			getCommData,
 		}}>
 			{children}
 		</NetworkContext.Provider>

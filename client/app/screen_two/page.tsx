@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
-import UIA_UI from "@/components/tss_link/uia_ui";
+import DATA_UI from "@/components/tss_link/data_ui";
 
 
 const NoSSR_Timers = dynamic(() => import('@/components/ui/timing'), { ssr: false })
@@ -35,7 +35,6 @@ const ScreenTwo = () => {
       <div className="absolute top-2.5 left-[46.3rem]">
         <RoverTelemetry />
       </div>
-      
 
       <div className=" bg-slate-600 flex-col w-[1050px] items-center justify-center rounded-r-2xl p-2 pl-3">
         <div className="flex flex-col pt-[180px]">
@@ -44,7 +43,7 @@ const ScreenTwo = () => {
             <TodoLister />
             <div className="flex flex-col items-center gap-y-2 pl-3 pt-4">
               
-              <UIA_UI />
+              <DATA_UI />
 
             </div>
           </div>

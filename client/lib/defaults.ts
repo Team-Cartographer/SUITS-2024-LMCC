@@ -114,7 +114,14 @@ const defaultErrorValue = {
         fan_error: false,
         oxy_error: false,
         pump_error: false,
+		power_error: false
     }
+}
+
+const defaultCommState = {
+	comm: {
+		comm_tower: false,
+	}
 }
 
 
@@ -193,6 +200,7 @@ export {
     defaultSpecValue, 
     defaultTimerValue, 
     defaultBiometricValue,
+	defaultCommState,
 	defaultErrorValue,
 	defaultEvaStatusValue,
 }
