@@ -1,11 +1,11 @@
 from PIL import Image, ImageDraw
 import heapq
-from numpy import sqrt, load
+import numpy as np
 from pathlib import Path
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
-HEIGHTMAP_NPY = Path(__file__).parent.parent / 'data' / 'heightmap.npy'
+HEIGHTMAP_NPY = Path(__file__).parent / 'heightmap.npy'
 TIFF_PATH = Path(__file__).parent / 'rockyard.tif'
 
 class Node:
@@ -13,7 +13,7 @@ class Node:
         self.x = x
         self.y = y
         self.parent = parent
-        self.height = GRID[x][y]
+        self.height = GRID[y][x]
 
         self.g: float = 0
         self.h: float = 0
@@ -31,7 +31,7 @@ class Node:
         return self.dist_btw(other)
 
     def dist_btw(self, other: "Node") -> float:
-        return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.height - other.height) ** 2)
+        return np.sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.height - other.height) ** 2)
 
     def new_g(self, other: "Node") -> float:
         k_dist: float = 1
@@ -43,15 +43,14 @@ class Node:
 
         eqn: float = k_dist * dist + k_height * height + height_penalty
         return eqn
-    
-    def __repr__(self): 
-        return f"Node({self.x}, {self.y}, {self.height})"
 
+    def __repr__(self):
+        return f"Node({self.x}, {self.y}, {self.height})"
 
 def process_node(current, dx, dy):
     x2 = current.x + dx
     y2 = current.y + dy
-    if 0 <= x2 < len(GRID) and 0 <= y2 < len(GRID[0]):
+    if 0 <= x2 < len(GRID[0]) and 0 <= y2 < len(GRID):
         new_node = Node(x2, y2, current)
         return new_node
     return None
@@ -87,17 +86,15 @@ def astar():
                         heapq.heappush(nodes, new_node)
 
                 pbar.update(1)
-    
+
     return []
-
-
 
 def run_astar(s_x, s_y, g_x, g_y) -> None:
     global GRID
-    GRID = load(HEIGHTMAP_NPY)
-    print(len(GRID), len(GRID[0]))
+    GRID = np.load(HEIGHTMAP_NPY)
+    print(len(GRID[0]), len(GRID))
 
-    start_x, start_y, goal_x, goal_y = s_y, s_x, g_y, g_x
+    start_x, start_y, goal_x, goal_y = s_x, s_y, g_x, g_y
 
     global start_node
     global goal_node
@@ -107,5 +104,34 @@ def run_astar(s_x, s_y, g_x, g_y) -> None:
     print(start_node, goal_node)
 
     final_path = astar()
+
+    return final_path
+
+
+if __name__ == '__main__':
+    start_x, start_y = 2555, 762
+    goal_x, goal_y = 1290, 2200
     
-    return final_path 
+    final_path = run_astar(start_x, start_y, goal_x, goal_y)
+    print("Final path:")
+    for node in final_path:
+        print(node)
+    
+    import matplotlib.pyplot as plt
+    from PIL import Image
+    import numpy as np
+
+
+    heightmap_img = Image.open("heightmap.png")
+    heightmap_array = np.array(heightmap_img)
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    ax.imshow(heightmap_array, cmap='gray')
+
+    for i in range(len(final_path) - 1):
+        x1, y1, _ = final_path[i]
+        x2, y2, _ = final_path[i + 1]
+        ax.plot([x1, x2], [y1, y2], 'r-', linewidth=2)
+
+    plt.show()
