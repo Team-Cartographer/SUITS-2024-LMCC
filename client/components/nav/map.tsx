@@ -144,7 +144,7 @@ const Map = () => {
     // Checks if the image was clicked, and whether that click was/wasn't near an existing point
     const handleImageClick = async (event: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
         const target = event.target as HTMLImageElement;
-        const tolerance = 80;
+        const tolerance = 40;
 
         const rect = target.getBoundingClientRect();
         const x = Math.round(event.clientX - rect.left) / SCALING_FACTOR;

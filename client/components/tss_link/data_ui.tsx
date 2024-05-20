@@ -69,7 +69,7 @@ const DATA_UI = () => {
                 </div>
             </div>
             <div className="flex flex-row py-2 gap-x-2">
-                <div className="flex flex-col outline p-4 pb-6 drop-shadow-2xl outline-muted-foreground rounded-lg bg-slate-950">
+                <div className="flex flex-col outline p-4 pb-6 drop-shadow-2xl outline-muted-foreground rounded-lg w-[69%] bg-slate-950">
                     <span className="text-muted-foreground underline font-bold pb-2">Errors</span>
                     <div className="flex flex-col gap-y-2">
                         {SwitchConfig(errorState.error.fan_error, "FAN ERROR", "text-red-400")}
@@ -80,8 +80,9 @@ const DATA_UI = () => {
                 </div>
                 <div className="flex flex-col outline p-4 pb-6 drop-shadow-2xl outline-muted-foreground rounded-lg bg-slate-950">
                     <span className="text-muted-foreground underline font-bold pb-2">Communications</span>
-                    <div className="flex flex-col gap-y-2">
-                        {SwitchConfig(commState.comm.comm_tower, "COMM TOWER STATUS")}
+                    <div className="flex flex-col items-center justify-center">
+                        <span className="pb-4">COMM TOWER STATUS</span>
+                        {commState.comm.comm_tower ? <span className="text-green-400">- CONNECTED -</span> : <span className="text-red-400">- DISCONNECTED -</span>}
                     </div>
                 </div>
             </div>

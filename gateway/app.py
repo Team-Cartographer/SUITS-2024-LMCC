@@ -48,6 +48,7 @@ eva2_poscache = ListCache(1000)
 rover_poscache = ListCache(1000)
 
 app.curr_telemetry = dict() 
+app.last_qr_id = 0
 app.get_reqs = 0 
 app.post_reqs = 0
 app.start_time = time() 
@@ -425,13 +426,19 @@ def rover():
     app.get_reqs += 1
     req = get(f"http://{TSS_HOST}:14141/json_data/ROVER.json")
     ret = req.json() 
+    qr_id = ret["rover"]["qr_id"]
     east_rover, north_rover = int(ret["rover"]["posx"]), int(ret["rover"]["posy"])
     llr = get_lat_lon_from_utm(east_rover, north_rover)
+
+    if qr_id != 0 and qr_id != app.last_qr_id: 
+        app.last_qr_id = qr_id
+        todoDb["todoItems"].append("Place pin at rover location, and scan sample with ID " + str(qr_id))
+        
     return { 
         "rover": {
             "posx": llr.lat,
             "posy": llr.lon,
-            "qr_id": ret["rover"]["qr_id"]
+            "qr_id": qr_id
         }
     }
 
