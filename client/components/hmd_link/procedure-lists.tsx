@@ -39,7 +39,7 @@ const ProcedureLists = () => {
                 <div className="pl-4 font-bold pb-2 pt-3">Complete for Each EVA</div>
                 <div className="pl-4" role="button" onClick={sendTodoItem}>1. Connect UIA to DCU and start Depress</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>a. EV1 and EV2 connect UIA and DCU umbilical</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1 and EV2 switch EMU PWR -- ON </div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV1 and EV2 switch PWR -- ON </div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>c. BATT -- UMB</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>c. DEPRESS PUMP PWR -- ON</div>
 
@@ -168,18 +168,62 @@ const ProcedureLists = () => {
                 <div className="pl-4" role="button" onClick={sendTodoItem}>4. If EVs do not have a procedure for the issue, standy until LMCCx sends new procedure</div>
                 <div className="pl-4" role="button" onClick={sendTodoItem}>5. Execute appropriate procedure</div>
     
-                <div className="pl-4 font-bold pb-1 pt-4">Cable Repair [NEEDS WORK]</div>
-                <div className="pl-4" role="button" onClick={sendTodoItem}>2. Shut down comm tower (EV1)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Select power button on screen</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Select shut down option</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. Relay system shutdown complete</div>
+                <div className="pl-4 font-bold pb-1 pt-4">Cable Repair</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>1. EV1 Select Gear Icon (COMM Tower Screen 1)</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>2. EV1 Select Shutdown (COMM Tower Screen 2)</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. EV1 Verify shutdown complete and notify EV2 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. EV2 Move POWER - OFF, notify EV1 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. EV2 Navigate to Comm Tower to retrieve one end of power cable</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>d. EV1 retrieve spare cable</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>e. EV2 take appropriate end of cable to MMRTG, notify EV1 and LMCC1 when at MMRTG</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>f. EV1 disconnect damaged cable from Comm Tower, notify EV2 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>g. EV2 disconnect damaged cable from MMRTG, notify EV1 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>h. EV1 Connect new cable from Comm Tower, notify EV1 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>i. EV2 Connect new cable from MMRTG, notify EV1 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>j. EV2 Move POWER – ON, notify EV1 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>k. EV1 POWER – ON, notify EV2 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>l. EV1 when start up complete, notify EV2 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>m. Screen 15. EV1 Verify channel “B” is operational, notify EV2 and LMCC1</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>n. On LMCC1 Go, switch to COM – B</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>o. Perform comm check</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>p. If Comm good, EV1/LMCC1 switch back to COM-A, EV2/LMCC2 continue COM-B, Else all to COM – A</div>
+
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Structural Damage Repair</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>1. EV1: Collect structural repair materials including metal patches, welding tools, and adhesives.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>2. EV2: Assemble safety gear for climbing and securing both crew members.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>3. EV1: Assess tower for visible structural damage.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>4. EV2: Assist in removing debris and damaged components.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>5. EV1: Apply metal patches over holes or tears using welding tools.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>6. EV2: Provide support in applying patches or adhesives.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>7. EV1: Secure larger structural issues with adhesives and temporary supports.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>8. EV2: Ensure safety protocols are followed during high or difficult access points.</div>
+                    
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Power System Troubleshooting and Repair</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>1. EV1: Assemble diagnostic kit, spare batteries, solar cells, and electrical repair tools.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>2. EV2: Carry additional spare parts and protective equipment.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>3. EV1: Perform diagnostics to identify power supply issues.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>4. EV2: Assist in identifying damaged components.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>5. EV1: Replace faulty batteries or solar cells.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>6. EV2: Help in repairing or replacing wiring, ensuring secure connections.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>7. EV1: Verify power system functionality post-repair</div>
+
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Antenna Alignment and Calibration</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>1.EV1: Prepare alignment tools and calibration software on a portable device.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>2. EV2: Assemble securing gear and safety equipment for both crew members.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>3. EV1: Adjust the antenna to correct orientation using tools.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>4. EV2: Assist in antenna inspection for misalignment or damage.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>5. EV1: Secure antenna position; perform calibration test.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>6. EV2: Support in adjustment and calibration process; maintain communication with mission control.</div>
+                    
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Transceiver Module Replacement</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>1. EV1: Collect replacement transceiver module and non-conductive tools.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>2. EV2: Prepare electrostatic discharge safety equipment.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>3. EV1: Remove the faulty module.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>4. EV2: Assist in isolating power supply.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>5. EV1: Install the new module ensuring all connections are secure.</div>
+                    <div className="pl-8" role="button" onClick={sendTodoItem}>6. EV2: Ensure module installation is correctly performed; conduct systems check to verify functionality.</div>
                 
-                <div className="pl-4" role="button" onClick={sendTodoItem}>3. Power down MMRTG (EV2)</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>a. Set power switch to off position</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>b. Relay power down to mcc</div>
-                    <div className="pl-8" role="button" onClick={sendTodoItem}>c. Return to comm tower for cable swap task</div>
-                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>4. Cable swap</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Cable swap</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>a. Retrieve functional cable (EV1)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>b. Take one end of cable to MMRTG site, relay when arrived (EV2)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>c. Disconnect damaged cable from comm tower, relay when complete (EV1)</div>
@@ -188,13 +232,13 @@ const ProcedureLists = () => {
                     <div className="pl-8" role="button" onClick={sendTodoItem}>f. Connect functional cable to MMRTG, relay when complete (EV2)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>g. Relay cable swap complete to MCC (EV1)</div>
                
-                <div className="pl-4" role="button" onClick={sendTodoItem}>5. Restore power</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Restore power</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>a. Set MMRTG power switch to on position (EV2)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>b. Power on comm tower by pressing power button (EV1)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>c. Wait for system start up (EV1)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>d. Relay successful system start (EV1)</div>
                 
-                <div className="pl-4" role="button" onClick={sendTodoItem}>6. Verify Successful Repair (Both EVs)</div>
+                <div className="pl-4" role="button" onClick={sendTodoItem}>Verify Successful Repair (Both EVs)</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>a. Verify channel is live on comm tower display</div>
                     <div className="pl-8" role="button" onClick={sendTodoItem}>b. Test if comm channel is functional</div>
                     <div className="pl-12" role="button" onClick={sendTodoItem}>i. Follow channel switch protocol</div>
