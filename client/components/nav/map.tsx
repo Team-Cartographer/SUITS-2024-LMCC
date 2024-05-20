@@ -7,7 +7,7 @@
  */
 
 import lmcc_config from "@/lmcc_config.json"
-import { fetchWithParams } from "@/api/fetchServer";
+import { fetchWithParams, fetchWithoutParams } from "@/api/fetchServer";
 import { useEffect, useState } from "react";
 import { useNetwork } from "@/hooks/context/network-context";
 import { GeoJSONFeature } from "@/lib/types";
@@ -48,6 +48,7 @@ const Map = () => {
     const [descContent, setDescContent] = useState<string | null>(null); // Description content for the pin
     const [nearPoint, setNearPoint] = useState<NearPoint | null>(null); // Near point  
     const [loading, setLoading] = useState(false); // Whether the map pin is loading or not
+    const [navLoad, setNavLoading] = useState(false); // Whether the navigation is loading or not
 
     const networkProvider = useNetwork();
 
@@ -273,7 +274,14 @@ const Map = () => {
             { /* eslint-disable-next-line @next/next/no-img-element */ }
             {mapImage && <img className="rounded-3xl pb-2" id="map" src={mapImage} alt="Map" onClick={handleImageClick} width={MAP_WIDTH * SCALING_FACTOR} height={MAP_HEIGHT * SCALING_FACTOR} />}
             {shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2">Removing: On (Press Shift+Click to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
-            {!shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2">Removing: Off (Press Shift+Click to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
+            {!shiftPressed && <span className="text-muted-foreground text-sm flex flex-row items-center gap-x-2 pb-2">Removing: Off (Press Shift+Click to Remove) {loading && <span className="text-muted-foreground text-sm flex flex-row gap-x-1 items-center">|| <Spinner /> Loading Pin...</span>}</span>}
+            <Button onClick={async () => {
+                setNavLoading(true);
+                await fetchWithoutParams("navigate");
+                setNavLoading(false);
+            }}>
+            {navLoad ? <Spinner /> : "Navigate"}
+            </Button>
         </div>
     );
 }

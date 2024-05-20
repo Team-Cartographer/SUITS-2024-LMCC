@@ -11,9 +11,9 @@ const RoverTelemetry = () => {
     const roverData = networkProvider.getRoverData();
 
 	return (
-		<div className="flex flex-row gap-x-1 items-center justify-start p-2">
-            <Alert>
-                <AlertTitle>Rover State Data</AlertTitle>
+		<div className="flex flex-row gap-x-1 items-center justify-start p-2 pt-3">
+            <Alert className="outline-muted-foreground outline">
+                <AlertTitle className="text-muted-foreground">Rover State Data</AlertTitle>
                 <AlertDescription className="pt-1 flex flex-row gap-x-6">
                     <p>
                     X: <span> </span>

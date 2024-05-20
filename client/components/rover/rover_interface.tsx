@@ -5,7 +5,10 @@
  * @function EVALiveView
  */
 
+import lmcc_config from "@/lmcc_config.json"
+
 const RoverLiveView = () => {
+	const ip = lmcc_config.rover_ip;
 
 	return (
 		<>
@@ -15,21 +18,10 @@ const RoverLiveView = () => {
 			</div>
 
 			<div className="flex flex-row max-w-[500px] gap-x-2">
-				<video
-					controls
-					poster="https://mars.nasa.gov/system/resources/detail_files/25904_1-PIA24546-1200.jpg"
-					className="rounded-2xl w-full"
-				>
-					<source src="path-to-your-video-file.webm" type="video/webm" />
-					Your browser does not support the video tag.
-				</video>
-				<video controls 
-					poster="https://mars.nasa.gov/system/resources/detail_files/25904_1-PIA24546-1200.jpg" 
-					className="rounded-2xl w-full"
-				>
-					<source type="video/webm" />
-					Your browser does not support the video tag.
-				</video>
+				<img src="/native_feed.jpg" alt="" className="rounded-lg" />
+				<img src="/thermal_feed.jpg" alt="" className="rounded-lg" />
+				{/* <img src={`http://${ip}:5000/native_feed`} alt="" className="rounded-lg" />
+				<img src={`http://${ip}:5000/thermal_feed`} alt="" className="rounded-lg" /> */}
 			</div>
 		</>
 	);

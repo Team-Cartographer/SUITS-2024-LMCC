@@ -9,6 +9,8 @@ import {
 	RoverData,
 	WarningData,
 	EvaStatus,
+	UIAState,
+	DCUState,
 } from "./types";
 
 ///////////////////////////////////////
@@ -143,11 +145,49 @@ const defaultEvaStatusValue: EvaStatus = {
   }
 }
 
+const defaultUIAState: UIAState = {
+    uia: {
+        eva1_power:        false,
+        eva1_oxy:          false,
+        eva1_water_supply: false,
+        eva1_water_waste:  false,
+        eva2_power:        false,
+        eva2_oxy:          false,
+        eva2_water_supply: false,
+        eva2_water_waste:  false,
+        oxy_vent:          false,
+        depress:           false
+    }
+};
+
+const defaultDCUState: DCUState = {
+    dcu: {
+        eva1: {
+            batt: false,
+            oxy: false,
+            comm: false,
+            fan: false,
+            pump: false,
+            co2: false
+        },
+        eva2: {
+            batt: false,
+            oxy: false,
+            comm: false,
+            fan: false,
+            pump: false,
+            co2: false
+        }
+    }
+};
+
 ///////////////////////////////////////////
 
 export { 
     defaultWarningValue,
 	defaultTodoValue,
+	defaultUIAState,
+	defaultDCUState,
     defaultRoverValue,
     defaultGEOJSONValue,
     defaultSpecValue, 

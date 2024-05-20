@@ -187,6 +187,47 @@ type EvaData = {
     eva: EvaStatus
 }
 
+
+/// UIA STATE //////////////////////////////////////////////////////////
+
+type UIAState = { 
+    uia: {
+        eva1_power:        boolean; 
+		eva1_oxy:          boolean; 
+		eva1_water_supply: boolean; 
+		eva1_water_waste:  boolean; 
+		eva2_power:        boolean;
+		eva2_oxy:          boolean;
+		eva2_water_supply: boolean;
+		eva2_water_waste:  boolean;
+		oxy_vent:          boolean;
+		depress:           boolean;
+    }
+}
+
+/// DCU STATE /////////////////////////////////////////////////////////
+
+type DCUState = {
+    dcu: {
+        eva1: {
+            batt: boolean;
+            oxy: boolean;
+            comm: boolean;
+            fan: boolean;
+            pump: boolean;
+            co2: boolean;
+        };
+        eva2: {
+            batt: boolean;
+            oxy: boolean;
+            comm: boolean;
+            fan: boolean;
+            pump: boolean;
+            co2: boolean;
+        };
+    };
+};
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -208,7 +249,9 @@ export type {
     ErrorData,
     EvaStatus,
     TaskStatus,
-    EvaData
+    EvaData,
+    UIAState, 
+    DCUState,
 }
 
 export { biometricIDMap }

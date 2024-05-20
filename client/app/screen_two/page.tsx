@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { fetchWithoutParams } from "@/api/fetchServer";
 import { useState } from "react";
 import { Spinner } from "@/components/ui/spinner";
+import UIA_UI from "@/components/tss_link/uia_ui";
 
 
 const NoSSR_Timers = dynamic(() => import('@/components/ui/timing'), { ssr: false })
@@ -31,6 +32,9 @@ const ScreenTwo = () => {
 
       <div className="absolute top-0 left-0 p-1 flex flex-row gap-x-1 justify-start text-3xl font-bold"> <NoSSR_Timers /></div>
       <div className="absolute top-4 left-[40rem] p-1 flex flex-row gap-x-1 justify-start text-3xl font-bold"><PanicButton /></div>
+      <div className="absolute top-2.5 left-[46.3rem]">
+        <RoverTelemetry />
+      </div>
       
 
       <div className=" bg-slate-600 flex-col w-[1050px] items-center justify-center rounded-r-2xl p-2 pl-3">
@@ -38,14 +42,11 @@ const ScreenTwo = () => {
           <NoSSR_LiveView />
           <div className="flex flex-row items-center gap-x-2">
             <TodoLister />
-            <RoverTelemetry />
-            <Button onClick={async () => {
-              setLoading(true);
-              await fetchWithoutParams("navigate");
-              setLoading(false);
-            }}>
-              {loading ? <Spinner /> : "Navigate"}
-            </Button>
+            <div className="flex flex-col items-center gap-y-2 pl-3 pt-4">
+              
+              <UIA_UI />
+
+            </div>
           </div>
         </div>
       </div>

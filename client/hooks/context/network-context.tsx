@@ -16,6 +16,8 @@ import {
 	SpecRequest,
 	EvaStatus,
 	EvaData,
+	UIAState,
+	DCUState,
 } from "@/lib/types";
 import { 
     defaultTodoValue,
@@ -26,7 +28,9 @@ import {
     defaultTimerValue, 
     defaultBiometricValue,
 	defaultErrorValue,
-	defaultEvaStatusValue
+	defaultEvaStatusValue,
+	defaultUIAState,
+	defaultDCUState
 } from "@/lib/defaults"
 
 ////////////////////////////////////////////////
@@ -51,6 +55,8 @@ interface NetworkContextType {
 	getRoverData: () => RoverData;
 	getErrorData: () => ErrorData; 
 	getEvaData: () => EvaStatus;
+	getUIAData: () => UIAState;
+	getDCUData: () => DCUState;
 	updateTodoItems: (newItem: string) => any; 
 	updateTodoItemsViaList: (newItems: string[][]) => any;
 	updateWarning: (warning: string) => any;
@@ -66,6 +72,8 @@ const defaultNetworkValue: NetworkContextType = {
 	getRoverData: () => defaultRoverValue,
 	getErrorData: () => defaultErrorValue,
 	getEvaData: () => defaultEvaStatusValue,
+	getUIAData: () => defaultUIAState,
+	getDCUData: () => defaultDCUState,
 	updateTodoItems: (newItem: string) => 0,
 	updateTodoItemsViaList: (newItems: string[][]) => 0,
 	updateWarning: (warning: string) => 0,
@@ -92,6 +100,8 @@ export const NetworkProvider = ({ children }: any) => {
 	const [roverData, setRoverData] = useState<RoverData>(defaultRoverValue); 
 	const [errorData, setErrorData] = useState<ErrorData>(defaultErrorValue);
 	const [evaData, setEvaData] = useState<EvaStatus>(defaultEvaStatusValue); 
+	const [uiaSwitchState, setUiaSwitchState] = useState<UIAState>(defaultUIAState);
+	const [dcuSwitchState, setDcuSwitchState] = useState<DCUState>(defaultDCUState);
 
 	useEffect(() => {
 		const interval = setInterval(async () => {
@@ -236,6 +246,20 @@ export const NetworkProvider = ({ children }: any) => {
 					throw new Error('Rover Data is Undefined!')
 				}
 
+				const uiaDataTemp = await fetchWithoutParams<UIAState>('mission/uia');
+				if (uiaDataTemp) { 
+					setUiaSwitchState(uiaDataTemp);
+				} else { 
+					throw new Error('UIA Data is Undefined!')
+				}
+
+				const dcuDataTemp = await fetchWithoutParams<DCUState>('mission/dcu');
+				if (dcuDataTemp) { 
+					setDcuSwitchState(dcuDataTemp);
+				} else { 
+					throw new Error('DCU Data is Undefined!')
+				}
+
 			} catch (error) {
 				console.error('error fetching some data:', error); 
 			}
@@ -326,6 +350,14 @@ export const NetworkProvider = ({ children }: any) => {
 		return evaData || defaultEvaStatusValue
 	}
 
+	const getUIAData = (): UIAState => {
+		return uiaSwitchState || defaultUIAState
+	}
+
+	const getDCUData = (): DCUState => {
+		return dcuSwitchState || defaultDCUState
+	}
+
 	const updateTodoItems = async (newItem: string) => { 
         const newItems = await fetchWithParams('settodo',
         {
@@ -356,6 +388,7 @@ export const NetworkProvider = ({ children }: any) => {
 			getWarningData,
 			getTodoData,
 			getGeoJSONData,
+			getDCUData,
 			getSpecData,
 			getTelemetryData,
 			getRoverData,
@@ -364,6 +397,7 @@ export const NetworkProvider = ({ children }: any) => {
 			updateTodoItems,
 			updateTodoItemsViaList,
 			updateWarning,
+			getUIAData
 		}}>
 			{children}
 		</NetworkContext.Provider>

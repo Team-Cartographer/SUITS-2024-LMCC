@@ -57,12 +57,12 @@ echo -e "ports ready, starting python config now\n"
 
 cd gateway
 
-python3 -m venv .venv >/dev/null
+python3 -m venv .venv 
 
-source .venv/bin/activate >/dev/null
+source .venv/bin/activate 
 
-pip install --upgrade pip >/dev/null
-pip install -r requirements.txt >/dev/null
+# pip install --upgrade pip 
+# pip install -r requirements.txt 
 
 cd ..
 
@@ -72,8 +72,8 @@ echo -e "\nsetting up lmcc client"
 
 cd client 
 
-npm install -g typescript >/dev/null 2>&1
-npm install >/dev/null 2>&1
+# npm install -g typescript 
+# npm install 
 
 echo -e "lmcc client setup complete\n"
 
