@@ -96,96 +96,6 @@ def on_startup() -> None:
                     {
                         "type": "Feature",
                         "properties": {
-                            "name": "RovGeoG",
-                            "description": "1840x1505",
-                            "utm": [
-                                298343.64256805787,
-                                3272381.5092994412
-                            ]
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                29.564893198890537,
-                                -95.08157841038
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "Comm Tower",
-                            "description": "2565x1770",
-                            "utm": [
-                                298351.35852840694,
-                                3272355.780468023
-                            ]
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                29.56466239272993,
-                                -95.08149404674889
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "GeoF",
-                            "description": "2425x1505",
-                            "utm": [
-                                298343.2723772615,
-                                3272360.867084749
-                            ]
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                29.564706962195427,
-                                -95.08157841038
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "GeoE",
-                            "description": "1860x1980",
-                            "utm": [
-                                298358.28272142727,
-                                3272380.540812802
-                            ]
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                29.56488683182404,
-                                -95.08142719255065
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {
-                            "name": "GeoD",
-                            "description": "1270x1865",
-                            "utm": [
-                                298355.10853550996,
-                                3272401.423072609
-                            ]
-                        },
-                        "geometry": {
-                            "type": "Point",
-                            "coordinates": [
-                                29.565074660285777,
-                                -95.08146380318301
-                            ]
-                        }
-                    },
-                    {
-                        "type": "Feature",
-                        "properties": {
                             "name": "GeoA",
                             "description": "810x2575",
                             "utm": [
@@ -201,6 +111,7 @@ def on_startup() -> None:
                             ]
                         }
                     },
+
                     {
                         "type": "Feature",
                         "properties": {
@@ -234,6 +145,96 @@ def on_startup() -> None:
                             "coordinates": [
                                 29.565149473317145,
                                 -95.08138899015165
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoD",
+                            "description": "1270x1865",
+                            "utm": [
+                                298355.10853550996,
+                                3272401.423072609
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.565074660285777,
+                                -95.08146380318301
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoE",
+                            "description": "1860x1980",
+                            "utm": [
+                                298358.28272142727,
+                                3272380.540812802
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.56488683182404,
+                                -95.08142719255065
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoF",
+                            "description": "2425x1505",
+                            "utm": [
+                                298343.2723772615,
+                                3272360.867084749
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.564706962195427,
+                                -95.08157841038
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "RovGeoG",
+                            "description": "1840x1505",
+                            "utm": [
+                                298343.64256805787,
+                                3272381.5092994412
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.564893198890537,
+                                -95.08157841038
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "Comm Tower",
+                            "description": "2565x1770",
+                            "utm": [
+                                298351.35852840694,
+                                3272355.780468023
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.56466239272993,
+                                -95.08149404674889
                             ]
                         }
                     }
@@ -321,7 +322,8 @@ def navigate() -> JSONResponse:
         })
     
     a_st_path = []
-    sorted_points = sorted(points, key=lambda point: (point[1], point[0]))
+    # sorted_points = sorted(points, key=lambda point: (point[1], point[0]))
+    sorted_points = points 
 
     for i in range(len(sorted_points) - 1):
         start_x, start_y = sorted_points[i]
@@ -666,7 +668,6 @@ async def map_socket(websocket: WebSocket):
                 def draw_dots(cache, color):
                     for i in range(0, len(cache)):
                         x, y = map(int, cache[i]["properties"]["description"].split('x'))
-                        print(f'\n\n\n\n\n{x}, {y}\n\n\n\n\n')
                         radius = 2
                         draw.ellipse([(x/5 - radius, y/5 - radius), (x/5 + radius, y/5 + radius)], fill=color)
 

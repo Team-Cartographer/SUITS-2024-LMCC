@@ -44,7 +44,7 @@ const GeoSampler = ({
   return (
     <div className="flex flex-col h-full max-h-[600px] text-sm overflow-y-auto p-4 border border-gray-200 rounded-lg pt-6 drop-shadow-2xl">
         <div className="space-y-4">
-            <div className="space-y-2">
+            <div className="space-y-2 font-bold">
                 <p className={`${EVA1SpecItem?.id !== 0 ? 'text-green-500' : 'text-red-500'}`}>
                     EVA 1 Data:
                 </p>
@@ -99,7 +99,7 @@ const GeoSampler = ({
                 </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 font-bold">
                 <p className={`${EVA2SpecItem?.id !== 0 ? 'text-green-500' : 'text-red-500'}`}>
                     EVA 2 Data:
                 </p>

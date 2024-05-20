@@ -35,17 +35,13 @@ class Node:
 
     def new_g(self, other: "Node") -> float:
         k_dist: float = 1
-        k_height: float = 0.25
-        height_penalty: float = 0.5
+        k_height: float = 100
+        height_penalty: float = 2 ** other.height
 
         dist: float = self.dist_btw(other)
         height: float = abs(self.height - other.height)
 
-        penalty: float = 0.0
-        if other.height > 30:
-            penalty = (other.height - 140) * 1000
-
-        eqn: float = k_dist * dist + k_height * height + height_penalty + penalty
+        eqn: float = k_dist * dist + k_height * height + height_penalty
         return eqn
     
     def __repr__(self): 

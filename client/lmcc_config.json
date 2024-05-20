@@ -7,5 +7,5 @@
     "eva2_ip": "1.1.1.1",
     "rover_ip": "1.2.3.4",
     "autowarn": false,
-    "rover_dev_img": true
+    "rover_dev_img": false
 }
