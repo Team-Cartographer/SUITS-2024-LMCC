@@ -34,13 +34,14 @@ def request_utm_data(tss_host: str) -> tuple[LATLON, LATLON, LATLON]:
 
     east_eva1, north_eva1 = int(imu_data["imu"]["eva1"]["posx"]), int(imu_data["imu"]["eva1"]["posy"])
     east_eva2, north_eva2 = int(imu_data["imu"]["eva2"]["posx"]), int(imu_data["imu"]["eva2"]["posy"])
+    heading_eva1, heading_eva2 = int(imu_data["imu"]["eva1"]["heading"]), int(imu_data["imu"]["eva2"]["heading"])
     east_rover, north_rover = int(rover_data["rover"]["posx"]), int(rover_data["rover"]["posy"])
 
     lat_eva_1, lon_eva_1 = get_lat_lon_from_utm(east_eva1, north_eva1, 15, 'R')
     lat_eva_2, lon_eva_2 = get_lat_lon_from_utm(east_eva2, north_eva2, 15, 'R')
     lat_rover, lon_rover = get_lat_lon_from_utm(east_rover, north_rover, 15, 'R')
 
-    return LATLON(lat_eva_1, lon_eva_1), LATLON(lat_eva_2, lon_eva_2), LATLON(lat_rover, lon_rover)
+    return LATLON(lat_eva_1, lon_eva_1), LATLON(lat_eva_2, lon_eva_2), LATLON(lat_rover, lon_rover), heading_eva1, heading_eva2
 
 
 

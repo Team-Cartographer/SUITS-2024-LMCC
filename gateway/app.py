@@ -1,5 +1,4 @@
 # File Imports
-import os
 import paths
 from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
                     extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
@@ -8,6 +7,8 @@ from services.astar import run_astar
 from services.schema import GeoJSON, WarningItem, TodoItems, TodoItem, GeoJSONFeature
 
 # Standard Imports 
+import os
+import math 
 from json import loads, load, dumps
 from base64 import b64encode
 from time import time 
@@ -70,7 +71,170 @@ def on_startup() -> None:
         warningDb["infoWarning"] = ""
     if "type" not in geojsonDb:
         geojsonDb["type"] = "FeatureCollection"
-        geojsonDb["features"] = []
+        geojsonDb["features"] = [
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "UIA",
+                            "description": "1970x2680",
+                            "utm": [
+                                298379.8067379597,
+                                3272376.272166174
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.564851812958292,
+                                -95.08120434522316
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "RovGeoG",
+                            "description": "1840x1505",
+                            "utm": [
+                                298343.64256805787,
+                                3272381.5092994412
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.564893198890537,
+                                -95.08157841038
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "Comm Tower",
+                            "description": "2565x1770",
+                            "utm": [
+                                298351.35852840694,
+                                3272355.780468023
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.56466239272993,
+                                -95.08149404674889
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoF",
+                            "description": "2425x1505",
+                            "utm": [
+                                298343.2723772615,
+                                3272360.867084749
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.564706962195427,
+                                -95.08157841038
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoE",
+                            "description": "1860x1980",
+                            "utm": [
+                                298358.28272142727,
+                                3272380.540812802
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.56488683182404,
+                                -95.08142719255065
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoD",
+                            "description": "1270x1865",
+                            "utm": [
+                                298355.10853550996,
+                                3272401.423072609
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.565074660285777,
+                                -95.08146380318301
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoA",
+                            "description": "810x2575",
+                            "utm": [
+                                298377.3016336306,
+                                3272417.2618119475
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.565221102815265,
+                                -95.08123777232228
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoB",
+                            "description": "1265x2315",
+                            "utm": [
+                                298368.99328193004,
+                                3272401.350574164
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.5650762520524,
+                                -95.08132054418678
+                            ]
+                        }
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {
+                            "name": "GeoC",
+                            "description": "1035x2100",
+                            "utm": [
+                                298362.5065035918,
+                                3272409.585246472
+                            ]
+                        },
+                        "geometry": {
+                            "type": "Point",
+                            "coordinates": [
+                                29.565149473317145,
+                                -95.08138899015165
+                            ]
+                        }
+                    }
+                ]
 
 
 @app.on_event("shutdown")
@@ -375,6 +539,20 @@ def getmap():
         if name in ["EVA 1", "EVA 2", "Rover"]:
             radius = 5
             draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
+            def draw_triangle(image, center, angle, size, color):
+                # Calculate the points of the triangle
+                x, y = center
+                half_size = size / 2
+                angle_rad = math.radians(angle)
+                
+                # Calculate the three points of the triangle
+                point1 = (x + half_size * math.cos(angle_rad), y + half_size * math.sin(angle_rad))
+                point2 = (x + half_size * math.cos(angle_rad + 2 * math.pi / 3), y + half_size * math.sin(angle_rad + 2 * math.pi / 3))
+                point3 = (x + half_size * math.cos(angle_rad + 4 * math.pi / 3), y + half_size * math.sin(angle_rad + 4 * math.pi / 3))
+                
+                # Draw the triangle
+                draw = ImageDraw.Draw(image)
+                draw.polygon([point1, point2, point3], fill=color)
         else: 
             radius = 3
             draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
@@ -452,7 +630,7 @@ async def map_socket(websocket: WebSocket):
             
             geojsonDb["features"] = [feature for feature in geojsonDb["features"] if feature["properties"]["name"] not in ["EVA 1", "EVA 2", "Rover"]]    
 
-            ll1, ll2, ll3 = request_utm_data(TSS_HOST)
+            ll1, ll2, ll3, heading_eva1, heading_eva2 = request_utm_data(TSS_HOST)
             with ProcessPoolExecutor() as executor:
                 future1 = executor.submit(get_x_y_from_lat_lon, ll1.lat, ll1.lon)
                 future2 = executor.submit(get_x_y_from_lat_lon, ll2.lat, ll2.lon)
@@ -490,6 +668,8 @@ async def map_socket(websocket: WebSocket):
             if app.astar_path: 
                 for i in range(len(app.astar_path) - 1):
                     draw.line([(app.astar_path[i][1], app.astar_path[i][0]), (app.astar_path[i+1][1], app.astar_path[i+1][0])], fill='blue', width=2)
+
+            heading_eva1, heading_eva2 = abs(heading_eva1), abs(heading_eva2)
 
             for feature in geojsonDb["features"]:
                 description = feature["properties"]["description"]
