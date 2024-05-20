@@ -161,6 +161,7 @@ interface ErrorData {
         fan_error: boolean,
         oxy_error: boolean,
         pump_error: boolean,
+        power_error: boolean
     }
 }
 
@@ -228,6 +229,14 @@ type DCUState = {
     };
 };
 
+/// COMM STATE /////////////////////////////////////////////////////////
+
+type CommState = { 
+    comm: { 
+        comm_tower: boolean; 
+    }
+}
+
 // EXPORT /////////////////////////////////////////////////////////////
 
 export type { 
@@ -236,6 +245,7 @@ export type {
     ChatItemType,
     GeoJSONFeature, 
     WarningData,
+    CommState,
     TodoItems,
     TimerType,
     Spec,
