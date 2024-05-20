@@ -1,4 +1,5 @@
 # File Imports
+import os
 import paths
 from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
                     extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
@@ -16,8 +17,8 @@ from threading import Thread
 import asyncio 
 
 # Third-Party Imports
-from fastapi import FastAPI, status, WebSocketDisconnect, WebSocket
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi import FastAPI, HTTPException, status, WebSocketDisconnect, WebSocket
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 from requests import get, post
 from requests.auth import HTTPBasicAuth
@@ -100,6 +101,20 @@ def post_message() -> JSONResponse:
     return JSONResponse({
         "message": "Hello, world!"
     }, status.HTTP_200_OK)
+
+
+ROCK_IMAGES_DIR = "rock_graphs"
+
+@app.get("/rock_img")
+def get_rock_img(id_number: int):
+    try:
+        file_path = os.path.join(ROCK_IMAGES_DIR, f"{id_number}.png")
+        if os.path.exists(file_path):
+            return FileResponse(file_path)
+        else:
+            raise HTTPException(status_code=404, detail="Rock image not found")
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid rock id")
 
 
 @app.get('/apimonitor')
