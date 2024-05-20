@@ -34,7 +34,6 @@ class Node:
         return sqrt((self.x - other.x) ** 2 + (self.y - other.y) ** 2 + (self.height - other.height) ** 2)
 
     def new_g(self, other: "Node") -> float:
-        # constant values:
         k_dist: float = 1
         k_height: float = 0.25
         height_penalty: float = 0.5
@@ -42,7 +41,6 @@ class Node:
         dist: float = self.dist_btw(other)
         height: float = abs(self.height - other.height)
 
-        # Additional penalty for heights above 140
         penalty: float = 0.0
         if other.height > 30:
             penalty = (other.height - 140) * 1000
