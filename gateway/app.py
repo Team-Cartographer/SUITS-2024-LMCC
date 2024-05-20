@@ -59,7 +59,8 @@ app.prev_breadcrumb = 1
 with open(paths.CONFIG_PATH) as f:
     data = load(f)
     TSS_HOST = data["TSS_IP"]
-    HOLO_IP = data["HOLOLENS_IP"]
+    EVA1_IP = data["EVA1_IP"]
+    EVA2_IP = data["EVA2_IP"]
 
 ####################################################################################
 ################################ SERVER EVENTS #####################################
@@ -315,14 +316,12 @@ def navigate() -> JSONResponse:
         x, y = x/5, y/5
         points.append((int(x), int(y)))
 
-    print(points)
     if not points: 
         return JSONResponse({
             "error": "No points to navigate"
         })
     
     a_st_path = []
-    # sorted_points = sorted(points, key=lambda point: (point[1], point[0]))
     sorted_points = points 
 
     for i in range(len(sorted_points) - 1):
@@ -348,14 +347,19 @@ def navigate() -> JSONResponse:
 def take_hololens_photo(eva: int = 1): 
     app.get_reqs += 1
     user, password = 'auto-abhi_mbp', 'password'
+    EVA_IP = EVA1_IP
+    if eva == 1: 
+        EVA_IP = EVA1_IP
+    else: 
+        EVA_IP = EVA2_IP 
 
-    takephoto_response = post(f"https://{HOLO_IP}/api/holographic/mrc/photo?holo=true&pv=true", 
+    takephoto_response = post(f"https://{EVA_IP}/api/holographic/mrc/photo?holo=true&pv=true", 
                              verify=False, 
                              auth=HTTPBasicAuth(user, password))
     filename = loads(takephoto_response.text)["PhotoFileName"]
     encoded = b64encode(filename.encode('utf')).decode('utf-8')
 
-    response = get(f"https://{HOLO_IP}/api/holographic/mrc/file?filename={encoded}", 
+    response = get(f"https://{EVA_IP}/api/holographic/mrc/file?filename={encoded}", 
                             verify=False, 
                             auth=HTTPBasicAuth(user, password))
     
@@ -684,7 +688,7 @@ async def map_socket(websocket: WebSocket):
 
             if app.astar_path: 
                 for i in range(len(app.astar_path) - 1):
-                    draw.line([(app.astar_path[i][1], app.astar_path[i][0]), (app.astar_path[i+1][1], app.astar_path[i+1][0])], fill='blue', width=2)
+                    draw.line([(app.astar_path[i][0], app.astar_path[i][1]), (app.astar_path[i+1][0], app.astar_path[i+1][1])], fill='blue', width=2)
 
             heading_eva1, heading_eva2 = abs(heading_eva1), abs(heading_eva2)
 

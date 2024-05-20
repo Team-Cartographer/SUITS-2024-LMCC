@@ -5,7 +5,7 @@ from pathlib import Path
 from tqdm import tqdm
 from concurrent.futures import ThreadPoolExecutor
 
-HEIGHTMAP_NPY = Path(__file__).parent / 'heightmap.npy'
+HEIGHTMAP_NPY = Path(__file__).parent.parent / 'data' / 'heightmap.npy'
 TIFF_PATH = Path(__file__).parent / 'rockyard.tif'
 
 class Node:
@@ -13,7 +13,7 @@ class Node:
         self.x = x
         self.y = y
         self.parent = parent
-        self.height = GRID[y][x]
+        self.height = GRID[y][x][0]
 
         self.g: float = 0
         self.h: float = 0
@@ -108,30 +108,30 @@ def run_astar(s_x, s_y, g_x, g_y) -> None:
     return final_path
 
 
-if __name__ == '__main__':
-    start_x, start_y = 2555, 762
-    goal_x, goal_y = 1290, 2200
+# if __name__ == '__main__':
+#     start_x, start_y = 2555, 762
+#     goal_x, goal_y = 1290, 2200
     
-    final_path = run_astar(start_x, start_y, goal_x, goal_y)
-    print("Final path:")
-    for node in final_path:
-        print(node)
+#     final_path = run_astar(start_x, start_y, goal_x, goal_y)
+#     print("Final path:")
+#     for node in final_path:
+#         print(node)
     
-    import matplotlib.pyplot as plt
-    from PIL import Image
-    import numpy as np
+#     import matplotlib.pyplot as plt
+#     from PIL import Image
+#     import numpy as np
 
 
-    heightmap_img = Image.open("heightmap.png")
-    heightmap_array = np.array(heightmap_img)
+#     heightmap_img = Image.open("heightmap.png")
+#     heightmap_array = np.array(heightmap_img)
 
-    fig, ax = plt.subplots(figsize=(10, 8))
+#     fig, ax = plt.subplots(figsize=(10, 8))
 
-    ax.imshow(heightmap_array, cmap='gray')
+#     ax.imshow(heightmap_array, cmap='gray')
 
-    for i in range(len(final_path) - 1):
-        x1, y1, _ = final_path[i]
-        x2, y2, _ = final_path[i + 1]
-        ax.plot([x1, x2], [y1, y2], 'r-', linewidth=2)
+#     for i in range(len(final_path) - 1):
+#         x1, y1, _ = final_path[i]
+#         x2, y2, _ = final_path[i + 1]
+#         ax.plot([x1, x2], [y1, y2], 'r-', linewidth=2)
 
-    plt.show()
+#     plt.show()
