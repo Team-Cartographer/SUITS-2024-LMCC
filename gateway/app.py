@@ -9,6 +9,7 @@ from services.schema import GeoJSON, WarningItem, TodoItems, TodoItem, GeoJSONFe
 # Standard Imports 
 import os
 import math 
+from copy import deepcopy
 from json import loads, load, dumps
 from base64 import b64encode
 from time import time 
@@ -43,9 +44,9 @@ todoDb: JSONDatabase[list[TodoItems]] = JSONDatabase(paths.TODO_PATH)
 warningDb: JSONDatabase[WarningItem] = JSONDatabase(paths.WARNING_PATH)
 geojsonDb: JSONDatabase[GeoJSON] = JSONDatabase(paths.GEOJSON_PATH)
 
-eva1_poscache = ListCache(1000)
-eva2_poscache = ListCache(1000)
-rover_poscache = ListCache(1000)
+eva1_poscache  = ListCache(360)
+eva2_poscache  = ListCache(360)
+rover_poscache = ListCache(360)
 
 app.curr_telemetry = dict() 
 app.last_qr_id = 0
@@ -53,6 +54,7 @@ app.get_reqs = 0
 app.post_reqs = 0
 app.start_time = time() 
 app.astar_path = []
+app.prev_breadcrumb = 1
 
 with open(paths.CONFIG_PATH) as f:
     data = load(f)
@@ -378,6 +380,12 @@ def get_warning() -> JSONResponse:
 @app.get('/geojson')
 def get_geojson() -> JSONResponse:
     app.get_reqs += 1
+    copied = deepcopy(geojsonDb)
+
+    copied["features"].extend(eva1_poscache)
+    copied["features"].extend(eva2_poscache)
+    copied["features"].extend(rover_poscache)
+
     return JSONResponse(geojsonDb, status.HTTP_200_OK)
 
 @app.get('/geojson_hmd')
@@ -393,6 +401,9 @@ def get_geojson_hmd() -> JSONResponse:
             "utm": feature["properties"]["utm"],
             "latlon": feature["geometry"]["coordinates"]
         })
+    data["features"].extend(eva1_poscache)
+    data["features"].extend(eva2_poscache)
+    data["features"].extend(rover_poscache)
     return JSONResponse(data, status.HTTP_200_OK)
 
 ########## MISSION ROUTES ###################################
@@ -508,29 +519,34 @@ def getmap():
     x_rov, y_rov = get_x_y_from_lat_lon(llr.lat, llr.lon)
 
     geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, llr.lat, llr.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
+    cur_time = app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0)
 
-    if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) >= 1: 
-        geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, llr.lat, llr.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-        eva1_poscache.append((x_ev1, y_ev1))
-        eva2_poscache.append((x_ev2, y_ev2))
-        rover_poscache.append((x_rov, y_rov))
+    if cur_time >= 0.1: 
+        if cur_time - app.prev_breadcrumb > 12:
+            ev1, ev2, rover = extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, llr.lat, llr.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov)
 
-        def draw_lines(cache, color):
-            for i in range(1, len(cache)):
-                x1, y1 = cache[i-1]
-                x2, y2 = cache[i]
-                draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill=color, width=2)
+            eva1_poscache.append(ev1)
+            eva2_poscache.append(ev2)
+            rover_poscache.append(rover)
 
-        thread1 = Thread(target=draw_lines, args=(eva1_poscache, 'lawngreen'))
-        thread2 = Thread(target=draw_lines, args=(eva2_poscache, 'deeppink'))
-        thread3 = Thread(target=draw_lines, args=(rover_poscache, 'aqua'))
+            def draw_dots(cache, color):
+                for i in range(0, len(cache)):
+                    x, y = map(int, cache[i]["properties"]["description"].split('x'))
+                    radius = 2
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=color)
 
-        thread1.start()
-        thread2.start()
-        thread3.start()
-        thread1.join()
-        thread2.join()
-        thread3.join()
+            thread1 = Thread(target=draw_dots, args=(eva1_poscache, 'lawngreen'))
+            thread2 = Thread(target=draw_dots, args=(eva2_poscache, 'deeppink'))
+            thread3 = Thread(target=draw_dots, args=(rover_poscache, 'aqua'))
+
+            thread1.start()
+            thread2.start()
+            thread3.start()
+            thread1.join()
+            thread2.join()
+            thread3.join()
+
+            app.prev_breadcrumb = cur_time
 
 
     for feature in geojsonDb["features"]:
@@ -546,20 +562,6 @@ def getmap():
         if name in ["EVA 1", "EVA 2", "Rover"]:
             radius = 5
             draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
-            def draw_triangle(image, center, angle, size, color):
-                # Calculate the points of the triangle
-                x, y = center
-                half_size = size / 2
-                angle_rad = math.radians(angle)
-                
-                # Calculate the three points of the triangle
-                point1 = (x + half_size * math.cos(angle_rad), y + half_size * math.sin(angle_rad))
-                point2 = (x + half_size * math.cos(angle_rad + 2 * math.pi / 3), y + half_size * math.sin(angle_rad + 2 * math.pi / 3))
-                point3 = (x + half_size * math.cos(angle_rad + 4 * math.pi / 3), y + half_size * math.sin(angle_rad + 4 * math.pi / 3))
-                
-                # Draw the triangle
-                draw = ImageDraw.Draw(image)
-                draw.polygon([point1, point2, point3], fill=color)
         else: 
             radius = 3
             draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red')
@@ -649,21 +651,28 @@ async def map_socket(websocket: WebSocket):
 
             geojsonDb["features"].extend(extend_eva_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
 
-            if app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0) >= 1: 
-                geojsonDb["features"].extend(extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov))
-                eva1_poscache.append((x_ev1, y_ev1))
-                eva2_poscache.append((x_ev2, y_ev2))
-                rover_poscache.append((x_rov, y_rov))
+            cur_time = app.curr_telemetry.get("telemetry", {"eva_time": 0}).get("eva_time", 0)
 
-                def draw_lines(cache, color):
-                    for i in range(1, len(cache)):
-                        x1, y1 = cache[i-1]
-                        x2, y2 = cache[i]
-                        draw.line([(x1/5, y1/5), (x2/5, y2/5)], fill=color, width=2)
+            if cur_time >= 1: 
+                if cur_time - app.prev_breadcrumb > 10:
+                    ev1, ev2, rover = extend_cache_to_geojson(ll1.lat, ll1.lon, ll2.lat, ll2.lon, ll3.lat, ll3.lon, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov)
 
-                thread1 = Thread(target=draw_lines, args=(eva1_poscache, 'lawngreen'))
-                thread2 = Thread(target=draw_lines, args=(eva2_poscache, 'deeppink'))
-                thread3 = Thread(target=draw_lines, args=(rover_poscache, 'aqua'))
+                    eva1_poscache.append(ev1)
+                    eva2_poscache.append(ev2)
+                    rover_poscache.append(rover)
+                    
+                    app.prev_breadcrumb = cur_time
+
+                def draw_dots(cache, color):
+                    for i in range(0, len(cache)):
+                        x, y = map(int, cache[i]["properties"]["description"].split('x'))
+                        print(f'\n\n\n\n\n{x}, {y}\n\n\n\n\n')
+                        radius = 2
+                        draw.ellipse([(x/5 - radius, y/5 - radius), (x/5 + radius, y/5 + radius)], fill=color)
+
+                thread1 = Thread(target=draw_dots, args=(eva1_poscache, 'lawngreen'))
+                thread2 = Thread(target=draw_dots, args=(eva2_poscache, 'deeppink'))
+                thread3 = Thread(target=draw_dots, args=(rover_poscache, 'aqua'))
 
                 thread1.start()
                 thread2.start()

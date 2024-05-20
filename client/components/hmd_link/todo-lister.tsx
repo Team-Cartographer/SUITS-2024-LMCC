@@ -41,8 +41,8 @@ const TodoLister = () => {
       };
 
     return ( 
-        <div className="flex flex-col text-sm self-start gap-x-2 p-4">
-            <div className="text-lg font-bold pb-2 underline self-start">
+        <div className="flex flex-col text-sm self-start gap-x-2 p-4 outline outline-muted-foreground rounded-lg w-[48.5%] drop-shadow-2xl max-h-screen overflow-scroll">
+            <div className="text-lg font-bold pb-2 self-start">
                 Todo List
             </div>
             <div className="pb-4 self-start text-base">

@@ -39,12 +39,10 @@ const ScreenTwo = () => {
       <div className=" bg-slate-600 flex-col w-[1050px] items-center justify-center rounded-r-2xl p-2 pl-3">
         <div className="flex flex-col pt-[180px]">
           <NoSSR_LiveView />
-          <div className="flex flex-row items-center gap-x-2">
+          <div className="flex flex-row items-center gap-x-2 pt-4">
             <TodoLister />
-            <div className="flex flex-col items-center gap-y-2 pl-3 pt-4">
-              
+            <div className="flex flex-col items-center gap-y-2 pl-3">
               <DATA_UI />
-
             </div>
           </div>
         </div>

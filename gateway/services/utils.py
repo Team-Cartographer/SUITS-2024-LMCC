@@ -77,7 +77,7 @@ def get_lat_lon_from_x_y(x: int, y: int):
     
 
 def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1, x_ev2, y_ev2, x_rov, y_rov):
-    return [
+    return (
         {
             "type": "Feature",
             "geometry": {
@@ -114,7 +114,7 @@ def extend_cache_to_geojson(lat1, lon1, lat2, lon2, latrov, lonrov, x_ev1, y_ev1
                 "utm": latlon_to_utm(latrov, lonrov)
             }
         }
-    ]
+    )
 
         
 

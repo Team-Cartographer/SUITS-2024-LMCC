@@ -154,12 +154,15 @@ export const NetworkProvider = ({ children }: any) => {
 				if (errorData) {
 					setErrorData(errorData);
 					if (errorData.error.oxy_error) {
+						if(warningData?.infoWarning === 'Oxygen Error Detected! Run appropriate procedure!') { return; }
 						updateWarning('Oxygen Error Detected! Run appropriate procedure!');
 					}
 					if (errorData.error.pump_error) {
+						if(warningData?.infoWarning === 'Pump Error Detected! Run appropriate procedure!') { return; }
 						updateWarning('Pump Error Detected! Run appropriate procedure!');
 					} 
 					if (errorData.error.fan_error) {
+						if(warningData?.infoWarning === 'Fan Error Detected! Run appropriate procedure!') { return; }
 						updateWarning('Fan Error Detected! Run appropriate procedure!');
 					} 
 				} else {
@@ -390,11 +393,14 @@ export const NetworkProvider = ({ children }: any) => {
 	}
 
 	const updateWarning = async (warning: string) => {
-		const warningData = await fetchWithParams(`setwarning`,
+		if (warning == warningData.infoWarning) {
+			return; 
+		}
+		const _warningData = await fetchWithParams(`setwarning`,
 			{
 				infoWarning: warning,
 			})
-		setWarningData(warningData);
+		setWarningData(_warningData);
 	}
 
 	return (

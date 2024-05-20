@@ -58,7 +58,7 @@ const HomePage = () => {
         <BiometricTelemetry evaNumber={2} bpm={0.0} temp={0.0} oxy={0.0} />
         <CameraFeed ip={lmcc_config.eva2_ip} />
         <div className="flex flex-row gap-x-2">
-        <Alert>
+        <Alert className="font-bold">
           <AlertTitle>EVA Phase Manager</AlertTitle>
             <AlertDescription className="grid grid-rows-2 grid-cols-2 pt-2">
             <div className={getPhaseStyle(evaStatus.uia)}>{getPhaseStatus(evaStatus.uia, 'UIA')}</div>
