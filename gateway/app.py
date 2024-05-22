@@ -45,9 +45,9 @@ todoDb: JSONDatabase[list[TodoItems]] = JSONDatabase(paths.TODO_PATH)
 warningDb: JSONDatabase[WarningItem] = JSONDatabase(paths.WARNING_PATH)
 geojsonDb: JSONDatabase[GeoJSON] = JSONDatabase(paths.GEOJSON_PATH)
 
-eva1_poscache  = ListCache(360)
-eva2_poscache  = ListCache(360)
-rover_poscache = ListCache(360)
+eva1_poscache  = ListCache(36)
+eva2_poscache  = ListCache(36)
+rover_poscache = ListCache(36)
 
 app.curr_telemetry = dict() 
 app.last_qr_id = 0
