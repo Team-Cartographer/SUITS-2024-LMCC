@@ -159,7 +159,7 @@ const Map = () => {
         if (nearPoint) {
            if(shiftPressed) {
                 await removePin(nearPoint.properties.description, nearPoint.properties.name);
-           } else { 
+           } else if (!["GeoA", "GeoB", "GeoC", "GeoD", "GeoE", "GeoF", "RovGeoG", "UIA", "Comm Tower"].includes(nearPoint.properties.name)) { 
                 setModalOpen(true);
                 setNearPoint({
                     name: nearPoint.properties.name,
@@ -167,6 +167,8 @@ const Map = () => {
                     x: x,
                     y: y
                 });
+           } else { 
+            await addPin(`${x}x${y}`, "");
            }
         } else {
             await addPin(`${x}x${y}`, "");
@@ -201,6 +203,7 @@ const Map = () => {
     };
 
     const removePin = async (xystring: string, _descContent: string) => {
+        if(["GeoA", "GeoB", "GeoC", "GeoD", "GeoE", "GeoF", "RovGeoG", "UIA", "Comm Tower"].includes(_descContent)) { return; }
         try {
             setLoading(true);
             const feature = { 

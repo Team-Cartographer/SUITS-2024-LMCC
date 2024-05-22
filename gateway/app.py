@@ -1,7 +1,8 @@
 # File Imports
 import paths
 from services.utils import process_geojson_request, request_utm_data, get_x_y_from_lat_lon, \
-                    extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm
+                    extend_eva_to_geojson, extend_cache_to_geojson, get_lat_lon_from_utm, get_lat_lon_from_x_y, \
+                    latlon_to_utm
 from services.database import JSONDatabase, ListCache
 from services.astar import run_astar
 from services.schema import GeoJSON, WarningItem, TodoItems, TodoItem, GeoJSONFeature
@@ -305,11 +306,17 @@ def api_monitor() -> JSONResponse:
 @app.get('/navigate')
 def navigate() -> JSONResponse:
     points = []
+
+    geojsonDb["features"] = [feature for feature in geojsonDb["features"] if feature["properties"]["name"] != "A* Path"]
+
     for feature in geojsonDb["features"]:
         description = feature["properties"]["description"]
         name = feature["properties"]["name"]
 
-        if name in ["EVA 1", "EVA 2", "Rover", "EVA 1 Cache Point", "EVA 2 Cache Point", "Rover Cache Point"]:
+        if name in [
+                "EVA 1", "EVA 2", "Rover", "EVA 1 Cache Point", "EVA 2 Cache Point", "Rover Cache Point",
+                "GeoA", "GeoB", "GeoC", "GeoD", "GeoE", "GeoF", "UIA", "Comm Tower", "RovGeoG"
+            ]:
             continue
 
         x, y = map(int, description.split('x'))
@@ -324,15 +331,19 @@ def navigate() -> JSONResponse:
     # sorted_points = sorted(points, key=lambda point: (point[1], point[0]))
     sorted_points = points 
 
-    for i in range(len(sorted_points) - 1):
-        start_x, start_y = sorted_points[i]
-        end_x, end_y = sorted_points[i+1]
+    if len(sorted_points) >= 2: 
+        start_x, start_y = sorted_points[-2]
+        end_x, end_y = sorted_points[-1]
         try: 
             a_st_path.extend(run_astar(start_x, start_y, end_x, end_y))
         except Exception as e: 
             return JSONResponse({
                 "error": str(e)
             })
+    else: 
+        return JSONResponse({
+            "error": "Not enough points to navigate"
+        })
 
     if a_st_path: 
         a_st_path = map(lambda x: (x[0] / 5, x[1] / 5), a_st_path)
@@ -401,19 +412,26 @@ def get_geojson() -> JSONResponse:
 @app.get('/geojson_hmd')
 def get_geojson_hmd() -> JSONResponse:
     app.get_reqs += 1
-    data = {
+    temp_data = {
         "features": []
     }
-    for feature in geojsonDb["features"]:
+    temp_data["features"].extend(geojsonDb["features"])
+    temp_data["features"].extend(eva1_poscache)
+    temp_data["features"].extend(eva2_poscache)
+    temp_data["features"].extend(rover_poscache)
+
+    data = { 
+        "features": []
+    }
+
+    for feature in temp_data["features"]:
         data["features"].append({
             "name": feature["properties"]["name"],
             "description": feature["properties"]["description"],
             "utm": feature["properties"]["utm"],
             "latlon": feature["geometry"]["coordinates"]
         })
-    data["features"].extend(eva1_poscache)
-    data["features"].extend(eva2_poscache)
-    data["features"].extend(rover_poscache)
+
     return JSONResponse(data, status.HTTP_200_OK)
 
 ########## MISSION ROUTES ###################################
@@ -615,9 +633,6 @@ def update_features(feature: GeoJSONFeature) -> JSONResponse:
     feature = process_geojson_request(feature)
     geojsonDb["features"].append(feature.feature)
 
-    if app.astar_path: 
-        navigate()
-
     return JSONResponse(geojsonDb, status_code=201)
 
 
@@ -628,8 +643,7 @@ def remove_feature(feature: GeoJSONFeature) -> JSONResponse:
     feature = process_geojson_request(feature)
     geojsonDb["features"].remove(feature.feature)
 
-    if app.astar_path: 
-        navigate()
+    app.astar_path = []
 
     return JSONResponse(geojsonDb, status.HTTP_201_CREATED)
 
@@ -692,6 +706,7 @@ async def map_socket(websocket: WebSocket):
 
             if app.astar_path: 
                 for i in range(len(app.astar_path) - 1):
+
                     draw.line([(app.astar_path[i][0], app.astar_path[i][1]), (app.astar_path[i+1][0], app.astar_path[i+1][1])], fill='blue', width=2)
 
             heading_eva1, heading_eva2 = abs(heading_eva1), abs(heading_eva2)
@@ -709,6 +724,9 @@ async def map_socket(websocket: WebSocket):
                 if name in ["EVA 1", "EVA 2", "Rover"]:
                     radius = 5
                     draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill=('lawngreen' if name == 'EVA 1' else 'deeppink' if name == 'EVA 2' else 'aqua'), outline="black", width=2)
+                elif name in ["UIA", "GeoA", "GeoB", "GeoC", "GeoD", "GeoE", "GeoF", "Comm Tower", "RovGeoG"]: 
+                    radius = 3
+                    draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='slateblue', outline="black", width=1)
                 else: 
                     radius = 3
                     draw.ellipse([(x - radius, y - radius), (x + radius, y + radius)], fill='red', outline="black", width=1)

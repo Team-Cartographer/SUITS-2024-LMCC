@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw
+from PIL import Image
 import heapq
 import numpy as np
 from pathlib import Path
@@ -90,6 +90,30 @@ def astar():
     return []
 
 
+
+def smooth_path(path):
+    tolerance = 0.075
+    max_iterations = 10
+
+    for _ in range(max_iterations):
+        new_path = [path[0]] 
+        for i in range(1, len(path)-1):
+            previous_node = new_path[-1]
+            next_node = path[i+1]
+
+            new_x = previous_node[0] + (next_node[0] - previous_node[0]) * tolerance
+            new_y = previous_node[1] + (next_node[1] - previous_node[1]) * tolerance
+
+            new_path.append((new_x, new_y))
+
+        new_path.append(path[-1])  
+        path = new_path  
+
+    return new_path
+
+
+
+
 def run_astar(s_x, s_y, g_x, g_y) -> None:
     global GRID
     GRID = np.load(HEIGHTMAP_NPY)
@@ -103,7 +127,7 @@ def run_astar(s_x, s_y, g_x, g_y) -> None:
 
     print(start_node, goal_node)
 
-    final_path = astar()
+    final_path = smooth_path(astar())
 
     return final_path
 
