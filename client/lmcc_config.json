@@ -1,11 +1,12 @@
 {
-    "lmcc_url": "http://0.0.0.0:3001",
+    "lmcc_url": "http://localhost:3001",
     "lmcc_ip": "0.0.0.0",
     "tickspeed": 100,
     "scale_factor": 5,
     "eva1_ip": "5.6.7.8",
-    "eva2_ip": "192.168.51.132",
-    "rover_ip": "192.168.51.195",
+    "eva2_ip": "1.2.3.4",
+    "rover_ip": "5.7.6.8",
     "autowarn": false,
-    "rover_dev_img": false
+    "rover_dev_img": true,
+    "timezone": "US/Central"
 }

@@ -39,10 +39,10 @@ def create_data_endpoints():
             np.save(GEODATA_PATH, coordinates)
 
 
-    if not HEIGHTMAP_NPY.exists():  
-        image = Image.open(HEIGHTMAP_IMG_PATH)
-        image_array = np.array(image)
-        np.save(HEIGHTMAP_NPY, image_array)
+    # if not HEIGHTMAP_NPY.exists():  
+    #     image = Image.open(HEIGHTMAP_IMG_PATH)
+    #     image_array = np.array(image)
+    #     np.save(HEIGHTMAP_NPY, image_array)
 
 
 

@@ -75,7 +75,8 @@ def on_startup() -> None:
         warningDb["infoWarning"] = ""
     if "type" not in geojsonDb:
         geojsonDb["type"] = "FeatureCollection"
-        geojsonDb["features"] = [
+        geojsonDb["features"] = [] 
+        random = [
                     {
                         "type": "Feature",
                         "properties": {
@@ -313,7 +314,6 @@ def navigate() -> JSONResponse:
             continue
 
         x, y = map(int, description.split('x'))
-        x, y = x/5, y/5
         points.append((int(x), int(y)))
 
     if not points: 
@@ -322,7 +322,7 @@ def navigate() -> JSONResponse:
         })
     
     a_st_path = []
-    sorted_points = points 
+    sorted_points = sorted(points, key=lambda point: (point[1], point[0]))
 
     for i in range(len(sorted_points) - 1):
         start_x, start_y = sorted_points[i]
@@ -334,7 +334,11 @@ def navigate() -> JSONResponse:
                 "error": str(e)
             })
 
-    app.astar_path = a_st_path if a_st_path else []
+    if a_st_path: 
+        a_st_path = map(lambda x: (x[0] / 5, x[1] / 5), a_st_path)
+        app.astar_path = list(a_st_path)
+    else: 
+        app.astar_path = []
 
     return JSONResponse({
         "final_path": str(app.astar_path)

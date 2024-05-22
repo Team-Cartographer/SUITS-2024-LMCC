@@ -89,10 +89,10 @@ def astar():
 
     return []
 
+
 def run_astar(s_x, s_y, g_x, g_y) -> None:
     global GRID
     GRID = np.load(HEIGHTMAP_NPY)
-    print(len(GRID[0]), len(GRID))
 
     start_x, start_y, goal_x, goal_y = s_x, s_y, g_x, g_y
 
@@ -109,13 +109,12 @@ def run_astar(s_x, s_y, g_x, g_y) -> None:
 
 
 if __name__ == '__main__':
-    start_x, start_y = 2555, 762
-    goal_x, goal_y = 1339, 1748
+    start_x, start_y = 2445, 670
+    goal_x, goal_y = 1220, 2580 
     
     final_path = run_astar(start_x, start_y, goal_x, goal_y)
     print("Final path:")
-    for node in final_path:
-        print(node)
+    print(final_path)
     
     import matplotlib.pyplot as plt
     from PIL import Image

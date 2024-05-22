@@ -7,12 +7,13 @@
 
 import { useNetwork } from "@/hooks/context/network-context";
 import Clock from 'react-live-clock'
+import lmcc_config from "@/lmcc_config.json"
 
-const MissionClock = () => {   
+const MissionClock = () => {  
 	return (
 	<div className="flex flex-row">
 		<div className="text-4xl font-semibold mb-4 absolute pt-0">
-			<span suppressHydrationWarning><Clock format={'HH:mm:ss'} ticking={true} timezone={'US/Pacific'}/></span>
+			<span suppressHydrationWarning><Clock format={'HH:mm:ss'} ticking={true} timezone={lmcc_config.timezone}/></span>
 		</div>
 	</div>
 	);
