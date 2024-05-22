@@ -86,7 +86,7 @@ const defaultNetworkValue: NetworkContextType = {
 const NetworkContext = createContext(defaultNetworkValue);
 
 export const NetworkProvider = ({ children }: any) => {
-	const TICKSPEED = 1000;
+	const TICKSPEED = 2000;
 
 	const [missionTime, setMissionTime] = useState("00:00:00");
 	const [specTime, setSpecTime] = useState("00:00:00");
@@ -107,9 +107,9 @@ export const NetworkProvider = ({ children }: any) => {
 	const [uiaSwitchState, setUiaSwitchState] = useState<UIAState>(defaultUIAState);
 	const [dcuSwitchState, setDcuSwitchState] = useState<DCUState>(defaultDCUState);
 
-	useEffect(() => {
-		const interval = setInterval(async () => {
-			try {
+	useEffect(() => { 
+		const interval = setInterval(async () => { 
+			try { 
 				const eva_data = await fetchWithoutParams<EvaData>('tss/eva_info'); 
 				if(eva_data) { 
 					setMissionTime(formatTime(eva_data.eva.total_time));
@@ -121,7 +121,16 @@ export const NetworkProvider = ({ children }: any) => {
 				} else { 
 					throw new Error("EVA Data is Undefined")
 				}
+			} catch (error) { 
+				console.error("error in fetching data: ", error); 
+			}
+		}, 1000)
+		return () => clearInterval(interval);
+	})
 
+	useEffect(() => {
+		const interval = setInterval(async () => {
+			try {
 				const commData = await fetchWithoutParams<CommState>('mission/comm');
 				if (commData) {
 					setCommData(commData);
@@ -280,6 +289,7 @@ export const NetworkProvider = ({ children }: any) => {
 		}, TICKSPEED);
   
 		return () => clearInterval(interval);
+	  // eslint-disable-next-line react-hooks/exhaustive-deps
 	  }, []);
 
 	
